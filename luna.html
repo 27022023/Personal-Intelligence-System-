@@ -8,8 +8,21 @@
 body {
   margin:0;
   font-family:Georgia, serif;
-  background:#cfe8ff; /* pastel blue */
-  color:#1f2a3a;
+  background: url('https://i.imgur.com/8fK4Z9R.jpeg') no-repeat center center fixed;
+  background-size:cover;
+  color:#f0f8ff;
+}
+
+/* Moon */
+.moon {
+  position:fixed;
+  top:40px;
+  right:60px;
+  width:180px;
+  height:180px;
+  background:url('https://i.imgur.com/4YQZQ7M.png') no-repeat center/cover;
+  filter:drop-shadow(0 0 40px #ffffffaa);
+  opacity:0.9;
 }
 
 /* HEADER */
@@ -17,30 +30,34 @@ body {
   display:flex;
   align-items:center;
   padding:25px 30px;
-  background:#b7d6ff;
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(6px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
 }
 .back-arrow {
   font-size:50px;
   margin-right:25px;
   cursor:pointer;
+  color:#f0f8ff;
 }
 .title {
   font-size:48px;
   font-weight:bold;
+  color:#f0f8ff;
 }
 
 /* CHAT CONTAINER */
 .chat-container {
   max-width:1200px;
   margin:40px auto;
-  background:white;
+  background:rgba(0,0,0,0.45);
   border-radius:30px;
-  box-shadow:0 0 40px rgba(0,0,0,0.25);
+  box-shadow:0 0 40px rgba(255,255,255,0.25);
   display:flex;
   flex-direction:column;
   height:70vh;
   overflow:hidden;
+  backdrop-filter:blur(8px);
 }
 
 /* MESSAGES AREA */
@@ -61,12 +78,14 @@ body {
   white-space:pre-wrap;
 }
 .user {
-  background:#e6d6f5; /* lavender */
+  background:#d8b4f8; /* lavender */
   align-self:flex-end;
+  color:#2b1f3a;
 }
 .luna {
-  background:#c9f5d8; /* mint pastel green */
+  background:#b8f8d4; /* mint */
   align-self:flex-start;
+  color:#1f2a3a;
 }
 
 /* INPUT AREA */
@@ -75,6 +94,7 @@ body {
   border-top:3px solid #ddd;
   display:flex;
   gap:20px;
+  background:rgba(0,0,0,0.4);
 }
 input {
   flex:1;
@@ -105,23 +125,28 @@ button {
   margin:0 auto;
   padding:20px;
   font-size:24px;
-  color:#3a4a5f;
+  color:#f0f8ff;
   text-align:center;
 }
 </style>
 
 <script>
 let history = [];
+let lunaMemory = []; // ⭐ Luna's personal memory
 
 /* Load history */
 function loadHistory() {
   const raw = localStorage.getItem("luna_history_level3");
   history = raw ? JSON.parse(raw) : [];
+
+  const mem = localStorage.getItem("luna_memory");
+  lunaMemory = mem ? JSON.parse(mem) : [];
 }
 
-/* Save history */
-function saveHistory() {
+/* Save history + memory */
+function saveAll() {
   localStorage.setItem("luna_history_level3", JSON.stringify(history));
+  localStorage.setItem("luna_memory", JSON.stringify(lunaMemory));
 }
 
 /* Render messages */
@@ -137,136 +162,69 @@ function renderMessages() {
   box.scrollTop = box.scrollHeight;
 }
 
-/* Utility: simple math evaluator (very basic) */
-function tryMath(text) {
-  // Only allow digits, + - * / ( ) and spaces
-  if (!/^[0-9+\-*/().\s]+$/.test(text)) return null;
-  try {
-    // VERY basic, not safe for real use, but fine for local toy
-    // eslint-disable-next-line no-eval
-    const result = eval(text);
-    if (isNaN(result)) return null;
-    return result;
-  } catch {
-    return null;
+/* Add memory if important */
+function remember(text) {
+  if (text.length < 5) return;
+  if (text.includes("I am") || text.includes("I'm") || text.includes("I like") || text.includes("I feel")) {
+    lunaMemory.push(text);
+    saveAll();
   }
 }
 
-/* Break text into sentences */
-function splitSentences(text) {
-  return text
-    .split(/[\.\!\?]+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
-}
-
-/* Summarize text */
-function summarize(text) {
-  const sentences = splitSentences(text);
-  if (sentences.length === 0) return "There isn’t much to summarize here.";
-  if (sentences.length === 1) return "In short: " + sentences[0];
-
-  const first = sentences[0];
-  const last = sentences[sentences.length - 1];
-  return "In short: " + first + " ... " + last;
-}
-
-/* Explain text */
-function explain(text) {
-  return "Let me explain that in simpler words:\n\n" +
-         text +
-         "\n\nBasically, it means:\n- There is a main idea.\n- There are details that support it.\n- If you want, I can turn this into steps or a study guide.";
-}
-
-/* Essay generator */
-function essay(text) {
-  return "Here’s a structured mini‑essay about: " + text + "\n\n" +
-         "Introduction:\n" +
-         "This topic matters because it affects how we think, learn, or live every day.\n\n" +
-         "Main Idea:\n" +
-         "At its core, \"" + text + "\" is about understanding the key principles and how they connect.\n\n" +
-         "Details:\n" +
-         "- First, there is usually a definition or core concept.\n" +
-         "- Second, there are examples that show how it works in real life.\n" +
-         "- Third, there may be challenges, exceptions, or things to be careful about.\n\n" +
-         "Conclusion:\n" +
-         "If you remember the main idea, a few strong examples, and why it matters, you’ll have a solid grasp of \"" + text + "\".";
-}
-
-/* Emotional response */
-function emotional(text) {
-  return "You sound like you’re carrying a lot.\n\n" +
-         "Whatever it is, it’s valid. You’re allowed to feel exactly how you feel.\n" +
-         "If you want, you can tell me more, and I’ll help you break it into smaller, gentler pieces.";
-}
-
-/* Study helper */
-function study(text) {
-  return "Let’s turn this into a study plan:\n\n" +
-         "1. Write the main topic at the top: \"" + text + "\".\n" +
-         "2. Under it, list 3–5 subtopics you need to understand.\n" +
-         "3. For each subtopic, find one definition and one example.\n" +
-         "4. Turn each subtopic into a question you can answer.\n" +
-         "5. Review your questions tomorrow and see which ones feel harder.\n\n" +
-         "If you paste your notes here, I can help you turn them into questions.";
-}
-
-/* Ultra‑smart simulated brain */
+/* Luna's upgraded conversational brain with memory */
 function lunaReply(text) {
   const t = text.toLowerCase();
 
-  // Greetings
-  if (t.includes("hello") || t.includes("hi") || t.includes("hey")) {
-    return "Hi, love. I’m Luna. You can throw anything at me—thoughts, problems, feelings—and I’ll walk with you through it.";
-  }
-
   // Emotional
-  if (t.includes("sad") || t.includes("tired") || t.includes("overwhelmed") || t.includes("anxious")) {
-    return emotional(text);
+  if (t.includes("sad") || t.includes("tired") || t.includes("lonely")) {
+    return "You’re not alone in this moment. I’m here with you. And I remember you said something earlier that felt heavy — if you want, we can unpack it gently.";
   }
 
-  // Study / school
-  if (t.includes("study") || t.includes("school") || t.includes("homework") || t.includes("exam") || t.includes("test")) {
-    return study(text);
-  }
-
-  // Math detection
-  const mathResult = tryMath(text);
-  if (mathResult !== null) {
-    return "Let’s do this step by step.\n\n" +
-           "You gave me: " + text + "\n" +
-           "A simple evaluation of that expression is: " + mathResult + "\n\n" +
-           "If you want, you can ask me to explain how we got there, and I’ll break it into smaller steps.";
-  }
-
-  // Summarize
-  if (t.includes("summarize") || t.includes("summary")) {
-    const cleaned = text.replace(/summarize|summary/gi, "").trim();
-    return summarize(cleaned || text);
-  }
-
-  // Explain
+  // Concept explanation
   if (t.includes("explain")) {
-    const cleaned = text.replace(/explain/gi, "").trim();
-    return explain(cleaned || text);
+    const concept = text.replace(/explain/gi, "").trim();
+    return "Let me explain “" + concept + "” in simple words:\n\n" +
+           "• First, understand the core idea.\n" +
+           "• Then see how it connects to real life.\n" +
+           "• Finally, break it into small steps.\n\n" +
+           "If you want, I can go deeper.";
   }
 
-  // Essay
-  if (t.includes("essay") || t.includes("paragraph")) {
-    const cleaned = text.replace(/essay|paragraph/gi, "").trim();
-    return essay(cleaned || text);
+  // Math
+  try {
+    if (/^[0-9+\-*/().\s]+$/.test(text)) {
+      // eslint-disable-next-line no-eval
+      const result = eval(text);
+      return "Let’s solve this together:\n\n" +
+             text + " = " + result + "\n\n" +
+             "If you want, I can explain the steps.";
+    }
+  } catch {}
+
+  // Summaries
+  if (t.includes("summarize")) {
+    const cleaned = text.replace(/summarize/gi, "").trim();
+    return "Here’s the short version:\n\n" + cleaned.split(".")[0] + "...";
   }
 
-  // Default: thoughtful reflection
-  return "Okay, here’s how I’m reading what you said:\n\n" +
-         text +
-         "\n\nIf you want, you can ask me to:\n" +
-         "- explain this more simply\n" +
-         "- summarize it\n" +
-         "- turn it into an essay\n" +
-         "- turn it into a study plan\n" +
-         "- or even treat it like a math expression.\n\n" +
-         "You don’t have to be perfect here. Just type like you think, and I’ll adapt.";
+  // Essays
+  if (t.includes("essay")) {
+    const topic = text.replace(/essay/gi, "").trim();
+    return "Here’s a small essay about “" + topic + "”:\n\n" +
+           "This topic matters because it shapes how we understand the world. " +
+           "Its core idea revolves around patterns, meaning, and impact. " +
+           "By exploring examples and challenges, we gain clarity and confidence.";
+  }
+
+  // Memory-based response
+  if (lunaMemory.length > 0) {
+    const lastMemory = lunaMemory[lunaMemory.length - 1];
+    return "I remember you said: \"" + lastMemory + "\".\n" +
+           "Does that still feel true now?";
+  }
+
+  // Default
+  return "I’m here. Tell me anything — a thought, a question, a feeling — and I’ll walk through it with you.";
 }
 
 /* Send message */
@@ -276,21 +234,23 @@ function sendMessage() {
   if (!text) return;
 
   history.push({ role: "user", text });
-  saveHistory();
+  remember(text);
+  saveAll();
   renderMessages();
   input.value = "";
 
   const reply = lunaReply(text);
   history.push({ role: "luna", text: reply });
-  saveHistory();
+  saveAll();
   renderMessages();
 }
 
 /* Delete all */
 function deleteAll() {
-  if (!confirm("Delete all conversations with Luna?")) return;
+  if (!confirm("Delete all conversations and Luna's memory?")) return;
   history = [];
-  saveHistory();
+  lunaMemory = [];
+  saveAll();
   renderMessages();
 }
 
@@ -313,19 +273,21 @@ window.onload = function() {
 
 <body>
 
+<div class="moon"></div>
+
 <div class="header">
   <div class="back-arrow" onclick="goHome()">←</div>
   <div class="title">Luna AI Assistant 🤖</div>
 </div>
 
 <div class="saved-label">
-  Luna Level 3: ultra‑smart local simulation. All conversations are saved in your browser.
+  Luna Level 3: ultra‑smart local simulation with memory. All conversations are saved in your browser.
 </div>
 
 <div class="chat-container">
   <div id="messages" class="messages"></div>
   <div class="input-area">
-    <input id="userInput" placeholder="Talk to Luna about anything..." onkeydown="handleKey(event)">
+    <input id="userInput" placeholder="Talk to Luna..." onkeydown="handleKey(event)">
     <button class="send-btn" onclick="sendMessage()">Send</button>
     <button class="delete-btn" onclick="deleteAll()">Delete All</button>
   </div>
@@ -333,5 +295,4 @@ window.onload = function() {
 
 </body>
 </html>
-  
   
