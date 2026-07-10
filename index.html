@@ -12,79 +12,78 @@
       font-family: "Segoe UI", system-ui, sans-serif;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      padding-top: 80px;
     }
 
     .container {
       text-align: center;
       position: relative;
-      transform: scale(1.55); /* EVERYTHING BIGGER */
-      margin-top: 120px; /* LOWER EVERYTHING */
+      transform: scale(1.65); /* EVERYTHING BIGGER */
     }
 
     .title {
       font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
-      font-size: 4.5rem; /* BIGGER */
-      color: #a8d8ff;
+      font-size: 4.8rem;
+      margin-bottom: 60px;
       text-shadow: 0 0 15px #4fc3f7;
-      margin-bottom: 50px;
     }
 
     /* ROBOT */
     .robot {
-      width: 240px; /* BIGGER */
-      height: 320px; /* BIGGER */
+      width: 260px;
+      height: 340px;
       background: #e0f7fa;
       border-radius: 40px;
       margin: 0 auto;
       position: relative;
       box-shadow: 0 0 20px rgba(79,195,247,0.6);
       animation: float 3s ease-in-out infinite;
-      margin-top: 80px; /* LOWER ROBOT */
+      margin-top: 120px; /* LOWER ROBOT */
     }
 
     .robot::before {
       content: "";
       position: absolute;
-      top: -90px; /* BIGGER HEAD */
+      top: -100px;
       left: 50%;
       transform: translateX(-50%);
-      width: 200px;
-      height: 140px;
+      width: 220px;
+      height: 150px;
       background: #b2ebf2;
-      border-radius: 30px;
+      border-radius: 35px;
       box-shadow: 0 0 15px rgba(79,195,247,0.6);
     }
 
     .eye {
       position: absolute;
-      top: -45px;
-      width: 28px;
-      height: 28px;
+      top: -55px;
+      width: 32px;
+      height: 32px;
       background: #004d40;
       border-radius: 50%;
       box-shadow: 0 0 10px #00e5ff;
     }
-    .eye.left { left: 50px; }
-    .eye.right { right: 50px; }
+    .eye.left { left: 55px; }
+    .eye.right { right: 55px; }
 
     .smile {
       position: absolute;
-      top: 10px;
+      top: 15px;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px;
-      height: 35px;
-      border-bottom: 6px solid #004d40;
+      width: 90px;
+      height: 40px;
+      border-bottom: 7px solid #004d40;
       border-radius: 0 0 50px 50px;
     }
 
     .screwdriver {
       position: absolute;
-      bottom: 25px;
-      right: -60px;
-      width: 25px;
-      height: 110px;
+      bottom: 30px;
+      right: -70px;
+      width: 30px;
+      height: 130px;
       background: #ffab40;
       border-radius: 12px;
       transform-origin: top;
@@ -94,24 +93,24 @@
     .screwdriver::after {
       content: "";
       position: absolute;
-      top: -25px;
+      top: -30px;
       left: 50%;
       transform: translateX(-50%);
-      width: 50px;
-      height: 25px;
+      width: 60px;
+      height: 30px;
       background: #b0bec5;
       border-radius: 5px;
     }
 
     .gear {
-      font-size: 3.5rem; /* BIGGER */
+      font-size: 4rem;
       color: #a8d8ff;
       position: absolute;
       animation: spin 4s linear infinite;
     }
-    .gear.one { bottom: -25px; left: -90px; }
-    .gear.two { bottom: 50px; left: -150px; animation-duration: 6s; }
-    .gear.three { bottom: 130px; left: -90px; animation-duration: 5s; }
+    .gear.one { bottom: -30px; left: -110px; }
+    .gear.two { bottom: 60px; left: -170px; animation-duration: 6s; }
+    .gear.three { bottom: 150px; left: -110px; animation-duration: 5s; }
 
     @keyframes float {
       0%, 100% { transform: translateY(0); }
@@ -128,36 +127,38 @@
       to { transform: rotate(360deg); }
     }
 
-    /* SPEECH BUBBLE — 💭 STYLE + MORE RIGHT */
+    /* BUBBLE — CENTERED + 💭 INSIDE */
     .bubble {
       position: absolute;
-      top: -20px;
-      right: -420px; /* MORE TO THE RIGHT */
-      width: 330px;
+      top: 20px;
+      right: -350px; /* MORE RIGHT */
+      width: 350px;
       background: #050b1a;
-      border-radius: 25px;
+      border-radius: 30px;
       border: 2px solid #a8d8ff;
-      padding: 25px;
+      padding: 30px;
       color: #ffffff;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
+      text-align: center; /* CENTER TEXT */
       box-shadow: 0 0 15px rgba(168,216,255,0.5);
     }
 
     .bubble::before {
-      content: "💭"; /* BUBBLE EMOJI */
+      content: "💭";
       position: absolute;
-      left: -45px;
-      top: 40px;
-      font-size: 2.5rem;
+      top: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 3.5rem;
     }
 
     /* MENU BUTTON — MORE RIGHT */
     .menu-button {
       position: fixed;
       top: 20px;
-      right: 60px; /* MORE RIGHT */
-      width: 160px; /* BIGGER */
-      height: 160px; /* BIGGER */
+      right: 80px; /* MORE RIGHT */
+      width: 170px;
+      height: 170px;
       border-radius: 50%;
       border: 3px solid #a8d8ff;
       color: #a8d8ff;
@@ -165,7 +166,7 @@
       justify-content: center;
       align-items: center;
       font-weight: 700;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       cursor: pointer;
       background: rgba(5,11,26,0.8);
       box-shadow: 0 0 20px rgba(168,216,255,0.6);
@@ -173,8 +174,8 @@
 
     .menu-panel {
       position: fixed;
-      top: 200px;
-      right: 60px; /* MATCH BUTTON */
+      top: 220px;
+      right: 80px; /* MATCH BUTTON */
       background: #050b1a;
       border: 2px solid #a8d8ff;
       border-radius: 15px;
@@ -240,6 +241,3 @@
 
 </body>
 </html>
-    
-
-        
