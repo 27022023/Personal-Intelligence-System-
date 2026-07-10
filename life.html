@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Life Console 💚</title>
+
+<style>
+body {
+  margin:0;
+  font-family:'Georgia', serif;
+  color:#0f172a;
+  background:#e0e7ff;
+}
+
+/* Bubble pastel gradient background */
+.bg {
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg, #c7b8ff, #b8d8ff, #b8ffe3);
+  z-index:-2;
+}
+.bubble {
+  position:absolute;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #ffffff, #e0f2fe);
+  opacity:0.5;
+  animation:float 8s ease-in-out infinite;
+}
+.bubble:nth-child(2) { width:180px; height:180px; left:10%; top:20%; }
+.bubble:nth-child(3) { width:220px; height:220px; right:8%; top:35%; animation-duration:10s; }
+.bubble:nth-child(4) { width:140px; height:140px; left:20%; bottom:10%; animation-duration:9s; }
+
+@keyframes float {
+  0% { transform:translateY(0px); }
+  50% { transform:translateY(-20px); }
+  100% { transform:translateY(0px); }
+}
+
+/* HEADER */
+.header {
+  display:flex;
+  align-items:center;
+  padding:30px 40px;
+  background:rgba(15,23,42,0.7);
+  color:#e5e7eb;
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+}
+.back-arrow {
+  font-size:50px;
+  margin-right:25px;
+  cursor:pointer;
+}
+.title {
+  font-size:48px;
+  font-weight:bold;
+}
+
+/* MAIN SCROLL AREA */
+.main {
+  max-width:1200px;
+  margin:30px auto 60px;
+  padding:0 20px 40px;
+}
+
+/* SECTION */
+.section {
+  background:rgba(248,250,252,0.9);
+  border-radius:30px;
+  padding:30px;
+  margin-bottom:30px;
+  box-shadow:0 0 30px rgba(15,23,42,0.25);
+}
+.section h2 {
+  font-size:36px;
+  margin-bottom:10px;
+}
+.section p {
+  font-size:22px;
+  margin-bottom:20px;
+}
+
+/* INPUTS */
+label {
+  display:block;
+  font-size:22px;
+  margin-top:15px;
+}
+input, textarea, select {
+  width:100%;
+  font-size:22px;
+  padding:14px 16px;
+  border-radius:18px;
+  border:3px solid #bfdbfe;
+  background:#fefce8; /* pastel yellow */
+  color:#0f172a;
+}
+textarea {
+  min-height:120px;
+  resize:vertical;
+}
+
+/* BUTTONS */
+button {
+  margin-top:18px;
+  font-size:22px;
+  padding:12px 22px;
+  border-radius:18px;
+  border:none;
+  cursor:pointer;
+}
+.primary-btn {
+  background:#a5b4fc;
+  color:#0f172a;
+}
+.danger-btn {
+  background:#fecaca;
+  color:#7f1d1d;
+}
+
+/* LISTS / TRACKERS */
+.list-item {
+  background:#e0f2fe;
+  border-radius:18px;
+  padding:10px 14px;
+  margin-top:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:20px;
+}
+.list-item button {
+  font-size:18px;
+  padding:6px 12px;
+  border-radius:14px;
+}
+
+/* Calendar simple display */
+.calendar-box {
+  font-size:22px;
+  background:#e0f2fe;
+  border-radius:18px;
+  padding:16px;
+}
+
+/* Footer delete all */
+.footer {
+  text-align:center;
+  margin-top:20px;
+}
+</style>
+
+<script>
+/* STORAGE KEYS */
+const STORAGE = {
+  todos: "life_todos",
+  daily: "life_daily",
+  weekly: "life_weekly",
+  reminders: "life_reminders",
+  trackers: "life_trackers"
+};
+
+let todos = [];
+let weekly = [];
+let reminders = [];
+let trackers = {
+  water: 0,
+  mood: "",
+  habits: "",
+  study: "",
+  health: "",
+  productivity: ""
+};
+
+/* LOAD ALL */
+function loadAll() {
+  todos = JSON.parse(localStorage.getItem(STORAGE.todos) || "[]");
+  weekly = JSON.parse(localStorage.getItem(STORAGE.weekly) || "[]");
+  reminders = JSON.parse(localStorage.getItem(STORAGE.reminders) || "[]");
+  const t = localStorage.getItem(STORAGE.trackers);
+  trackers = t ? JSON.parse(t) : trackers;
+
+  renderTodos();
+  renderWeekly();
+  renderReminders();
+  renderTrackers();
+  renderCalendar();
+}
+
+/* SAVE HELPERS */
+function saveTodos() {
+  localStorage.setItem(STORAGE.todos, JSON.stringify(todos));
+}
+function saveWeekly() {
+  localStorage.setItem(STORAGE.weekly, JSON.stringify(weekly));
+}
+function saveReminders() {
+  localStorage.setItem(STORAGE.reminders, JSON.stringify(reminders));
+}
+function saveTrackers() {
+  localStorage.setItem(STORAGE.trackers, JSON.stringify(trackers));
+}
+
+/* TO-DO LIST */
+function addTodo() {
+  const input = document.getElementById("todoInput");
+  const text = input.value.trim();
+  if (!text) return;
+  todos.push({ text });
+  saveTodos();
+  renderTodos();
+  input.value = "";
+}
+function deleteTodo(i) {
+  todos.splice(i, 1);
+  saveTodos();
+  renderTodos();
+}
+function renderTodos() {
+  const box = document.getElementById("todoList");
+  box.innerHTML = "";
+  if (todos.length === 0) {
+    box.innerHTML = "<p style='font-size:20px;'>No tasks yet.</p>";
+    return;
+  }
+  todos.forEach((t, i) => {
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerHTML = `<span>${t.text}</span>
+      <button class="danger-btn" onclick="deleteTodo(${i})">Delete</button>`;
+    box.appendChild(div);
+  });
+}
+
+/* DAILY PLANNER */
+function saveDaily() {
+  const text = document.getElementById("dailyPlan").value.trim();
+  localStorage.setItem(STORAGE.daily, text);
+}
+function loadDaily() {
+  const text = localStorage.getItem(STORAGE.daily) || "";
+  document.getElementById("dailyPlan").value = text;
+}
+
+/* WEEKLY PLANNER */
+function addWeekly() {
+  const day = document.getElementById("weeklyDay").value;
+  const plan = document.getElementById("weeklyText").value.trim();
+  if (!plan) return;
+  weekly.push({ day, plan });
+  saveWeekly();
+  renderWeekly();
+  document.getElementById("weeklyText").value = "";
+}
+function deleteWeekly(i) {
+  weekly.splice(i, 1);
+  saveWeekly();
+  renderWeekly();
+}
+function renderWeekly() {
+  const box = document.getElementById("weeklyList");
+  box.innerHTML = "";
+  if (weekly.length === 0) {
+    box.innerHTML = "<p style='font-size:20px;'>No weekly plans yet.</p>";
+    return;
+  }
+  weekly.forEach((w, i) => {
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerHTML = `<span><b>${w.day}:</b> ${w.plan}</span>
+      <button class="danger-btn" onclick="deleteWeekly(${i})">Delete</button>`;
+    box.appendChild(div);
+  });
+}
+
+/* SIMPLE CALENDAR DISPLAY */
+function renderCalendar() {
+  const box = document.getElementById("calendarBox");
+  const now = new Date();
+  box.textContent = `Today: ${now.toDateString()} | Week: ${getWeekNumber(now)} | Month: ${now.getMonth()+1}/${now.getFullYear()}`;
+}
+function getWeekNumber(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+}
+
+/* REMINDERS + NOTIFICATIONS */
+function requestNotificationPermission() {
+  if (!("Notification" in window)) {
+    alert("Notifications are not supported in this browser.");
+    return;
+  }
+  Notification.requestPermission().then(result => {
+    if (result !== "granted") alert("Notifications blocked. You can change this in browser settings.");
+  });
+}
+function addReminder() {
+  const text = document.getElementById("reminderText").value.trim();
+  const minutes = parseInt(document.getElementById("reminderMinutes").value, 10);
+  if (!text || isNaN(minutes) || minutes <= 0) return;
+
+  const when = Date.now() + minutes * 60000;
+  const reminder = { text, when };
+  reminders.push(reminder);
+  saveReminders();
+  renderReminders();
+  document.getElementById("reminderText").value = "";
+  document.getElementById("reminderMinutes").value = "";
+
+  scheduleNotification(reminder);
+}
+function deleteReminder(i) {
+  reminders.splice(i, 1);
+  saveReminders();
+  renderReminders();
+}
+function renderReminders() {
+  const box = document.getElementById("reminderList");
+  box.innerHTML = "";
+  if (reminders.length === 0) {
+    box.innerHTML = "<p style='font-size:20px;'>No reminders yet.</p>";
+    return;
+  }
+  reminders.forEach((r, i) => {
+    const time = new Date(r.when).toLocaleTimeString();
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerHTML = `<span>${r.text} (at ~${time})</span>
+      <button class="danger-btn" onclick="deleteReminder(${i})">Delete</button>`;
+    box.appendChild(div);
+  });
+}
+function scheduleNotification(reminder) {
+  if (!("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+
+  const delay = reminder.when - Date.now();
+  if (delay <= 0) {
+    new Notification("Life Console Reminder", { body: reminder.text });
+    return;
+  }
+  setTimeout(() => {
+    new Notification("Life Console Reminder", { body: reminder.text });
+  }, delay);
+}
+
+/* TRACKERS */
+function saveTrackersFromInputs() {
+  trackers.water = document.getElementById("waterInput").value;
+  trackers.mood = document.getElementById("moodInput").value;
+  trackers.habits = document.getElementById("habitsInput").value.trim();
+  trackers.study = document.getElementById("studyInput").value.trim();
+  trackers.health = document.getElementById("healthInput").value.trim();
+  trackers.productivity = document.getElementById("prodInput").value.trim();
+  saveTrackers();
+  renderTrackers();
+}
+function renderTrackers() {
+  document.getElementById("waterInput").value = trackers.water || "";
+  document.getElementById("moodInput").value = trackers.mood || "";
+  document.getElementById("habitsInput").value = trackers.habits || "";
+  document.getElementById("studyInput").value = trackers.study || "";
+  document.getElementById("healthInput").value = trackers.health || "";
+  document.getElementById("prodInput").value = trackers.productivity || "";
+}
+
+/* DELETE ALL */
+function deleteAll() {
+  if (!confirm("Delete ALL Life Console data?")) return;
+  todos = [];
+  weekly = [];
+  reminders = [];
+  trackers = { water:0, mood:"", habits:"", study:"", health:"", productivity:"" };
+  saveTodos();
+  saveWeekly();
+  saveReminders();
+  saveTrackers();
+  localStorage.removeItem(STORAGE.daily);
+  loadAll();
+  loadDaily();
+}
+
+/* BACK */
+function goHome() {
+  window.location.href = "knowledge.html";
+}
+
+window.onload = function() {
+  loadAll();
+  loadDaily();
+  requestNotificationPermission();
+};
+</script>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+
+<div class="header">
+  <div class="back-arrow" onclick="goHome()">←</div>
+  <div class="title">Life Console 💚</div>
+</div>
+
+<div class="main">
+
+  <!-- Daily Planner -->
+  <div class="section">
+    <h2>Daily Planner</h2>
+    <p>Write what you want to focus on today.</p>
+    <textarea id="dailyPlan" onblur="saveDaily()" placeholder="Today I want to..."></textarea>
+  </div>
+
+  <!-- To-Do List -->
+  <div class="section">
+    <h2>To‑Do List</h2>
+    <p>Tasks, chores, little things you don’t want to forget.</p>
+    <label>New task</label>
+    <input id="todoInput" placeholder="e.g. Finish homework, clean desk, drink water">
+    <button class="primary-btn" onclick="addTodo()">Add Task</button>
+    <div id="todoList"></div>
+  </div>
+
+  <!-- Weekly Planner -->
+  <div class="section">
+    <h2>Weekly Planner</h2>
+    <p>Plan your week by day.</p>
+    <label>Day</label>
+    <select id="weeklyDay">
+      <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+      <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+    </select>
+    <label>Plan</label>
+    <textarea id="weeklyText" placeholder="What do you want to do that day?"></textarea>
+    <button class="primary-btn" onclick="addWeekly()">Add to Week</button>
+    <div id="weeklyList"></div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="section">
+    <h2>Calendar</h2>
+    <p>Simple view of today, week number, and month.</p>
+    <div id="calendarBox" class="calendar-box"></div>
+  </div>
+
+  <!-- Reminders -->
+  <div class="section">
+    <h2>Reminders & Notifications</h2>
+    <p>Set reminders that send real browser notifications (while this page is open).</p>
+    <label>Reminder text</label>
+    <input id="reminderText" placeholder="e.g. Drink water, start studying, take a break">
+    <label>In how many minutes?</label>
+    <input id="reminderMinutes" type="number" min="1" placeholder="e.g. 15">
+    <button class="primary-btn" onclick="addReminder()">Add Reminder</button>
+    <div id="reminderList"></div>
+  </div>
+
+  <!-- Trackers -->
+  <div class="section">
+    <h2>Trackers</h2>
+    <p>Little things that make everyday life easier.</p>
+
+    <label>Water (glasses)</label>
+    <input id="waterInput" type="number" min="0" max="30">
+
+    <label>Mood</label>
+    <select id="moodInput">
+      <option value="">Select mood</option>
+      <option>Happy</option><option>Sad</option><option>Stressed</option>
+      <option>Tired</option><option>Neutral</option><option>Excited</option><option>Anxious</option>
+    </select>
+
+    <label>Habits</label>
+    <textarea id="habitsInput" placeholder="Habits you’re tracking (e.g. reading, skincare, stretching)..."></textarea>
+
+    <label>Study</label>
+    <textarea id="studyInput" placeholder="What did you study or want to study?"></textarea>
+
+    <label>Health</label>
+    <textarea id="healthInput" placeholder="Movement, food, rest, anything health‑related..."></textarea>
+
+    <label>Productivity</label>
+    <textarea id="prodInput" placeholder="What did you get done today?"></textarea>
+
+    <button class="primary-btn" onclick="saveTrackersFromInputs()">Save Trackers</button>
+  </div>
+
+  <!-- Notes -->
+  <div class="section">
+    <h2>Notes</h2>
+    <p>Random thoughts, ideas, anything that doesn’t fit elsewhere.</p>
+    <textarea placeholder="Use Mind Atlas for deep thoughts, and here for quick notes."></textarea>
+  </div>
+
+  <div class="footer">
+    <button class="danger-btn" onclick="deleteAll()">Delete ALL Life Console Data</button>
+  </div>
+
+</div>
+
+</body>
+</html>
