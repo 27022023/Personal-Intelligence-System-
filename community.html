@@ -10,67 +10,138 @@ body {
   font-family:'Georgia', serif;
   background:#ffd8b3; /* peachy pastel */
   color:#3f2a24;
+  overflow-x:hidden;
+}
+
+/* STICKERS (CSS ONLY) */
+.sticker {
+  position:absolute;
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #fff7ae, #ffe27a);
+  box-shadow:0 0 24px #ffe27a;
+  opacity:0.8;
+  left:40px;
+  top:180px;
+  animation:float1 6s ease-in-out infinite;
+}
+.sticker2 {
+  position:absolute;
+  width:160px;
+  height:160px;
+  border-radius:24px;
+  background:linear-gradient(135deg, #ffd6e8, #ffe8b3);
+  box-shadow:0 0 24px #ffd6e8;
+  opacity:0.8;
+  right:40px;
+  top:260px;
+  animation:float2 7s ease-in-out infinite;
+}
+.sticker3 {
+  position:absolute;
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #e0f2fe, #bfdbfe);
+  box-shadow:0 0 24px #bfdbfe;
+  opacity:0.7;
+  left:15%;
+  bottom:80px;
+  animation:float3 8s ease-in-out infinite;
+}
+
+@keyframes float1 {
+  0% { transform:translateY(0px) rotate(-6deg); }
+  50% { transform:translateY(-16px) rotate(-3deg); }
+  100% { transform:translateY(0px) rotate(-6deg); }
+}
+@keyframes float2 {
+  0% { transform:translateY(0px) rotate(6deg); }
+  50% { transform:translateY(14px) rotate(9deg); }
+  100% { transform:translateY(0px) rotate(6deg); }
+}
+@keyframes float3 {
+  0% { transform:translateY(0px); }
+  50% { transform:translateY(-12px); }
+  100% { transform:translateY(0px); }
 }
 
 /* HEADER */
 .header {
   display:flex;
   align-items:center;
-  padding:30px 40px;
+  padding:40px 50px;
   background:rgba(255, 220, 180, 0.9);
   box-shadow:0 4px 16px rgba(0,0,0,0.25);
+  position:relative;
+  z-index:1;
 }
 .back-arrow {
-  font-size:50px;
-  margin-right:25px;
+  font-size:60px;
+  margin-right:30px;
   cursor:pointer;
 }
 .title {
-  font-size:48px;
+  font-size:60px;
   font-weight:bold;
 }
 
 /* MAIN */
 .main {
-  max-width:1100px;
-  margin:40px auto 60px;
-  padding:0 20px 40px;
+  max-width:1200px;
+  margin:50px auto 80px;
+  padding:0 30px 50px;
+  position:relative;
+  z-index:1;
 }
 
 /* INFO TEXT */
 .info {
-  font-size:24px;
-  margin-bottom:20px;
+  font-size:28px;
+  margin-bottom:30px;
 }
 
 /* FACT CARDS */
 .fact-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+  gap:24px;
 }
 .fact-card {
   background:#fff7ae; /* pastel yellow */
-  border-radius:24px;
-  padding:22px 24px;
-  box-shadow:0 0 24px rgba(0,0,0,0.2);
-  font-size:22px;
+  border-radius:28px;
+  padding:26px 28px;
+  box-shadow:0 0 28px rgba(0,0,0,0.25);
+  font-size:24px;
 }
 .fact-title {
-  font-size:26px;
+  font-size:30px;
   font-weight:bold;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 .fact-body {
-  font-size:22px;
+  font-size:24px;
 }
 
 /* FOOTNOTE */
 .footnote {
-  margin-top:30px;
-  font-size:20px;
+  margin-top:40px;
+  font-size:22px;
   color:#5b3b30;
   text-align:center;
+}
+
+/* BUTTON */
+.danger-btn {
+  margin-top:20px;
+  font-size:24px;
+  padding:14px 26px;
+  border-radius:20px;
+  border:none;
+  cursor:pointer;
+  background:#fecaca;
+  color:#7f1d1d;
 }
 </style>
 
@@ -118,8 +189,6 @@ function analyzeLuna() {
 /* Analyze Mind Atlas diary */
 function analyzeMindAtlas() {
   const entries = getJSON("mind_atlas_entries", []);
-  const text = entries.map(e => (e.thoughts || "") + " " + (e.selfcare || "")).join(" ").toLowerCase();
-
   const stats = {
     entriesCount: entries.length,
     moodCounts: {},
@@ -167,7 +236,6 @@ function buildInsights() {
 
   const facts = [];
 
-  // "Community" based on study
   if (luna.mentionsStudy > 0 || mind.entriesCount > 0 || life.studyText.trim()) {
     facts.push({
       title: "Student Community",
@@ -175,7 +243,6 @@ function buildInsights() {
     });
   }
 
-  // Faith
   if (luna.mentionsFaith > 0) {
     facts.push({
       title: "Faith‑Based Community",
@@ -183,7 +250,6 @@ function buildInsights() {
     });
   }
 
-  // Entrepreneur / project vibes
   if (luna.mentionsWork > 0 || life.prodText.toLowerCase().includes("project")) {
     facts.push({
       title: "Entrepreneur / Project Community",
@@ -191,7 +257,6 @@ function buildInsights() {
     });
   }
 
-  // Sport
   if (luna.mentionsSport > 0 || life.healthText.toLowerCase().includes("sport") || life.healthText.toLowerCase().includes("gym")) {
     facts.push({
       title: "Sport & Movement Community",
@@ -199,7 +264,6 @@ function buildInsights() {
     });
   }
 
-  // Mood patterns
   if (mind.entriesCount > 0) {
     const totalMoods = Object.values(mind.moodCounts).reduce((a,b)=>a+b,0);
     if (totalMoods > 0) {
@@ -211,7 +275,6 @@ function buildInsights() {
     }
   }
 
-  // Dreams
   if (mind.entriesCount > 0) {
     facts.push({
       title: "Dream Community",
@@ -219,7 +282,6 @@ function buildInsights() {
     });
   }
 
-  // Water
   if (life.water > 0) {
     facts.push({
       title: "Hydration Community",
@@ -227,7 +289,6 @@ function buildInsights() {
     });
   }
 
-  // If no data at all
   if (facts.length === 0) {
     facts.push({
       title: "Quiet Community",
@@ -262,10 +323,10 @@ function renderFacts() {
   });
 }
 
-/* Delete all community-related local data (but not the original sources) */
+/* Clear insights view */
 function clearCommunityView() {
   if (!confirm("This will clear the insights view, but not your original data in Luna, Mind Atlas, or Life Console. Continue?")) return;
-  document.getElementById("factGrid").innerHTML = "<p style='font-size:22px;'>Insights cleared. Reload the page to rebuild them from your saved data.</p>";
+  document.getElementById("factGrid").innerHTML = "<p style='font-size:24px;'>Insights cleared. Reload the page to rebuild them from your saved data.</p>";
 }
 
 window.onload = function() {
@@ -275,6 +336,10 @@ window.onload = function() {
 </head>
 
 <body>
+
+<div class="sticker"></div>
+<div class="sticker2"></div>
+<div class="sticker3"></div>
 
 <div class="header">
   <div class="back-arrow" onclick="goHome()">←</div>
@@ -290,7 +355,7 @@ window.onload = function() {
   <div id="factGrid" class="fact-grid"></div>
 
   <div class="footnote">
-    All insights are generated locally from your own data. Nothing leaves your device.  
+    All insights are generated locally from your own data. Nothing leaves your device.<br>
     As you keep living, studying, praying, moving, and tracking, this “community” will keep changing with you.
     <br><br>
     <button class="danger-btn" onclick="clearCommunityView()">Clear Insights View</button>
@@ -299,3 +364,4 @@ window.onload = function() {
 
 </body>
 </html>
+          
