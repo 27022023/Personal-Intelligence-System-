@@ -7,116 +7,108 @@
     body {
       margin: 0;
       height: 100vh;
-      background: #050b1a; 
+      background: #050b1a;
       color: #a8d8ff;
       font-family: "Segoe UI", system-ui, sans-serif;
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* move content DOWN so title is visible */
-      padding-top: 20px; /* spacing for phone screens */
+      align-items: flex-start;
+      padding-top: 20px;
     }
 
     .container {
       text-align: center;
       position: relative;
-      transform: scale(1.2); /* smaller scale for phones */
+      transform: scale(1.3);
     }
 
     .title {
       font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
-      font-size: 2.4rem; /* smaller for phones */
-      color: #a8d8ff;
-      text-shadow: 0 0 15px #4fc3f7;
-      margin-bottom: 10px;
+      font-size: 2.8rem;
+      margin-bottom: 20px;
       padding: 0 10px;
+      text-shadow: 0 0 15px #4fc3f7;
     }
 
-    /* ROBOT */
+    /* ROBOT — SAME STYLE AS FIRST VERSION */
     .robot {
-      width: 180px;
-      height: 230px;
+      width: 200px;
+      height: 260px;
       background: #e0f7fa;
-      border-radius: 35px;
+      border-radius: 30px;
       margin: 0 auto;
       position: relative;
-      box-shadow: 0 0 20px rgba(79,195,247,0.6);
+      box-shadow: 0 0 15px rgba(79,195,247,0.6);
       animation: float 3s ease-in-out infinite;
-      margin-top: 20px; /* move robot DOWN */
+      margin-top: 30px; /* moved DOWN so it doesn't cover title */
     }
 
-    /* ROBOT HEAD */
     .robot::before {
       content: "";
       position: absolute;
-      top: -60px;
+      top: -60px; /* moved UP slightly */
       left: 50%;
       transform: translateX(-50%);
-      width: 140px;
-      height: 90px;
+      width: 150px;
+      height: 100px;
       background: #b2ebf2;
       border-radius: 25px;
-      box-shadow: 0 0 15px rgba(79,195,247,0.6);
     }
 
-    /* EYES */
     .eye {
       position: absolute;
-      top: -30px;
-      width: 20px;
-      height: 20px;
+      top: -25px;
+      width: 18px;
+      height: 18px;
       background: #004d40;
       border-radius: 50%;
-      box-shadow: 0 0 10px #00e5ff;
     }
     .eye.left { left: 35px; }
     .eye.right { right: 35px; }
 
-    /* SMILE */
     .smile {
       position: absolute;
-      top: -5px;
+      top: 5px;
       left: 50%;
       transform: translateX(-50%);
-      width: 55px;
-      height: 25px;
-      border-bottom: 5px solid #004d40;
+      width: 50px;
+      height: 20px;
+      border-bottom: 4px solid #004d40;
       border-radius: 0 0 50px 50px;
     }
 
-    /* SCREWDRIVER */
     .screwdriver {
       position: absolute;
       bottom: 10px;
       right: -40px;
-      width: 18px;
-      height: 80px;
+      width: 15px;
+      height: 70px;
       background: #ffab40;
       border-radius: 10px;
-      transform-origin: top;
       animation: fix 1.5s ease-in-out infinite;
     }
+
     .screwdriver::after {
       content: "";
       position: absolute;
-      top: -18px;
+      top: -15px;
       left: 50%;
       transform: translateX(-50%);
-      width: 35px;
-      height: 18px;
+      width: 30px;
+      height: 15px;
       background: #b0bec5;
       border-radius: 5px;
     }
 
-    /* GEARS */
     .gear {
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       color: #a8d8ff;
       position: absolute;
       animation: spin 4s linear infinite;
     }
-    .gear.one { bottom: -10px; left: -55px; }
-    .gear.two { bottom: 35px; left: -95px; animation-duration: 6s; }
-    .gear.three { bottom: 85px; left: -55px; animation-duration: 5s; }
+    .gear.one { bottom: -10px; left: -50px; }
+    .gear.two { bottom: 35px; left: -90px; animation-duration: 6s; }
+    .gear.three { bottom: 80px; left: -50px; animation-duration: 5s; }
 
     @keyframes float {
       0%, 100% { transform: translateY(0); }
@@ -133,61 +125,55 @@
       to { transform: rotate(360deg); }
     }
 
-    /* SPEECH BUBBLE — CLOSER FOR PHONE */
+    /* BUBBLE — MOVED CLOSER */
     .bubble {
       position: absolute;
-      top: -20px;
-      right: -220px; /* MUCH closer */
-      width: 220px;
+      top: -10px;
+      right: -200px; /* MUCH closer */
+      width: 200px;
       background: #050b1a;
       border-radius: 15px;
       border: 2px solid #a8d8ff;
-      padding: 15px;
-      color: #ffffff;
-      font-size: 0.9rem;
-      box-shadow: 0 0 15px rgba(168,216,255,0.5);
+      padding: 12px;
+      font-size: 0.85rem;
     }
 
     .bubble::after {
       content: "";
       position: absolute;
-      left: -15px;
-      top: 40px;
-      border-width: 15px;
+      left: -12px;
+      top: 35px;
+      border-width: 12px;
       border-style: solid;
       border-color: transparent #050b1a transparent transparent;
     }
 
-    /* MENU BUTTON — CLOSER + SMALLER FOR PHONE */
+    /* MENU — MOVED CLOSER + SMALLER */
     .menu-button {
       position: fixed;
       top: 10px;
       right: 10px;
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       border: 2px solid #a8d8ff;
       color: #a8d8ff;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.9rem;
       cursor: pointer;
-      background: rgba(5,11,26,0.8);
-      box-shadow: 0 0 15px rgba(168,216,255,0.6);
     }
 
     .menu-panel {
       position: fixed;
-      top: 100px;
+      top: 90px;
       right: 10px;
       background: #050b1a;
       border: 2px solid #a8d8ff;
       border-radius: 12px;
-      padding: 10px 15px;
+      padding: 10px;
       display: none;
-      box-shadow: 0 0 20px rgba(168,216,255,0.6);
     }
 
     .menu-link {
@@ -195,11 +181,7 @@
       margin: 8px 0;
       color: #a8d8ff;
       text-decoration: none;
-      font-size: 1rem;
-    }
-
-    .menu-link:hover {
-      text-decoration: underline;
+      font-size: 0.9rem;
     }
   </style>
 </head>
@@ -247,3 +229,4 @@
 
 </body>
 </html>
+  
