@@ -7,8 +7,8 @@
     body {
       margin: 0;
       height: 100vh;
-      background: #050b1a; /* rich navy */
-      color: #a8d8ff;      /* glowing blue */
+      background: #050b1a;
+      color: #a8d8ff;
       font-family: "Segoe UI", system-ui, sans-serif;
       display: flex;
       justify-content: center;
@@ -18,7 +18,7 @@
     .container {
       text-align: center;
       position: relative;
-      transform: scale(1.6); /* EVERYTHING BIGGER */
+      transform: scale(2.0);
     }
 
     .title {
@@ -26,22 +26,20 @@
       font-size: 4rem;
       color: #a8d8ff;
       text-shadow: 0 0 15px #4fc3f7;
-      margin-bottom: 40px;
+      margin-bottom: 60px;
     }
 
-    /* ROBOT */
     .robot {
       width: 240px;
       height: 300px;
       background: #e0f7fa;
       border-radius: 40px;
-      margin: 0 auto;
+      margin: 80px auto 0 auto;
       position: relative;
       box-shadow: 0 0 20px rgba(79,195,247,0.6);
       animation: float 3s ease-in-out infinite;
     }
 
-    /* ROBOT HEAD */
     .robot::before {
       content: "";
       position: absolute;
@@ -55,7 +53,6 @@
       box-shadow: 0 0 15px rgba(79,195,247,0.6);
     }
 
-    /* EYES */
     .eye {
       position: absolute;
       top: -40px;
@@ -68,7 +65,6 @@
     .eye.left { left: 45px; }
     .eye.right { right: 45px; }
 
-    /* SMILE */
     .smile {
       position: absolute;
       top: -5px;
@@ -80,7 +76,6 @@
       border-radius: 0 0 50px 50px;
     }
 
-    /* REAL SCREWDRIVER */
     .screwdriver {
       position: absolute;
       bottom: 20px;
@@ -104,7 +99,6 @@
       border-radius: 5px;
     }
 
-    /* GEARS */
     .gear {
       font-size: 3.2rem;
       color: #a8d8ff;
@@ -130,18 +124,17 @@
       to { transform: rotate(360deg); }
     }
 
-    /* SPEECH BUBBLE */
     .bubble {
       position: absolute;
       top: -40px;
-      right: -350px;
-      width: 320px;
+      right: -420px;
+      width: 360px;
       background: #050b1a;
       border-radius: 20px;
       border: 2px solid #a8d8ff;
       padding: 20px;
       color: #ffffff;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       box-shadow: 0 0 15px rgba(168,216,255,0.5);
     }
 
@@ -155,13 +148,12 @@
       border-color: transparent #050b1a transparent transparent;
     }
 
-    /* MENU BUTTON */
     .menu-button {
       position: fixed;
       top: 20px;
-      right: 20px;
-      width: 140px;
-      height: 140px;
+      right: 60px;
+      width: 160px;
+      height: 160px;
       border-radius: 50%;
       border: 3px solid #a8d8ff;
       color: #a8d8ff;
@@ -169,7 +161,7 @@
       justify-content: center;
       align-items: center;
       font-weight: 700;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       cursor: pointer;
       background: rgba(5,11,26,0.8);
       box-shadow: 0 0 20px rgba(168,216,255,0.6);
@@ -177,26 +169,76 @@
 
     .menu-panel {
       position: fixed;
-      top: 180px;
-      right: 20px;
+      top: 200px;
+      right: 60px;
       background: #050b1a;
       border: 2px solid #a8d8ff;
       border-radius: 15px;
-      padding: 15px 20px;
+      padding: 20px 25px;
       display: none;
       box-shadow: 0 0 20px rgba(168,216,255,0.6);
     }
 
     .menu-link {
       display: block;
-      margin: 10px 0;
+      margin: 12px 0;
       color: #a8d8ff;
       text-decoration: none;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
     }
 
     .menu-link:hover {
       text-decoration: underline;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 600px) {
+
+      body {
+        height: auto;
+        padding: 20px 0;
+        display: block;
+      }
+
+      .container {
+        transform: scale(1.0);
+        margin-top: 40px;
+      }
+
+      .title {
+        font-size: 2.2rem;
+        margin-bottom: 30px;
+      }
+
+      .robot {
+        margin: 40px auto 0 auto;
+        transform: scale(0.9);
+      }
+
+      .bubble {
+        right: -10px;
+        top: 20px;
+        width: 260px;
+        font-size: 1rem;
+      }
+
+      .menu-button {
+        width: 90px;
+        height: 90px;
+        font-size: 1rem;
+        right: 20px;
+        top: 20px;
+      }
+
+      .menu-panel {
+        right: 20px;
+        top: 130px;
+        padding: 15px;
+      }
+
+      .menu-link {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
@@ -244,8 +286,4 @@
 
 </body>
 </html>
-
-
-
-
-          
+        
