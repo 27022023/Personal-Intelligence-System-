@@ -10,18 +10,44 @@ body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
 /* Title */
 .title { text-align:center; margin-top:20px; font-size:70px; text-shadow:0 0 30px #f5e9c8; }
 
+/* Bookshelves */
+.library {
+  position:fixed; top:140px; left:0; width:100%; height:calc(100% - 140px);
+  background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);
+  z-index:-1;
+}
+.shelf {
+  width:90%; height:200px; background:#3b2a15; margin:30px auto; border-radius:12px;
+  box-shadow:inset 0 0 25px rgba(0,0,0,0.8),0 12px 25px rgba(0,0,0,0.7);
+  display:flex; align-items:flex-end; padding:22px 32px; gap:18px;
+}
+.book {
+  width:52px; height:150px; border-radius:4px; border:2px solid rgba(0,0,0,0.6);
+  box-shadow:inset 0 0 12px rgba(0,0,0,0.5);
+}
+.tall { height:170px; }
+.short { height:120px; }
+.red { background:#7b2e2e; }
+.blue { background:#2e4a7b; }
+.green { background:#2e7b4a; }
+.yellow { background:#b89b3b; }
+.purple { background:#5b2e7b; }
+
+/* Desk */
+.desk { width:100%; height:340px; background:#3f2b17; position:absolute; bottom:0; }
+
 /* Buttons (Pastel Brown) */
+.notes {
+  position:absolute; bottom:40px; width:100%; display:flex; justify-content:center; gap:40px;
+}
 .note {
-  width:280px; height:280px;
-  background:#d8c3a5; border:3px solid #b89b7a;
+  width:280px; height:280px; background:#d8c3a5; border:3px solid #b89b7a;
   border-radius:16px; box-shadow:0 0 25px rgba(0,0,0,0.5);
   display:flex; justify-content:center; align-items:center;
   font-size:32px; font-weight:bold; cursor:pointer; color:#4a3b2b;
   transition:0.2s; text-align:center;
 }
 .note:hover { transform:scale(1.1); background:#e3d2bd; }
-
-.notes { position:absolute; bottom:40px; width:100%; display:flex; justify-content:center; gap:40px; }
 
 /* Sections */
 .section {
@@ -143,6 +169,25 @@ function renderNotes(){
 
 <div class="title">Knowledge Studio</div>
 
+<!-- BOOKSHELVES -->
+<div class="library">
+<script>
+const colors=["red","blue","green","yellow","purple"];
+for(let s=0;s<4;s++){
+  document.write('<div class="shelf">');
+  for(let b=0;b<14;b++){
+    let c=colors[Math.floor(Math.random()*colors.length)];
+    let h=[""," tall"," short"][Math.floor(Math.random()*3)];
+    document.write(`<div class="book ${c}${h}"></div>`);
+  }
+  document.write('</div>');
+}
+</script>
+</div>
+
+<div class="desk"></div>
+
+<!-- MAIN BUTTONS -->
 <div class="notes">
   <div class="note" onclick="openSection('quizSection')">Quiz</div>
   <div class="note" onclick="openSection('flashSection')">Flashcards</div>
@@ -197,4 +242,4 @@ function renderNotes(){
 
 </body>
 </html>
-            
+  
