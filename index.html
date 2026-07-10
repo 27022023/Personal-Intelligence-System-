@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Personal Intelligence System</title>
+
 <style>
 
     body {
         margin: 0;
-        background: #0a1a33; /* rich navy */
+        background: #07152b; /* richer navy */
         font-family: "Segoe UI", sans-serif;
         overflow-x: hidden;
     }
@@ -15,16 +16,16 @@
     /* Title */
     .title {
         text-align: center;
-        margin-top: 60px;
-        font-size: 60px;
+        margin-top: 40px;
+        font-size: 80px;
         font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
         color: #7dd6ff;
-        text-shadow: 0 0 15px #7dd6ff;
+        text-shadow: 0 0 20px #7dd6ff;
     }
 
-    /* Robot container */
+    /* Robot area */
     .robot-area {
-        margin-top: 40px;
+        margin-top: 80px; /* moved down */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -32,67 +33,67 @@
 
     /* Robot body */
     .robot {
-        width: 120px;
-        height: 160px;
+        width: 180px;
+        height: 240px;
         background: #cce7ff;
-        border-radius: 20px;
+        border-radius: 25px;
         position: relative;
-        box-shadow: 0 0 10px #7dd6ff;
+        box-shadow: 0 0 15px #7dd6ff;
     }
 
     /* Robot head */
     .robot-head {
-        width: 100px;
-        height: 80px;
+        width: 150px;
+        height: 110px;
         background: #e0f7ff;
-        border-radius: 20px;
+        border-radius: 25px;
         position: absolute;
-        top: -70px;
-        left: 10px;
-        box-shadow: 0 0 10px #7dd6ff;
+        top: -100px;
+        left: 15px;
+        box-shadow: 0 0 15px #7dd6ff;
     }
 
-    /* Robot eyes */
+    /* Eyes */
     .eye {
-        width: 20px;
-        height: 20px;
+        width: 30px;
+        height: 30px;
         background: #7dd6ff;
         border-radius: 50%;
         position: absolute;
-        top: 25px;
+        top: 35px;
         animation: blink 3s infinite;
     }
 
-    .eye.left { left: 20px; }
-    .eye.right { right: 20px; }
+    .eye.left { left: 25px; }
+    .eye.right { right: 25px; }
 
     @keyframes blink {
-        0%, 90%, 100% { height: 20px; }
-        95% { height: 2px; }
+        0%, 90%, 100% { height: 30px; }
+        95% { height: 4px; }
     }
 
     /* Screwdriver hand */
     .hand {
-        width: 15px;
-        height: 60px;
+        width: 20px;
+        height: 90px;
         background: #b0d9ff;
         position: absolute;
-        right: -20px;
-        top: 40px;
-        border-radius: 10px;
+        right: -30px;
+        top: 70px;
+        border-radius: 12px;
         transform-origin: top;
         animation: fix 1.5s infinite alternate;
     }
 
     @keyframes fix {
-        from { transform: rotate(10deg); }
-        to { transform: rotate(-20deg); }
+        from { transform: rotate(15deg); }
+        to { transform: rotate(-25deg); }
     }
 
     /* Gears */
     .gears {
-        margin-top: 20px;
-        font-size: 40px;
+        margin-top: 40px;
+        font-size: 70px;
         color: #7dd6ff;
         animation: spin 3s linear infinite;
     }
@@ -104,36 +105,37 @@
 
     /* Speech bubble */
     .bubble {
-        margin-top: 30px;
-        background: #0a1a33;
-        border: 2px solid #7dd6ff;
+        margin-top: 40px;
+        background: #07152b;
+        border: 3px solid #7dd6ff;
         color: white;
-        padding: 20px;
-        width: 300px;
-        border-radius: 20px;
-        font-size: 18px;
+        padding: 30px;
+        width: 420px;
+        border-radius: 25px;
+        font-size: 24px;
         text-align: center;
-        box-shadow: 0 0 10px #7dd6ff;
+        box-shadow: 0 0 15px #7dd6ff;
     }
 
     /* Menu button */
     .menu-btn {
         position: fixed;
-        top: 20px;
-        right: 20px;
+        top: 25px;
+        right: 25px;
         background: #7dd6ff;
-        color: #0a1a33;
-        width: 90px;
-        height: 90px;
+        color: #07152b;
+        width: 110px;
+        height: 110px;
         border-radius: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 22px;
+        font-size: 26px;
         font-weight: bold;
         cursor: pointer;
-        box-shadow: 0 0 15px #7dd6ff;
+        box-shadow: 0 0 20px #7dd6ff;
         transition: 0.3s;
+        z-index: 1000;
     }
 
     .menu-btn:hover {
@@ -144,23 +146,24 @@
     .menu-panel {
         position: fixed;
         top: 0;
-        right: -300px;
-        width: 300px;
+        right: -350px;
+        width: 350px;
         height: 100%;
         background: #11264d;
-        box-shadow: -5px 0 10px #000;
-        padding: 40px 20px;
+        box-shadow: -5px 0 15px #000;
+        padding: 50px 30px;
         transition: 0.4s;
         color: white;
-        font-size: 20px;
+        font-size: 24px;
+        z-index: 999;
     }
 
     .menu-panel a {
         display: block;
-        margin: 20px 0;
+        margin: 30px 0;
         color: #7dd6ff;
         text-decoration: none;
-        font-size: 22px;
+        font-size: 26px;
     }
 
 </style>
@@ -189,7 +192,7 @@
 
 </div>
 
-<div class="menu-btn" onclick="openMenu()">Menu</div>
+<div class="menu-btn" onclick="toggleMenu()">Menu</div>
 
 <div class="menu-panel" id="menuPanel">
     <a href="knowledge.html">Knowledge Studio 📖</a>
@@ -200,11 +203,21 @@
 </div>
 
 <script>
-function openMenu() {
-    document.getElementById("menuPanel").style.right = "0";
+let menuOpen = false;
+
+function toggleMenu() {
+    const panel = document.getElementById("menuPanel");
+
+    if (!menuOpen) {
+        panel.style.right = "0";
+        menuOpen = true;
+    } else {
+        panel.style.right = "-350px";
+        menuOpen = false;
+    }
 }
 </script>
 
 </body>
 </html>
-                    
+                
