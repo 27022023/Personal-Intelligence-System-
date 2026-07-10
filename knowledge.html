@@ -224,6 +224,17 @@ function loadTeacher(){
 let notes = [];
 let cur = null;
 
+/* FIX: Convert old notes to new format */
+function normalizeNotes(){
+  notes = notes.map(n => {
+    return {
+      title: n.title ? n.title : "New Note",
+      content: n.content ? n.content : (n.c ? n.c : ""),
+      photos: n.photos ? n.photos : []
+    };
+  });
+}
+
 function newNote(){
   cur = notes.length;
   notes.push({title:"New Note", content:"", photos:[]});
@@ -333,7 +344,11 @@ function deleteNotesAll(){
 function loadNotes(){
   const raw = localStorage.getItem(LS_KEYS.notes);
   notes = raw ? JSON.parse(raw) : [];
+
+  normalizeNotes();  /* FIX APPLIED HERE */
+
   if(notes.length > 0) cur = 0;
+
   renderNotes();
   loadNote();
 }
@@ -441,4 +456,3 @@ for(let s=0;s<4;s++){
 
 </body>
 </html>
-        
