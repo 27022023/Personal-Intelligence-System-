@@ -12,8 +12,6 @@ body {
     color: #f5e9c8;
     overflow-x: hidden;
 }
-
-/* TITLE */
 .title {
     text-align: center;
     margin-top: 20px;
@@ -22,8 +20,6 @@ body {
     color: #f5e9c8;
     text-shadow: 0 0 30px #f5e9c8;
 }
-
-/* BACK ARROW */
 .back {
     position: fixed;
     top: 20px;
@@ -34,8 +30,6 @@ body {
     text-shadow: 0 0 15px #f5e9c8;
 }
 .back:hover { transform: scale(1.2); }
-
-/* LIBRARY BACKGROUND */
 .library {
     position: fixed;
     top: 140px;
@@ -45,64 +39,53 @@ body {
     background: radial-gradient(circle at top, #cfa96b 0%, #2b1f10 40%, #15100b 100%);
     z-index: -1;
 }
-
-/* SHELF */
 .shelf {
     width: 90%;
-    height: 180px;
+    height: 200px;
     background: #3b2a15;
-    margin: 25px auto;
+    margin: 30px auto;
     border-radius: 12px;
     box-shadow: inset 0 0 25px rgba(0,0,0,0.8), 0 12px 25px rgba(0,0,0,0.7);
     display: flex;
     align-items: flex-end;
-    padding: 18px 28px;
-    gap: 16px;
+    padding: 22px 32px;
+    gap: 18px;
     border: 3px solid #2b1f10;
 }
-
-/* BOOK */
 .book {
-    width: 46px;
-    height: 135px;
+    width: 52px;
+    height: 150px;
     border-radius: 4px;
     border: 2px solid rgba(0,0,0,0.6);
     box-shadow: inset 0 0 12px rgba(0,0,0,0.5);
 }
-.tall { height: 155px; }
-.short { height: 105px; }
-
-/* COLORS */
+.tall { height: 170px; }
+.short { height: 120px; }
 .red    { background: #7b2e2e; }
 .blue   { background: #2e4a7b; }
 .green  { background: #2e7b4a; }
 .yellow { background: #b89b3b; }
 .purple { background: #5b2e7b; }
-
-/* DESK */
 .desk {
     width: 100%;
-    height: 320px;
+    height: 340px;
     background: #3f2b17;
     position: absolute;
     bottom: 0;
     box-shadow: 0 -12px 35px rgba(0,0,0,0.9);
     border-top: 4px solid #2b1f10;
 }
-
-/* STICKY NOTES */
 .notes {
     position: absolute;
-    bottom: 40px;
+    bottom: 50px;
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 50px;
+    gap: 60px;
 }
-
 .note {
-    width: 220px;
-    height: 220px;
+    width: 240px;
+    height: 240px;
     background: #fff7a1;
     border: 2px solid #d6c56f;
     border-radius: 10px;
@@ -110,19 +93,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
     color: #3b2a15;
 }
 .note:hover { transform: scale(1.1) rotate(-3deg); }
-
-/* SECTIONS */
 .section {
     display: none;
     position: absolute;
-    top: 200px;
+    top: 190px;
     left: 50%;
     transform: translateX(-50%);
     width: 85%;
@@ -135,41 +116,34 @@ body {
     box-shadow: 0 0 30px black;
     font-size: 22px;
 }
-
 .close-btn {
     font-size: 40px;
     cursor: pointer;
     float: right;
 }
-
-/* INPUTS */
 input, select, textarea {
-    font-size: 20px;
-    padding: 10px;
-    margin: 8px 0;
+    font-size: 22px;
+    padding: 12px;
+    margin: 10px 0;
     width: 100%;
 }
-
 button {
-    font-size: 20px;
-    padding: 10px 20px;
-    margin: 8px 8px 8px 0;
+    font-size: 22px;
+    padding: 12px 24px;
+    margin: 10px 10px 10px 0;
     cursor: pointer;
 }
-
 .item-row {
     margin: 12px 0;
     padding: 12px;
     border-radius: 10px;
     background: #f3f3f3;
 }
-
-/* NOTEPAPER */
 .note-paper {
     border: 2px solid #ccc;
     border-radius: 10px;
     padding: 15px;
-    min-height: 180px;
+    min-height: 220px;
     margin-top: 10px;
 }
 .lined {
@@ -185,11 +159,10 @@ button {
 </style>
 
 <script>
-/* SECTION TOGGLE */
+const SERVER_URL = "http://localhost:8000"; // Change to your online server URL later
+
 function openSection(id){document.getElementById(id).style.display="block";}
 function closeSection(id){document.getElementById(id).style.display="none";}
-
-/* STORAGE */
 function saveData(k,v){localStorage.setItem(k,JSON.stringify(v));}
 function loadData(k,f){let v=localStorage.getItem(k);return v?JSON.parse(v):f;}
 
@@ -211,6 +184,32 @@ function checkQuizAnswer(i,a){
 }
 function deleteAllQuizzes(){quizzes=[];saveData("quizzes",quizzes);renderQuizzes();quizResult.textContent="";}
 
+async function generateAIQuiz(){
+    const topic=quizTopic.value.trim();
+    if(!topic)return;
+    quizResult.textContent="AI is generating...";
+    const response=await fetch(`${SERVER_URL}/solve-text`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({mode:"quiz",content:topic})
+    });
+    const raw=await response.json();
+    let arr;
+    try{arr=JSON.parse(raw.result);}catch(e){quizResult.textContent="AI JSON error";return;}
+    arr.forEach(q=>{
+        quizzes.push({
+            t:topic,
+            ty:q.type,
+            q:q.question,
+            c:q.correct||"",
+            o:JSON.stringify(q.options||q.pairs||[])
+        });
+    });
+    saveData("quizzes",quizzes);
+    renderQuizzes();
+    quizResult.textContent="AI quiz added.";
+}
+
 /* FLASHCARDS */
 let flashcards=loadData("flashcards",[]);
 function addFlashcard(){
@@ -231,12 +230,42 @@ function flipFlashcard(i){
 }
 function deleteAllFlashcards(){flashcards=[];saveData("flashcards",flashcards);renderFlashcards();}
 
-/* VIRTUAL TEACHER (UI only) */
-function handleTeacherUpload(){
-    teacherInfo.textContent=teacherFile.files.length? "Image uploaded. AI will work once server is connected." : "Please upload a photo.";
+async function generateAIFlashcards(){
+    const topic=flashFront.value.trim();
+    if(!topic)return;
+    const response=await fetch(`${SERVER_URL}/solve-text`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({mode:"flashcards",content:topic})
+    });
+    const raw=await response.json();
+    let arr;
+    try{arr=JSON.parse(raw.result);}catch(e){alert("AI JSON error");return;}
+    arr.forEach(c=>flashcards.push({f:c.front,b:c.back}));
+    saveData("flashcards",flashcards);
+    renderFlashcards();
 }
 
-/* NOTES */
+/* VIRTUAL TEACHER */
+async function handleTeacherUpload(){
+    const fileInput=document.getElementById("teacherFile");
+    const info=document.getElementById("teacherInfo");
+    if(fileInput.files.length===0){
+        info.textContent="Please upload a photo.";
+        return;
+    }
+    info.textContent="Thinking...";
+    const formData=new FormData();
+    formData.append("image",fileInput.files[0]);
+    const response=await fetch(`${SERVER_URL}/solve-image`,{
+        method:"POST",
+        body:formData
+    });
+    const data=await response.json();
+    info.textContent=data.result;
+}
+
+/* NOTES + AI MODES */
 let notes=loadData("notesData",[]),cur=null;
 function newNote(){cur=notes.length;notes.push({p:"lined",bg:"#fff",c:""});saveData("notesData",notes);loadNote(cur);renderNotesList();}
 function loadNote(i){cur=i;let n=notes[i];notePaper.className="note-paper "+n.p;notePaper.style.backgroundColor=n.bg;noteText.value=n.c;}
@@ -249,14 +278,16 @@ function renderNotesList(){
 }
 function deleteAllNotes(){notes=[];saveData("notesData",notes);noteText.value="";cur=null;renderNotesList();}
 
-/* AUTO SOLVE */
-function autoSolve(){
-    let t=noteText.value,r="";
-    let kg=t.match(/(\d+)\s*kg to g/);
-    let fr=t.match(/(\d+)\s*\/\s*(\d+)/);
-    if(kg)r=`${kg[1]} kg = ${kg[1]*1000} g`;
-    else if(fr)r=`${fr[1]}/${fr[2]} = ${fr[1]/fr[2]}`;
-    if(r)alert("Auto-solve: "+r);
+async function callNotesAI(mode){
+    const text=noteText.value;
+    if(!text.trim())return;
+    const response=await fetch(`${SERVER_URL}/solve-text`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({mode,content:text})
+    });
+    const data=await response.json();
+    alert("AI says:\n\n"+data.result);
 }
 
 window.onload=function(){renderQuizzes();renderFlashcards();renderNotesList();}
@@ -265,7 +296,7 @@ window.onload=function(){renderQuizzes();renderFlashcards();renderNotesList();}
 
 <body>
 
-<div class="back" onclick="window.location.href='index.html'">←</div>
+<div class="back">←</div>
 <div class="title">Knowledge Studio 📖</div>
 
 <div class="library">
@@ -273,7 +304,7 @@ window.onload=function(){renderQuizzes();renderFlashcards();renderNotesList();}
         const colors=["red","blue","green","yellow","purple"];
         for(let s=0;s<4;s++){
             document.write('<div class="shelf">');
-            for(let b=0;b<12;b++){
+            for(let b=0;b<14;b++){
                 let c=colors[Math.floor(Math.random()*colors.length)];
                 let h=[""," tall"," short"][Math.floor(Math.random()*3)];
                 document.write(`<div class="book ${c}${h}"></div>`);
@@ -289,10 +320,9 @@ window.onload=function(){renderQuizzes();renderFlashcards();renderNotesList();}
     <div class="note" onclick="openSection('quizSection')">Quiz Generator</div>
     <div class="note" onclick="openSection('flashSection')">Flashcards</div>
     <div class="note" onclick="openSection('teacherSection')">Virtual Teacher</div>
-    <div class="note" onclick="openSection('notesSection')">Notetaking</div>
+    <div class="note" onclick="openSection('notesSection')">Notetaking + AI</div>
 </div>
 
-<!-- QUIZ -->
 <div class="section" id="quizSection">
     <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
     <h2>Quiz Generator</h2>
@@ -307,36 +337,35 @@ window.onload=function(){renderQuizzes();renderFlashcards();renderNotesList();}
     <textarea id="quizOptions" placeholder="Options or matching info"></textarea>
     <button onclick="addQuizQuestion()">Add</button>
     <button onclick="deleteAllQuizzes()">Delete All</button>
+    <button onclick="generateAIQuiz()">AI Generate Quiz</button>
     <h3>Saved Questions</h3>
     <div id="quizList"></div>
-    <div id="quizResult"></div>
+    <div id="quizResult" style="margin-top:10px;font-weight:bold;"></div>
 </div>
 
-<!-- FLASHCARDS -->
 <div class="section" id="flashSection">
     <div class="close-btn" onclick="closeSection('flashSection')">✖</div>
     <h2>Flashcards</h2>
-    <input id="flashFront" placeholder="Front">
+    <input id="flashFront" placeholder="Front (or topic for AI)">
     <input id="flashBack" placeholder="Back">
     <button onclick="addFlashcard()">Add</button>
     <button onclick="deleteAllFlashcards()">Delete All</button>
+    <button onclick="generateAIFlashcards()">AI Generate Flashcards</button>
     <h3>Saved Flashcards</h3>
     <div id="flashList"></div>
 </div>
 
-<!-- VIRTUAL TEACHER -->
 <div class="section" id="teacherSection">
     <div class="close-btn" onclick="closeSection('teacherSection')">✖</div>
     <h2>Virtual Teacher</h2>
     <input type="file" id="teacherFile" accept="image/*">
-    <button onclick="handleTeacherUpload()">Upload</button>
-    <p id="teacherInfo"></p>
+    <button onclick="handleTeacherUpload()">Upload & Explain</button>
+    <p id="teacherInfo" style="white-space:pre-wrap;"></p>
 </div>
 
-<!-- NOTES -->
 <div class="section" id="notesSection">
     <div class="close-btn" onclick="closeSection('notesSection')">✖</div>
-    <h2>Notetaking</h2>
+    <h2>Notetaking + AI</h2>
     <button onclick="newNote()">New Note</button>
     <button onclick="deleteAllNotes()">Delete All</button>
     <h3>Your Notes</h3>
@@ -350,9 +379,14 @@ window.onload=function(){renderQuizzes();renderFlashcards();renderNotesList();}
     <div id="notePaper" class="note-paper lined">
         <textarea id="noteText" oninput="updateNoteContent()" placeholder="Type..."></textarea>
     </div>
-    <button onclick="autoSolve()">Auto-Solve</button>
+    <h3>AI Modes</h3>
+    <button onclick="callNotesAI('math')">AI Math Solver</button>
+    <button onclick="callNotesAI('textbook')">AI Textbook Explainer</button>
+    <button onclick="callNotesAI('language')">AI Language Tutor</button>
+    <button onclick="callNotesAI('handwriting')">AI Handwriting Cleanup</button>
 </div>
 
 </body>
 </html>
-                    
+    
+    
