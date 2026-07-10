@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mind Atlas 🗺️✨</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Georgia, serif;
+  background:#f7c9d8; /* pastel pink */
+  color:#4a3b47;
+}
+
+/* Notebook lines */
+.notebook {
+  position:fixed;
+  inset:0;
+  background: repeating-linear-gradient(
+    to bottom,
+    #f7c9d8,
+    #f7c9d8 28px,
+    #f3b9cc 29px
+  );
+  z-index:-1;
+}
+
+/* HEADER */
+.header {
+  display:flex;
+  align-items:center;
+  padding:25px 30px;
+  background:#f3b9cc;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+.back-arrow {
+  font-size:50px;
+  margin-right:25px;
+  cursor:pointer;
+  color:#4a3b47;
+}
+.title {
+  font-size:48px;
+  font-weight:bold;
+}
+
+/* LOCK SCREEN */
+.lock-screen {
+  max-width:600px;
+  margin:120px auto;
+  background:white;
+  padding:40px;
+  border-radius:30px;
+  box-shadow:0 0 40px rgba(0,0,0,0.25);
+  text-align:center;
+}
+.lock-screen input {
+  width:80%;
+  font-size:32px;
+  padding:20px;
+  border-radius:20px;
+  border:3px solid #f3b9cc;
+  margin-top:20px;
+}
+.lock-screen button {
+  margin-top:30px;
+  font-size:32px;
+  padding:20px 40px;
+  border-radius:20px;
+  border:none;
+  background:#f3b9cc;
+  color:#4a3b47;
+  cursor:pointer;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width:900px;
+  margin:40px auto;
+  background:white;
+  padding:40px;
+  border-radius:30px;
+  box-shadow:0 0 40px rgba(0,0,0,0.25);
+}
+
+/* SECTION LABEL */
+.section-label {
+  font-size:32px;
+  margin-bottom:20px;
+  font-weight:bold;
+  text-align:center;
+}
+
+/* INPUTS */
+label {
+  font-size:26px;
+  margin-top:20px;
+  display:block;
+}
+input, textarea, select {
+  width:100%;
+  font-size:26px;
+  padding:16px;
+  border-radius:20px;
+  border:3px solid #f3b9cc;
+  background:#ffe6f0;
+  color:#4a3b47;
+}
+textarea {
+  min-height:160px;
+  resize:vertical;
+}
+
+/* BUTTONS */
+button {
+  margin-top:30px;
+  font-size:28px;
+  padding:18px 30px;
+  border-radius:20px;
+  border:none;
+  cursor:pointer;
+}
+.save-btn {
+  background:#f3b9cc;
+  color:#4a3b47;
+}
+.delete-btn {
+  background:#ffb7c3;
+  color:#3a1f24;
+}
+
+/* SAVED ENTRIES */
+.entry {
+  background:#ffe6f0;
+  padding:20px;
+  border-radius:20px;
+  margin-top:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.15);
+}
+.entry-title {
+  font-size:28px;
+  font-weight:bold;
+}
+.entry-body {
+  font-size:22px;
+  margin-top:10px;
+  white-space:pre-wrap;
+}
+.entry button {
+  margin-top:10px;
+  font-size:20px;
+  padding:10px 20px;
+  border-radius:16px;
+  background:#ffb7c3;
+  color:#3a1f24;
+}
+</style>
+
+<script>
+let unlocked = false;
+let atlas = [];
+
+/* Load */
+function loadAtlas() {
+  const raw = localStorage.getItem("mind_atlas_entries");
+  atlas = raw ? JSON.parse(raw) : [];
+
+  const code = localStorage.getItem("mind_atlas_code");
+  if (!code) {
+    document.getElementById("lock").style.display = "block";
+    document.getElementById("main").style.display = "none";
+  } else {
+    document.getElementById("lock").style.display = "block";
+    document.getElementById("main").style.display = "none";
+  }
+}
+
+/* Save */
+function saveAtlas() {
+  localStorage.setItem("mind_atlas_entries", JSON.stringify(atlas));
+}
+
+/* Unlock */
+function unlockAtlas() {
+  const inputCode = document.getElementById("unlockCode").value.trim();
+  let savedCode = localStorage.getItem("mind_atlas_code");
+
+  if (!savedCode) {
+    // First time: set code
+    localStorage.setItem("mind_atlas_code", inputCode);
+    unlocked = true;
+  } else {
+    // Check code
+    if (inputCode === savedCode) {
+      unlocked = true;
+    } else {
+      alert("Wrong code.");
+      return;
+    }
+  }
+
+  document.getElementById("lock").style.display = "none";
+  document.getElementById("main").style.display = "block";
+  renderAtlas();
+}
+
+/* Add entry */
+function addEntry() {
+  const mood = document.getElementById("mood").value;
+  const sleep = document.getElementById("sleep").value;
+  const dream = document.getElementById("dream").value;
+  const selfcare = document.getElementById("selfcare").value.trim();
+  const thoughts = document.getElementById("thoughts").value.trim();
+
+  const entry = {
+    date: new Date().toLocaleString(),
+    mood,
+    sleep,
+    dream,
+    selfcare,
+    thoughts
+  };
+
+  atlas.push(entry);
+  saveAtlas();
+  renderAtlas();
+
+  document.getElementById("selfcare").value = "";
+  document.getElementById("thoughts").value = "";
+}
+
+/* Delete entry */
+function deleteEntry(i) {
+  atlas.splice(i, 1);
+  saveAtlas();
+  renderAtlas();
+}
+
+/* Delete all */
+function deleteAll() {
+  if (!confirm("Delete ALL diary entries?")) return;
+  atlas = [];
+  saveAtlas();
+  renderAtlas();
+}
+
+/* Render */
+function renderAtlas() {
+  const box = document.getElementById("entries");
+  box.innerHTML = "";
+
+  if (atlas.length === 0) {
+    box.innerHTML = "<p style='font-size:22px;'>No entries yet.</p>";
+    return;
+  }
+
+  atlas.forEach((e, i) => {
+    const div = document.createElement("div");
+    div.className = "entry";
+
+    div.innerHTML = `
+      <div class="entry-title">${e.date}</div>
+      <div class="entry-body">
+        <b>Mood:</b> ${e.mood}<br>
+        <b>Sleep:</b> ${e.sleep} hours<br>
+        <b>Dream:</b> ${e.dream}<br>
+        <b>Self‑care:</b> ${e.selfcare}<br><br>
+        <b>Thoughts:</b><br>${e.thoughts}
+      </div>
+      <button onclick="deleteEntry(${i})">Delete</button>
+    `;
+
+    box.appendChild(div);
+  });
+}
+
+/* Back */
+function goHome() {
+  window.location.href = "knowledge.html";
+}
+
+window.onload = loadAtlas;
+</script>
+</head>
+
+<body>
+
+<div class="notebook"></div>
+
+<!-- LOCK SCREEN -->
+<div id="lock" class="lock-screen" style="display:none;">
+  <h1>Mind Atlas 🗺️✨</h1>
+  <p style="font-size:26px;">Enter your secret code to unlock your diary.</p>
+  <input id="unlockCode" placeholder="Your code...">
+  <button onclick="unlockAtlas()">Unlock</button>
+</div>
+
+<!-- MAIN -->
+<div id="main" style="display:none;">
+
+  <div class="header">
+    <div class="back-arrow" onclick="goHome()">←</div>
+    <div class="title">Mind Atlas 🗺️✨</div>
+  </div>
+
+  <div class="container">
+    <div class="section-label">Write about your day, thoughts, feelings...</div>
+
+    <label>Mood</label>
+    <select id="mood">
+      <option>Happy</option>
+      <option>Sad</option>
+      <option>Stressed</option>
+      <option>Tired</option>
+      <option>Neutral</option>
+      <option>Excited</option>
+      <option>Anxious</option>
+    </select>
+
+    <label>Hours you slept</label>
+    <input id="sleep" type="number" min="0" max="24">
+
+    <label>Did you dream?</label>
+    <select id="dream">
+      <option>Yes</option>
+      <option>No</option>
+      <option>Can't remember</option>
+    </select>
+
+    <label>Self‑care ideas</label>
+    <textarea id="selfcare" placeholder="What did you do for yourself today?"></textarea>
+
+    <label>Your thoughts</label>
+    <textarea id="thoughts" placeholder="Write anything you want..."></textarea>
+
+    <button class="save-btn" onclick="addEntry()">Save Entry</button>
+    <button class="delete-btn" onclick="deleteAll()">Delete All</button>
+
+    <div id="entries"></div>
+  </div>
+
+</div>
+
+</body>
+</html>
