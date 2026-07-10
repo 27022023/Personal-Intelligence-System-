@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Luna AI Assistant 🤖</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Georgia, sans-serif;
+  background:#cfe8ff; /* pastel blue */
+  color:#1f2a3a;
+}
+
+/* Top bar */
+.header {
+  display:flex;
+  align-items:center;
+  padding:15px 20px;
+  background:#b7d6ff;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+.back-arrow {
+  font-size:32px;
+  margin-right:15px;
+  cursor:pointer;
+}
+.title {
+  font-size:28px;
+  font-weight:bold;
+}
+
+/* Chat container */
+.chat-container {
+  max-width:900px;
+  margin:20px auto;
+  background:white;
+  border-radius:18px;
+  box-shadow:0 0 20px rgba(0,0,0,0.15);
+  display:flex;
+  flex-direction:column;
+  height:70vh;
+  overflow:hidden;
+}
+
+/* Messages area */
+.messages {
+  flex:1;
+  padding:20px;
+  overflow-y:auto;
+}
+
+/* Bubbles */
+.bubble {
+  max-width:70%;
+  padding:12px 16px;
+  margin:8px 0;
+  border-radius:16px;
+  font-size:18px;
+  line-height:1.4;
+  white-space:pre-wrap;
+}
+.user {
+  background:#e6d6f5; /* lavender */
+  align-self:flex-end;
+}
+.luna {
+  background:#c9f5d8; /* mint pastel green */
+  align-self:flex-start;
+}
+
+/* Input area */
+.input-area {
+  padding:15px;
+  border-top:1px solid #ddd;
+  display:flex;
+  gap:10px;
+}
+input {
+  flex:1;
+  font-size:18px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:2px solid #9fb8ff;
+}
+button {
+  font-size:18px;
+  padding:10px 16px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+}
+.send-btn {
+  background:#9fb8ff;
+  color:#1f2a3a;
+}
+.delete-btn {
+  background:#ffb7c3;
+  color:#3a1f24;
+}
+
+/* Saved conversations label */
+.saved-label {
+  max-width:900px;
+  margin:0 auto;
+  padding:5px 5px 15px;
+  font-size:14px;
+  color:#3a4a5f;
+}
+</style>
+
+<script>
+const SERVER_URL = "http://localhost:8000";
+let history = [];
+
+/* Load history from localStorage */
+function loadHistory() {
+  const raw = localStorage.getItem("luna_history");
+  history = raw ? JSON.parse(raw) : [];
+}
+
+/* Save history */
+function saveHistory() {
+  localStorage.setItem("luna_history", JSON.stringify(history));
+}
+
+/* Render messages */
+function renderMessages() {
+  const box = document.getElementById("messages");
+  box.innerHTML = "";
+  history.forEach(msg => {
+    const div = document.createElement("div");
+    div.className = "bubble " + (msg.role === "user" ? "user" : "luna");
+    div.textContent = msg.text;
+    box.appendChild(div);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+/* Send message */
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  // Add user message
+  history.push({ role: "user", text });
+  saveHistory();
+  renderMessages();
+  input.value = "";
+
+  // Ask Luna (server)
+  try {
+    const res = await fetch(SERVER_URL + "/solve-text", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "chat", content: text })
+    });
+    const data = await res.json();
+    const reply = data.result || "(No reply)";
+
+    history.push({ role: "luna", text: reply });
+    saveHistory();
+    renderMessages();
+  } catch (e) {
+    history.push({ role: "luna", text: "I couldn't reach the server, but I'm here. Check if it's running." });
+    saveHistory();
+    renderMessages();
+  }
+}
+
+/* Delete all conversations */
+function deleteAll() {
+  if (!confirm("Delete all saved conversations with Luna?")) return;
+  history = [];
+  saveHistory();
+  renderMessages();
+}
+
+/* Back to homepage */
+function goHome() {
+  window.location.href = "knowledge.html";
+}
+
+/* Enter key handler */
+function handleKey(e) {
+  if (e.key === "Enter") sendMessage();
+}
+
+window.onload = function() {
+  loadHistory();
+  renderMessages();
+};
+</script>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="back-arrow" onclick="goHome()">←</div>
+  <div class="title">Luna AI Assistant 🤖</div>
+</div>
+
+<div class="saved-label">
+  All conversations are saved locally. You can delete them anytime with the button below.
+</div>
+
+<div class="chat-container">
+  <div id="messages" class="messages"></div>
+  <div class="input-area">
+    <input id="userInput" placeholder="Talk to Luna about anything..." onkeydown="handleKey(event)">
+    <button class="send-btn" onclick="sendMessage()">Send</button>
+    <button class="delete-btn" onclick="deleteAll()">Delete All</button>
+  </div>
+</div>
+
+</body>
+</html>
