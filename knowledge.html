@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Knowledge Studio</title>
+
+<style>
+
+    body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        overflow-x: hidden;
+        background: #2b1f0f;
+    }
+
+    /* Animated Library Background */
+    .library {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            to right,
+            #3b2a15 0px,
+            #3b2a15 120px,
+            #2e1f10 120px,
+            #2e1f10 140px
+        );
+        animation: slide 20s linear infinite;
+        z-index: -1;
+    }
+
+    @keyframes slide {
+        from { background-position: 0 0; }
+        to { background-position: -2000px 0; }
+    }
+
+    /* Desk */
+    .desk {
+        width: 100%;
+        height: 300px;
+        background: #5a3e1b;
+        position: absolute;
+        bottom: 0;
+        box-shadow: 0 -10px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Sticky notes container */
+    .notes {
+        position: absolute;
+        top: 120px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+    }
+
+    /* Sticky note style */
+    .note {
+        width: 220px;
+        height: 220px;
+        background: #fff7a1;
+        border: 2px solid #d6c56f;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 26px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        text-align: center;
+    }
+
+    .note:hover {
+        transform: scale(1.1) rotate(-3deg);
+        background: #fff9b8;
+    }
+
+    /* Back arrow */
+    .back {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 60px;
+        color: #fff7a1;
+        cursor: pointer;
+        text-shadow: 0 0 10px #fff7a1;
+        transition: 0.3s;
+    }
+
+    .back:hover {
+        transform: scale(1.2);
+    }
+
+    /* Title */
+    .title {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 80px;
+        color: #fff7a1;
+        text-shadow: 0 0 20px #fff7a1;
+        font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="library"></div>
+
+<div class="back" onclick="window.location.href='index.html'">←</div>
+
+<div class="title">Knowledge Studio 📖</div>
+
+<div class="notes">
+
+    <div class="note" onclick="window.location.href='quiz.html'">
+        Quiz Generator
+    </div>
+
+    <div class="note" onclick="window.location.href='flashcards.html'">
+        Flashcards Generator
+    </div>
+
+    <div class="note" onclick="window.location.href='teacher.html'">
+        Virtual Teacher
+    </div>
+
+    <div class="note" onclick="window.location.href='notes.html'">
+        Notetaking
+    </div>
+
+</div>
+
+<div class="desk"></div>
+
+</body>
+</html>
