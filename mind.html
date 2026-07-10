@@ -8,53 +8,67 @@
 body {
   margin:0;
   font-family:'Georgia', serif;
-  background:#ffd9e8; /* pastel pink */
+  background:#e8d9ff; /* soft lavender */
   color:#4a3b47;
   overflow-x:hidden;
 }
 
-/* Notebook lines */
+/* Gradient lock screen */
+.lock-bg {
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg, #c7b8ff, #b8d8ff, #d9c7ff);
+  z-index:-1;
+}
+
+/* Notebook background */
 .notebook {
   position:fixed;
   inset:0;
   background: repeating-linear-gradient(
     to bottom,
-    #ffd9e8,
-    #ffd9e8 40px,
-    #f7c9d8 41px
+    #e8d9ff,
+    #e8d9ff 40px,
+    #dcd0ff 41px
   );
   z-index:-1;
 }
 
-/* Cute stickers */
+/* Cute CSS stickers (no images) */
 .sticker {
   position:absolute;
   width:120px;
   height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #fff7ae, #ffe27a);
+  box-shadow:0 0 20px #fff7ae;
   opacity:0.8;
-  transform:rotate(-10deg);
+  left:40px;
+  top:200px;
   animation:float 4s ease-in-out infinite;
 }
 .sticker2 {
   position:absolute;
   width:140px;
   height:140px;
+  border-radius:20px;
+  background:linear-gradient(135deg, #ffd6e8, #ffe8b3);
+  box-shadow:0 0 20px #ffd6e8;
   opacity:0.8;
   right:40px;
   top:180px;
-  transform:rotate(8deg);
   animation:float2 5s ease-in-out infinite;
 }
 
 @keyframes float {
-  0% { transform:translateY(0px) rotate(-10deg); }
-  50% { transform:translateY(-12px) rotate(-8deg); }
-  100% { transform:translateY(0px) rotate(-10deg); }
+  0% { transform:translateY(0px) rotate(-6deg); }
+  50% { transform:translateY(-12px) rotate(-3deg); }
+  100% { transform:translateY(0px) rotate(-6deg); }
 }
 @keyframes float2 {
-  0% { transform:translateY(0px) rotate(8deg); }
-  50% { transform:translateY(10px) rotate(10deg); }
-  100% { transform:translateY(0px) rotate(8deg); }
+  0% { transform:translateY(0px) rotate(6deg); }
+  50% { transform:translateY(10px) rotate(9deg); }
+  100% { transform:translateY(0px) rotate(6deg); }
 }
 
 /* HEADER */
@@ -62,7 +76,7 @@ body {
   display:flex;
   align-items:center;
   padding:35px 40px;
-  background:#f7c9d8;
+  background:#dcd0ff;
   box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 .back-arrow {
@@ -91,7 +105,7 @@ body {
   font-size:40px;
   padding:25px;
   border-radius:30px;
-  border:4px solid #f3b9cc;
+  border:4px solid #b8d8ff;
   margin-top:30px;
 }
 .lock-screen button {
@@ -100,7 +114,7 @@ body {
   padding:25px 50px;
   border-radius:30px;
   border:none;
-  background:#f3b9cc;
+  background:#b8d8ff;
   color:#4a3b47;
   cursor:pointer;
 }
@@ -109,7 +123,7 @@ body {
 .container {
   max-width:1100px;
   margin:60px auto;
-  background:white;
+  background:#dcd0ff; /* lavender diary */
   padding:60px;
   border-radius:40px;
   box-shadow:0 0 50px rgba(0,0,0,0.25);
@@ -135,8 +149,8 @@ input, textarea, select {
   font-size:32px;
   padding:25px;
   border-radius:30px;
-  border:4px solid #f3b9cc;
-  background:#ffe6f0;
+  border:4px solid #ffe27a;
+  background:#fff7ae; /* pastel yellow */
   color:#4a3b47;
 }
 textarea {
@@ -154,7 +168,7 @@ button {
   cursor:pointer;
 }
 .save-btn {
-  background:#f3b9cc;
+  background:#ffe27a;
   color:#4a3b47;
 }
 .delete-btn {
@@ -164,7 +178,7 @@ button {
 
 /* DAILY QUOTE */
 .quote-box {
-  background:#ffe6f0;
+  background:#fff7ae;
   padding:30px;
   border-radius:30px;
   font-size:32px;
@@ -175,7 +189,7 @@ button {
 
 /* SAVED ENTRIES */
 .entry {
-  background:#ffe6f0;
+  background:#fff7ae;
   padding:30px;
   border-radius:30px;
   margin-top:40px;
@@ -206,11 +220,11 @@ let atlas = [];
 
 /* Cute daily quotes */
 const quotes = [
-  "You’re growing quietly, beautifully, even when you don’t notice.",
+  "You’re growing quietly, beautifully.",
   "Soft hearts are strong hearts.",
   "You deserve gentleness today.",
-  "Your feelings matter. All of them.",
-  "You’re allowed to rest without earning it.",
+  "Your feelings matter.",
+  "You’re allowed to rest.",
   "You are becoming someone you can be proud of.",
   "Small steps count too.",
   "You’re doing better than you think."
@@ -225,7 +239,6 @@ function loadAtlas() {
   document.getElementById("lock").style.display = "block";
   document.getElementById("main").style.display = "none";
 
-  // Daily quote
   const q = quotes[Math.floor(Math.random() * quotes.length)];
   document.getElementById("quote").textContent = q;
 }
@@ -334,11 +347,11 @@ window.onload = loadAtlas;
 
 <body>
 
-<div class="notebook"></div>
+<div class="lock-bg"></div>
 
 <!-- Stickers -->
-<div class="sticker" style="left:40px; top:200px; background:url('https://i.imgur.com/1Q9Zq7k.png') no-repeat center/cover;"></div>
-<div class="sticker2" style="background:url('https://i.imgur.com/7mYpX6F.png') no-repeat center/cover;"></div>
+<div class="sticker"></div>
+<div class="sticker2"></div>
 
 <!-- LOCK SCREEN -->
 <div id="lock" class="lock-screen" style="display:none;">
@@ -398,5 +411,4 @@ window.onload = loadAtlas;
 
 </body>
 </html>
-
-
+  
