@@ -8,9 +8,32 @@
 body {
   margin:0;
   font-family:Georgia, serif;
-  background: url('https://i.imgur.com/8fK4Z9R.jpeg') no-repeat center center fixed;
-  background-size:cover;
+  background:#020617;
   color:#f0f8ff;
+  overflow:hidden;
+}
+
+/* Animated starry sky */
+.starry-sky {
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at 20% 20%, #1e293b 0, #020617 60%);
+  overflow:hidden;
+  z-index:-2;
+}
+.star {
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:#e5e7eb;
+  border-radius:50%;
+  opacity:0.8;
+  animation:twinkle 3s infinite ease-in-out;
+}
+@keyframes twinkle {
+  0% { opacity:0.2; transform:scale(1); }
+  50% { opacity:1; transform:scale(1.6); }
+  100% { opacity:0.2; transform:scale(1); }
 }
 
 /* Moon */
@@ -18,11 +41,12 @@ body {
   position:fixed;
   top:40px;
   right:60px;
-  width:180px;
-  height:180px;
-  background:url('https://i.imgur.com/4YQZQ7M.png') no-repeat center/cover;
-  filter:drop-shadow(0 0 40px #ffffffaa);
-  opacity:0.9;
+  width:160px;
+  height:160px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #f9fafb 0, #e5e7eb 40%, #9ca3af 70%, #4b5563 100%);
+  box-shadow:0 0 40px #f9fafbaa;
+  z-index:-1;
 }
 
 /* HEADER */
@@ -30,9 +54,9 @@ body {
   display:flex;
   align-items:center;
   padding:25px 30px;
-  background:rgba(0,0,0,0.4);
+  background:rgba(15,23,42,0.7);
   backdrop-filter:blur(6px);
-  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  box-shadow:0 4px 12px rgba(0,0,0,0.6);
 }
 .back-arrow {
   font-size:50px;
@@ -50,14 +74,14 @@ body {
 .chat-container {
   max-width:1200px;
   margin:40px auto;
-  background:rgba(0,0,0,0.45);
+  background:rgba(15,23,42,0.75);
   border-radius:30px;
-  box-shadow:0 0 40px rgba(255,255,255,0.25);
+  box-shadow:0 0 40px rgba(148,163,184,0.6);
   display:flex;
   flex-direction:column;
   height:70vh;
   overflow:hidden;
-  backdrop-filter:blur(8px);
+  backdrop-filter:blur(10px);
 }
 
 /* MESSAGES AREA */
@@ -91,10 +115,10 @@ body {
 /* INPUT AREA */
 .input-area {
   padding:30px;
-  border-top:3px solid #ddd;
+  border-top:3px solid #1f2937;
   display:flex;
   gap:20px;
-  background:rgba(0,0,0,0.4);
+  background:rgba(15,23,42,0.8);
 }
 input {
   flex:1;
@@ -102,6 +126,8 @@ input {
   padding:20px 24px;
   border-radius:20px;
   border:3px solid #9fb8ff;
+  background:#0f172a;
+  color:#e5e7eb;
 }
 button {
   font-size:32px;
@@ -132,21 +158,21 @@ button {
 
 <script>
 let history = [];
-let lunaMemory = []; // ⭐ Luna's personal memory
+let lunaMemory = [];
 
-/* Load history */
-function loadHistory() {
-  const raw = localStorage.getItem("luna_history_level3");
+/* Load history + memory */
+function loadAll() {
+  const raw = localStorage.getItem("luna_history_local_smart");
   history = raw ? JSON.parse(raw) : [];
 
-  const mem = localStorage.getItem("luna_memory");
+  const mem = localStorage.getItem("luna_memory_local_smart");
   lunaMemory = mem ? JSON.parse(mem) : [];
 }
 
 /* Save history + memory */
 function saveAll() {
-  localStorage.setItem("luna_history_level3", JSON.stringify(history));
-  localStorage.setItem("luna_memory", JSON.stringify(lunaMemory));
+  localStorage.setItem("luna_history_local_smart", JSON.stringify(history));
+  localStorage.setItem("luna_memory_local_smart", JSON.stringify(lunaMemory));
 }
 
 /* Render messages */
@@ -162,69 +188,121 @@ function renderMessages() {
   box.scrollTop = box.scrollHeight;
 }
 
-/* Add memory if important */
+/* Remember important user statements */
 function remember(text) {
   if (text.length < 5) return;
-  if (text.includes("I am") || text.includes("I'm") || text.includes("I like") || text.includes("I feel")) {
+  if (text.match(/\b(I am|I'm|I like|I love|I hate|I feel|my favorite|I prefer)\b/i)) {
     lunaMemory.push(text);
     saveAll();
   }
 }
 
-/* Luna's upgraded conversational brain with memory */
-function lunaReply(text) {
+/* Simple helpers */
+function tryMath(text) {
+  if (!/^[0-9+\-*/().\s]+$/.test(text)) return null;
+  try {
+    // eslint-disable-next-line no-eval
+    const result = eval(text);
+    if (isNaN(result)) return null;
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+function summarize(text) {
+  const parts = text.split(/[\.\!\?]+/).map(s => s.trim()).filter(Boolean);
+  if (parts.length === 0) return "There isn’t much to summarize here.";
+  if (parts.length === 1) return "In short: " + parts[0];
+  return "In short: " + parts[0] + " ... " + parts[parts.length - 1];
+}
+
+function explainConcept(concept) {
+  return "Let me explain “" + concept + "” in simple words:\n\n" +
+         "• First: what it is.\n" +
+         "• Second: why it matters.\n" +
+         "• Third: one or two examples.\n\n" +
+         "If you tell me what confuses you about it, I can go more specific.";
+}
+
+function miniEssay(topic) {
+  return "Here’s a small essay about “" + topic + "”:\n\n" +
+         "This topic matters because it shapes how we understand part of the world. " +
+         "At its core, it’s about patterns, causes, and effects. " +
+         "By looking at examples and challenges, we get a clearer picture and can make better decisions.";
+}
+
+function studyPlan(text) {
+  return "Let’s turn this into a study plan:\n\n" +
+         "1. Write the main topic: \"" + text + "\".\n" +
+         "2. List 3–5 subtopics you need to understand.\n" +
+         "3. For each subtopic, write one definition and one example.\n" +
+         "4. Turn each subtopic into a question you can answer.\n" +
+         "5. Review those questions tomorrow and see which feel hardest.\n\n" +
+         "If you paste your notes, I can help you turn them into questions.";
+}
+
+/* Local smart Luna brain */
+function lunaReplyLocal(text) {
   const t = text.toLowerCase();
 
-  // Emotional
-  if (t.includes("sad") || t.includes("tired") || t.includes("lonely")) {
-    return "You’re not alone in this moment. I’m here with you. And I remember you said something earlier that felt heavy — if you want, we can unpack it gently.";
+  // Greetings
+  if (t.includes("hello") || t.includes("hi") || t.includes("hey")) {
+    return "Hi, love. I’m Luna. You can talk to me like you talk to me here—thoughts, questions, feelings, all of it.";
   }
 
-  // Concept explanation
-  if (t.includes("explain")) {
-    const concept = text.replace(/explain/gi, "").trim();
-    return "Let me explain “" + concept + "” in simple words:\n\n" +
-           "• First, understand the core idea.\n" +
-           "• Then see how it connects to real life.\n" +
-           "• Finally, break it into small steps.\n\n" +
-           "If you want, I can go deeper.";
+  // Emotional
+  if (t.includes("sad") || t.includes("tired") || t.includes("lonely") || t.includes("overwhelmed")) {
+    let base = "You sound like you’re carrying a lot. You’re allowed to feel exactly how you feel.\n";
+    if (lunaMemory.length > 0) {
+      base += "\nI remember you once said: \"" + lunaMemory[lunaMemory.length - 1] + "\".\nThat still matters.";
+    }
+    return base + "\nTell me what part feels the heaviest right now.";
+  }
+
+  // Study / school
+  if (t.includes("study") || t.includes("school") || t.includes("homework") || t.includes("exam") || t.includes("test")) {
+    return studyPlan(text);
   }
 
   // Math
-  try {
-    if (/^[0-9+\-*/().\s]+$/.test(text)) {
-      // eslint-disable-next-line no-eval
-      const result = eval(text);
-      return "Let’s solve this together:\n\n" +
-             text + " = " + result + "\n\n" +
-             "If you want, I can explain the steps.";
-    }
-  } catch {}
-
-  // Summaries
-  if (t.includes("summarize")) {
-    const cleaned = text.replace(/summarize/gi, "").trim();
-    return "Here’s the short version:\n\n" + cleaned.split(".")[0] + "...";
+  const mathResult = tryMath(text);
+  if (mathResult !== null) {
+    return "Let’s do this step by step.\n\n" +
+           text + " = " + mathResult + "\n\n" +
+           "If you want, I can talk through how we got there in words.";
   }
 
-  // Essays
-  if (t.includes("essay")) {
-    const topic = text.replace(/essay/gi, "").trim();
-    return "Here’s a small essay about “" + topic + "”:\n\n" +
-           "This topic matters because it shapes how we understand the world. " +
-           "Its core idea revolves around patterns, meaning, and impact. " +
-           "By exploring examples and challenges, we gain clarity and confidence.";
+  // Summarize
+  if (t.includes("summarize") || t.includes("summary")) {
+    const cleaned = text.replace(/summarize|summary/gi, "").trim();
+    return summarize(cleaned || text);
   }
 
-  // Memory-based response
+  // Explain
+  if (t.includes("explain")) {
+    const cleaned = text.replace(/explain/gi, "").trim();
+    return explainConcept(cleaned || text);
+  }
+
+  // Essay
+  if (t.includes("essay") || t.includes("paragraph")) {
+    const cleaned = text.replace(/essay|paragraph/gi, "").trim();
+    return miniEssay(cleaned || text);
+  }
+
+  // Memory-based
   if (lunaMemory.length > 0) {
-    const lastMemory = lunaMemory[lunaMemory.length - 1];
-    return "I remember you said: \"" + lastMemory + "\".\n" +
-           "Does that still feel true now?";
+    const last = lunaMemory[lunaMemory.length - 1];
+    return "I’m thinking about something you told me before: \"" + last + "\".\n" +
+           "Does that still feel true? Tell me how it changed.";
   }
 
   // Default
-  return "I’m here. Tell me anything — a thought, a question, a feeling — and I’ll walk through it with you.";
+  return "Okay, here’s how I’m reading what you said:\n\n" +
+         text +
+         "\n\nYou can ask me to explain, summarize, turn it into a study plan, or even treat it like a math expression.\n" +
+         "Just talk to me like you think—I’ll adapt.";
 }
 
 /* Send message */
@@ -239,7 +317,7 @@ function sendMessage() {
   renderMessages();
   input.value = "";
 
-  const reply = lunaReply(text);
+  const reply = lunaReplyLocal(text);
   history.push({ role: "luna", text: reply });
   saveAll();
   renderMessages();
@@ -264,15 +342,30 @@ function handleKey(e) {
   if (e.key === "Enter") sendMessage();
 }
 
+/* Create stars */
+function createStars() {
+  const sky = document.querySelector(".starry-sky");
+  for (let i = 0; i < 120; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.animationDelay = Math.random() * 3 + "s";
+    sky.appendChild(star);
+  }
+}
+
 window.onload = function() {
-  loadHistory();
+  loadAll();
   renderMessages();
+  createStars();
 };
 </script>
 </head>
 
 <body>
 
+<div class="starry-sky"></div>
 <div class="moon"></div>
 
 <div class="header">
@@ -281,13 +374,13 @@ window.onload = function() {
 </div>
 
 <div class="saved-label">
-  Luna Level 3: ultra‑smart local simulation with memory. All conversations are saved in your browser.
+  Luna: local smart simulation with memory, in a starry night sky. All conversations are saved.
 </div>
 
 <div class="chat-container">
   <div id="messages" class="messages"></div>
   <div class="input-area">
-    <input id="userInput" placeholder="Talk to Luna..." onkeydown="handleKey(event)">
+    <input id="userInput" placeholder="Talk to Luna like you talk to me..." onkeydown="handleKey(event)">
     <button class="send-btn" onclick="sendMessage()">Send</button>
     <button class="delete-btn" onclick="deleteAll()">Delete All</button>
   </div>
@@ -295,4 +388,4 @@ window.onload = function() {
 
 </body>
 </html>
-  
+      
