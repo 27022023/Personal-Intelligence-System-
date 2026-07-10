@@ -9,34 +9,49 @@
     body {
         margin: 0;
         font-family: "Segoe UI", sans-serif;
-        overflow-x: hidden;
         background: #2b1f0f;
+        overflow-x: hidden;
     }
 
-    /* Animated Library Background */
+    /* STATIC LIBRARY BACKGROUND */
     .library {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: repeating-linear-gradient(
-            to right,
-            #3b2a15 0px,
-            #3b2a15 120px,
-            #2e1f10 120px,
-            #2e1f10 140px
-        );
-        animation: slide 20s linear infinite;
+        background: #3b2a15;
         z-index: -1;
     }
 
-    @keyframes slide {
-        from { background-position: 0 0; }
-        to { background-position: -2000px 0; }
+    /* BOOKSHELVES */
+    .shelf {
+        width: 100%;
+        height: 180px;
+        background: #2e1f10;
+        border-bottom: 6px solid #1c1208;
+        display: flex;
+        align-items: center;
+        padding-left: 40px;
+        gap: 20px;
     }
 
-    /* Desk */
+    /* BOOKS */
+    .book {
+        width: 50px;
+        height: 140px;
+        background: #c49b5f;
+        border: 3px solid #8a6a3b;
+        border-radius: 4px;
+    }
+
+    .book.red { background: #b84a4a; border-color: #7a2d2d; }
+    .book.blue { background: #4a6bb8; border-color: #2d437a; }
+    .book.green { background: #4ab86b; border-color: #2d7a43; }
+    .book.yellow { background: #d8c45a; border-color: #9e8f3a; }
+    .book.purple { background: #8a4ab8; border-color: #5a2d7a; }
+
+    /* DESK */
     .desk {
         width: 100%;
         height: 300px;
@@ -46,17 +61,42 @@
         box-shadow: 0 -10px 20px rgba(0,0,0,0.5);
     }
 
-    /* Sticky notes container */
+    /* TITLE */
+    .title {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 80px;
+        color: #fff7a1;
+        text-shadow: 0 0 20px #fff7a1;
+        font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
+    }
+
+    /* BACK ARROW */
+    .back {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 60px;
+        color: #fff7a1;
+        cursor: pointer;
+        text-shadow: 0 0 10px #fff7a1;
+        transition: 0.3s;
+    }
+
+    .back:hover {
+        transform: scale(1.2);
+    }
+
+    /* STICKY NOTES */
     .notes {
         position: absolute;
-        top: 120px;
+        top: 200px;
         width: 100%;
         display: flex;
         justify-content: center;
         gap: 60px;
     }
 
-    /* Sticky note style */
     .note {
         width: 220px;
         height: 220px;
@@ -79,38 +119,76 @@
         background: #fff9b8;
     }
 
-    /* Back arrow */
-    .back {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        font-size: 60px;
-        color: #fff7a1;
+    /* TOOL SECTIONS */
+    .section {
+        display: none;
+        position: absolute;
+        top: 200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        background: rgba(255,255,255,0.9);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px black;
+        font-size: 24px;
+    }
+
+    .close-btn {
+        font-size: 40px;
         cursor: pointer;
-        text-shadow: 0 0 10px #fff7a1;
-        transition: 0.3s;
-    }
-
-    .back:hover {
-        transform: scale(1.2);
-    }
-
-    /* Title */
-    .title {
-        text-align: center;
-        margin-top: 40px;
-        font-size: 80px;
-        color: #fff7a1;
-        text-shadow: 0 0 20px #fff7a1;
-        font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
+        float: right;
+        margin-top: -20px;
     }
 
 </style>
+
+<script>
+function openSection(id) {
+    document.getElementById(id).style.display = "block";
+}
+
+function closeSection(id) {
+    document.getElementById(id).style.display = "none";
+}
+</script>
+
 </head>
 
 <body>
 
-<div class="library"></div>
+<div class="library">
+
+    <!-- THREE STATIC BOOKSHELVES -->
+    <div class="shelf">
+        <div class="book red"></div>
+        <div class="book blue"></div>
+        <div class="book green"></div>
+        <div class="book yellow"></div>
+        <div class="book purple"></div>
+        <div class="book red"></div>
+        <div class="book blue"></div>
+    </div>
+
+    <div class="shelf">
+        <div class="book green"></div>
+        <div class="book yellow"></div>
+        <div class="book purple"></div>
+        <div class="book red"></div>
+        <div class="book blue"></div>
+        <div class="book green"></div>
+    </div>
+
+    <div class="shelf">
+        <div class="book purple"></div>
+        <div class="book red"></div>
+        <div class="book yellow"></div>
+        <div class="book blue"></div>
+        <div class="book green"></div>
+        <div class="book purple"></div>
+    </div>
+
+</div>
 
 <div class="back" onclick="window.location.href='index.html'">←</div>
 
@@ -118,19 +196,19 @@
 
 <div class="notes">
 
-    <div class="note" onclick="window.location.href='quiz.html'">
+    <div class="note" onclick="openSection('quiz')">
         Quiz Generator
     </div>
 
-    <div class="note" onclick="window.location.href='flashcards.html'">
+    <div class="note" onclick="openSection('flashcards')">
         Flashcards Generator
     </div>
 
-    <div class="note" onclick="window.location.href='teacher.html'">
+    <div class="note" onclick="openSection('teacher')">
         Virtual Teacher
     </div>
 
-    <div class="note" onclick="window.location.href='notes.html'">
+    <div class="note" onclick="openSection('notes')">
         Notetaking
     </div>
 
@@ -138,5 +216,35 @@
 
 <div class="desk"></div>
 
+<!-- QUIZ SECTION -->
+<div class="section" id="quiz">
+    <div class="close-btn" onclick="closeSection('quiz')">✖</div>
+    <h2>Quiz Generator</h2>
+    <p>Write a topic and create multiple choice, true/false, or matching questions.</p>
+</div>
+
+<!-- FLASHCARDS SECTION -->
+<div class="section" id="flashcards">
+    <div class="close-btn" onclick="closeSection('flashcards')">✖</div>
+    <h2>Flashcards Generator</h2>
+    <p>Create flashcards and flip them to reveal answers.</p>
+</div>
+
+<!-- VIRTUAL TEACHER SECTION -->
+<div class="section" id="teacher">
+    <div class="close-btn" onclick="closeSection('teacher')">✖</div>
+    <h2>Virtual Teacher</h2>
+    <p>Upload a photo of any problem and get step-by-step explanations.</p>
+</div>
+
+<!-- NOTETAKING SECTION -->
+<div class="section" id="notes">
+    <div class="close-btn" onclick="closeSection('notes')">✖</div>
+    <h2>Notetaking</h2>
+    <p>Choose lined or square paper, customize colors, type or write notes.</p>
+</div>
+
 </body>
 </html>
+
+    
