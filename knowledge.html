@@ -2,192 +2,457 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Knowledge Studio</title>
+<title>Knowledge Studio 📖</title>
 
 <style>
+/* GLOBAL */
+body {
+    margin: 0;
+    font-family: "Georgia", serif;
+    background: #15100b;
+    color: #f5e9c8;
+    overflow-x: hidden;
+}
 
-    body {
-        margin: 0;
-        font-family: "Segoe UI", sans-serif;
-        background: #2b1f0f;
-        overflow-x: hidden;
-    }
+/* OXFORD LIBRARY BACKGROUND */
+.library {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top, #cfa96b 0%, #2b1f10 40%, #15100b 100%);
+    z-index: -1;
+}
 
-    /* STATIC LIBRARY BACKGROUND */
-    .library {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #3b2a15;
-        z-index: -1;
-    }
+/* BOOKSHELVES */
+.shelf {
+    width: 90%;
+    height: 190px;
+    background: #3b2a15;
+    margin: 35px auto;
+    border-radius: 12px;
+    box-shadow:
+        inset 0 0 25px rgba(0,0,0,0.8),
+        0 12px 25px rgba(0,0,0,0.7);
+    display: flex;
+    align-items: flex-end;
+    padding: 18px 28px;
+    gap: 16px;
+    border: 3px solid #2b1f10;
+}
 
-    /* BOOKSHELVES */
-    .shelf {
-        width: 100%;
-        height: 180px;
-        background: #2e1f10;
-        border-bottom: 6px solid #1c1208;
-        display: flex;
-        align-items: center;
-        padding-left: 40px;
-        gap: 20px;
-    }
+/* BOOKS */
+.book {
+    width: 46px;
+    height: 135px;
+    border-radius: 4px;
+    border: 2px solid rgba(0,0,0,0.6);
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.5);
+}
 
-    /* BOOKS */
-    .book {
-        width: 50px;
-        height: 140px;
-        background: #c49b5f;
-        border: 3px solid #8a6a3b;
-        border-radius: 4px;
-    }
+.book.red    { background: #7b2e2e; }
+.book.blue   { background: #2e4a7b; }
+.book.green  { background: #2e7b4a; }
+.book.yellow { background: #b89b3b; }
+.book.purple { background: #5b2e7b; }
 
-    .book.red { background: #b84a4a; border-color: #7a2d2d; }
-    .book.blue { background: #4a6bb8; border-color: #2d437a; }
-    .book.green { background: #4ab86b; border-color: #2d7a43; }
-    .book.yellow { background: #d8c45a; border-color: #9e8f3a; }
-    .book.purple { background: #8a4ab8; border-color: #5a2d7a; }
+.book.tall  { height: 155px; }
+.book.short { height: 105px; }
 
-    /* DESK */
-    .desk {
-        width: 100%;
-        height: 300px;
-        background: #5a3e1b;
-        position: absolute;
-        bottom: 0;
-        box-shadow: 0 -10px 20px rgba(0,0,0,0.5);
-    }
+/* DESK */
+.desk {
+    width: 100%;
+    height: 300px;
+    background: #3f2b17;
+    position: absolute;
+    bottom: 0;
+    box-shadow: 0 -12px 35px rgba(0,0,0,0.9);
+    border-top: 4px solid #2b1f10;
+}
 
-    /* TITLE */
-    .title {
-        text-align: center;
-        margin-top: 40px;
-        font-size: 80px;
-        color: #fff7a1;
-        text-shadow: 0 0 20px #fff7a1;
-        font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
-    }
+/* TITLE */
+.title {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 80px;
+    font-family: "Lucida Calligraphy", cursive;
+    color: #f5e9c8;
+    text-shadow: 0 0 30px #f5e9c8;
+}
 
-    /* BACK ARROW */
-    .back {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        font-size: 60px;
-        color: #fff7a1;
-        cursor: pointer;
-        text-shadow: 0 0 10px #fff7a1;
-        transition: 0.3s;
-    }
+/* BACK ARROW */
+.back {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 60px;
+    color: #f5e9c8;
+    cursor: pointer;
+    text-shadow: 0 0 15px #f5e9c8;
+    transition: 0.3s;
+}
+.back:hover { transform: scale(1.2); }
 
-    .back:hover {
-        transform: scale(1.2);
-    }
+/* STICKY NOTES */
+.notes {
+    position: absolute;
+    bottom: 120px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
 
-    /* STICKY NOTES */
-    .notes {
-        position: absolute;
-        top: 200px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        gap: 60px;
-    }
+.note {
+    width: 220px;
+    height: 220px;
+    background: #fff7a1;
+    border: 2px solid #d6c56f;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    text-align: center;
+    color: #3b2a15;
+}
+.note:hover {
+    transform: scale(1.1) rotate(-3deg);
+    background: #fff9b8;
+}
 
-    .note {
-        width: 220px;
-        height: 220px;
-        background: #fff7a1;
-        border: 2px solid #d6c56f;
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.4);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 26px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
-        text-align: center;
-    }
+/* TOOL SECTIONS */
+.section {
+    display: none;
+    position: absolute;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    max-height: 60%;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.97);
+    color: #2b1f10;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 30px black;
+    font-size: 22px;
+}
 
-    .note:hover {
-        transform: scale(1.1) rotate(-3deg);
-        background: #fff9b8;
-    }
+.close-btn {
+    font-size: 40px;
+    cursor: pointer;
+    float: right;
+    margin-top: -20px;
+}
 
-    /* TOOL SECTIONS */
-    .section {
-        display: none;
-        position: absolute;
-        top: 200px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80%;
-        background: rgba(255,255,255,0.9);
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 0 20px black;
-        font-size: 24px;
-    }
+/* INPUTS */
+input, select, textarea {
+    font-size: 20px;
+    padding: 10px;
+    margin: 8px 0;
+    width: 100%;
+    box-sizing: border-box;
+}
 
-    .close-btn {
-        font-size: 40px;
-        cursor: pointer;
-        float: right;
-        margin-top: -20px;
-    }
+button {
+    font-size: 20px;
+    padding: 10px 20px;
+    margin: 8px 8px 8px 0;
+    cursor: pointer;
+}
 
+/* LIST ITEMS */
+.item-row {
+    margin: 12px 0;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f3f3f3;
+}
+
+/* NOTEPAPER */
+.note-paper {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 180px;
+    margin-top: 10px;
+}
+
+.lined {
+    background-image: linear-gradient(to bottom, #ddd 1px, transparent 1px);
+    background-size: 100% 28px;
+}
+
+.square {
+    background-image:
+        linear-gradient(#ddd 1px, transparent 1px),
+        linear-gradient(90deg, #ddd 1px, transparent 1px);
+    background-size: 28px 28px;
+}
 </style>
 
 <script>
+/* SECTION TOGGLE */
 function openSection(id) {
     document.getElementById(id).style.display = "block";
 }
-
 function closeSection(id) {
     document.getElementById(id).style.display = "none";
 }
-</script>
 
+/* STORAGE HELPERS */
+function saveData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+function loadData(key, fallback) {
+    const v = localStorage.getItem(key);
+    if (!v) return fallback;
+    try { return JSON.parse(v); } catch { return fallback; }
+}
+
+/* QUIZ GENERATOR */
+let quizzes = loadData("quizzes", []);
+
+function addQuizQuestion() {
+    const topic    = document.getElementById("quizTopic").value.trim();
+    const type     = document.getElementById("quizType").value;
+    const question = document.getElementById("quizQuestion").value.trim();
+    const correct  = document.getElementById("quizCorrect").value.trim();
+    const options  = document.getElementById("quizOptions").value.trim();
+
+    if (!topic || !question || !correct) return;
+
+    quizzes.push({ topic, type, question, correct, options });
+    saveData("quizzes", quizzes);
+    renderQuizzes();
+}
+
+function renderQuizzes() {
+    const container = document.getElementById("quizList");
+    container.innerHTML = "";
+    quizzes.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.className = "item-row";
+        div.innerHTML = `
+            <strong>Topic:</strong> ${q.topic}<br>
+            <strong>Type:</strong> ${q.type}<br>
+            <strong>Question:</strong> ${q.question}<br>
+            <strong>Options / Matching:</strong> ${q.options || "(none)"}<br>
+            <input placeholder="Your answer" onblur="checkQuizAnswer(${index}, this.value)">
+        `;
+        container.appendChild(div);
+    });
+}
+
+function checkQuizAnswer(index, answer) {
+    const q = quizzes[index];
+    const result = document.getElementById("quizResult");
+    if (!answer.trim()) return;
+    if (answer.trim().toLowerCase() === q.correct.trim().toLowerCase()) {
+        result.textContent = "Correct! ✅";
+    } else {
+        result.textContent = `Wrong ❌. Correct answer: "${q.correct}".`;
+    }
+}
+
+function deleteAllQuizzes() {
+    quizzes = [];
+    saveData("quizzes", quizzes);
+    renderQuizzes();
+    document.getElementById("quizResult").textContent = "";
+}
+
+/* FLASHCARDS */
+let flashcards = loadData("flashcards", []);
+
+function addFlashcard() {
+    const front = document.getElementById("flashFront").value.trim();
+    const back  = document.getElementById("flashBack").value.trim();
+    if (!front || !back) return;
+    flashcards.push({ front, back });
+    saveData("flashcards", flashcards);
+    renderFlashcards();
+}
+
+function renderFlashcards() {
+    const container = document.getElementById("flashList");
+    container.innerHTML = "";
+    flashcards.forEach((card, index) => {
+        const div = document.createElement("div");
+        div.className = "item-row";
+        div.innerHTML = `
+            <div onclick="flipFlashcard(${index})" id="flashCard${index}">
+                <strong>Front:</strong> ${card.front}<br>
+                <span style="color:#888;">(tap to see back)</span>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function flipFlashcard(index) {
+    const el   = document.getElementById("flashCard" + index);
+    const card = flashcards[index];
+    if (el.dataset.side === "back") {
+        el.innerHTML = `<strong>Front:</strong> ${card.front}<br><span style="color:#888;">(tap to see back)</span>`;
+        el.dataset.side = "front";
+    } else {
+        el.innerHTML = `<strong>Back:</strong> ${card.back}<br><span style="color:#888;">(tap to see front)</span>`;
+        el.dataset.side = "back";
+    }
+}
+
+function deleteAllFlashcards() {
+    flashcards = [];
+    saveData("flashcards", flashcards);
+    renderFlashcards();
+}
+
+/* VIRTUAL TEACHER (UI ONLY – AI later) */
+function handleTeacherUpload() {
+    const fileInput = document.getElementById("teacherFile");
+    const info      = document.getElementById("teacherInfo");
+
+    if (fileInput.files.length === 0) {
+        info.textContent = "Please upload a photo of a problem or page.";
+        return;
+    }
+
+    info.textContent = "Image uploaded. Once the server is connected, AI will read and explain this.";
+}
+
+/* NOTETAKING */
+let notes = loadData("notesData", []);
+let currentNoteIndex = null;
+
+function newNote() {
+    currentNoteIndex = notes.length;
+    notes.push({ paper: "lined", bg: "#ffffff", content: "" });
+    saveData("notesData", notes);
+    loadNote(currentNoteIndex);
+    renderNotesList();
+}
+
+function loadNote(index) {
+    currentNoteIndex = index;
+    const note = notes[index];
+    const paper = document.getElementById("notePaper");
+    const text  = document.getElementById("noteText");
+
+    paper.className = "note-paper " + note.paper;
+    paper.style.backgroundColor = note.bg;
+    text.value = note.content || "";
+}
+
+function setPaper(type) {
+    if (currentNoteIndex === null) return;
+    notes[currentNoteIndex].paper = type;
+    saveData("notesData", notes);
+    loadNote(currentNoteIndex);
+}
+
+function setPaperColor(color) {
+    if (currentNoteIndex === null) return;
+    notes[currentNoteIndex].bg = color;
+    saveData("notesData", notes);
+    loadNote(currentNoteIndex);
+}
+
+function updateNoteContent() {
+    if (currentNoteIndex === null) return;
+    const text = document.getElementById("noteText").value;
+    notes[currentNoteIndex].content = text;
+    saveData("notesData", notes);
+}
+
+function renderNotesList() {
+    const container = document.getElementById("notesList");
+    container.innerHTML = "";
+    notes.forEach((n, index) => {
+        const div = document.createElement("div");
+        div.className = "item-row";
+        div.innerHTML = `
+            <strong>Note ${index + 1}</strong>
+            <button onclick="loadNote(${index})">Open</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function deleteAllNotes() {
+    notes = [];
+    saveData("notesData", notes);
+    document.getElementById("noteText").value = "";
+    currentNoteIndex = null;
+    renderNotesList();
+}
+
+/* SIMPLE AUTO-SOLVE */
+function autoSolve() {
+    const text = document.getElementById("noteText").value;
+    let result = "";
+
+    if (text.includes("kg to g")) {
+        const match = text.match(/(\d+)\s*kg to g/);
+        if (match) {
+            const kg = parseFloat(match[1]);
+            result = `${kg} kg = ${kg * 1000} g`;
+        }
+    } else {
+        const frac = text.match(/(\d+)\s*\/\s*(\d+)/);
+        if (frac) {
+            const a = parseFloat(frac[1]);
+            const b = parseFloat(frac[2]);
+            result = `${a}/${b} = ${a / b}`;
+        }
+    }
+
+    if (result) alert("Auto-solve: " + result);
+}
+
+/* INIT */
+window.onload = function() {
+    renderQuizzes();
+    renderFlashcards();
+    renderNotesList();
+};
+</script>
 </head>
 
 <body>
 
 <div class="library">
-
-    <!-- THREE STATIC BOOKSHELVES -->
     <div class="shelf">
-        <div class="book red"></div>
+        <div class="book.red tall book red tall"></div>
         <div class="book blue"></div>
-        <div class="book green"></div>
-        <div class="book yellow"></div>
+        <div class="book green short"></div>
+        <div class="book yellow tall"></div>
         <div class="book purple"></div>
-        <div class="book red"></div>
-        <div class="book blue"></div>
+        <div class="book red short"></div>
+        <div class="book blue tall"></div>
     </div>
-
     <div class="shelf">
         <div class="book green"></div>
-        <div class="book yellow"></div>
-        <div class="book purple"></div>
+        <div class="book yellow short"></div>
+        <div class="book purple tall"></div>
         <div class="book red"></div>
-        <div class="book blue"></div>
-        <div class="book green"></div>
+        <div class="book blue short"></div>
+        <div class="book green tall"></div>
     </div>
-
     <div class="shelf">
-        <div class="book purple"></div>
-        <div class="book red"></div>
+        <div class="book purple short"></div>
+        <div class="book red tall"></div>
         <div class="book yellow"></div>
-        <div class="book blue"></div>
+        <div class="book blue tall"></div>
         <div class="book green"></div>
-        <div class="book purple"></div>
+        <div class="book purple tall"></div>
     </div>
-
 </div>
 
 <div class="back" onclick="window.location.href='index.html'">←</div>
@@ -195,56 +460,91 @@ function closeSection(id) {
 <div class="title">Knowledge Studio 📖</div>
 
 <div class="notes">
-
-    <div class="note" onclick="openSection('quiz')">
-        Quiz Generator
-    </div>
-
-    <div class="note" onclick="openSection('flashcards')">
-        Flashcards Generator
-    </div>
-
-    <div class="note" onclick="openSection('teacher')">
-        Virtual Teacher
-    </div>
-
-    <div class="note" onclick="openSection('notes')">
-        Notetaking
-    </div>
-
+    <div class="note" onclick="openSection('quizSection')">Quiz Generator</div>
+    <div class="note" onclick="openSection('flashSection')">Flashcards</div>
+    <div class="note" onclick="openSection('teacherSection')">Virtual Teacher</div>
+    <div class="note" onclick="openSection('notesSection')">Notetaking</div>
 </div>
 
 <div class="desk"></div>
 
 <!-- QUIZ SECTION -->
-<div class="section" id="quiz">
-    <div class="close-btn" onclick="closeSection('quiz')">✖</div>
+<div class="section" id="quizSection">
+    <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
     <h2>Quiz Generator</h2>
-    <p>Write a topic and create multiple choice, true/false, or matching questions.</p>
+    <p>Write a topic and create multiple choice, true/false, or matching questions. Everything is saved.</p>
+
+    <input id="quizTopic" placeholder="Topic (e.g. Thermodynamics, Foreign Languages)">
+    <select id="quizType">
+        <option value="Multiple Choice">Multiple Choice</option>
+        <option value="True/False">True / False</option>
+        <option value="Matching">Matching</option>
+    </select>
+    <input id="quizQuestion" placeholder="Question">
+    <input id="quizCorrect" placeholder="Correct answer">
+    <textarea id="quizOptions" placeholder="Options or matching info (comma separated)"></textarea>
+    <button onclick="addQuizQuestion()">Add Question</button>
+    <button onclick="deleteAllQuizzes()">Delete All</button>
+
+    <h3>Saved Questions</h3>
+    <div id="quizList"></div>
+    <div id="quizResult" style="margin-top:10px;font-weight:bold;"></div>
 </div>
 
 <!-- FLASHCARDS SECTION -->
-<div class="section" id="flashcards">
-    <div class="close-btn" onclick="closeSection('flashcards')">✖</div>
+<div class="section" id="flashSection">
+    <div class="close-btn" onclick="closeSection('flashSection')">✖</div>
     <h2>Flashcards Generator</h2>
-    <p>Create flashcards and flip them to reveal answers.</p>
+    <p>Create flashcards and tap to flip between front and back. Everything is saved.</p>
+
+    <input id="flashFront" placeholder="Front (question / term)">
+    <input id="flashBack" placeholder="Back (answer / definition)">
+    <button onclick="addFlashcard()">Add Flashcard</button>
+    <button onclick="deleteAllFlashcards()">Delete All</button>
+
+    <h3>Saved Flashcards</h3>
+    <div id="flashList"></div>
 </div>
 
 <!-- VIRTUAL TEACHER SECTION -->
-<div class="section" id="teacher">
-    <div class="close-btn" onclick="closeSection('teacher')">✖</div>
+<div class="section" id="teacherSection">
+    <div class="close-btn" onclick="closeSection('teacherSection')">✖</div>
     <h2>Virtual Teacher</h2>
-    <p>Upload a photo of any problem and get step-by-step explanations.</p>
+    <p>Upload ANY PHOTO of a problem or textbook page. Once we connect the server, AI will read and explain it step by step.</p>
+
+    <input type="file" id="teacherFile" accept="image/*">
+    <button onclick="handleTeacherUpload()">Upload</button>
+    <p id="teacherInfo" style="margin-top:10px;font-style:italic;"></p>
 </div>
 
 <!-- NOTETAKING SECTION -->
-<div class="section" id="notes">
-    <div class="close-btn" onclick="closeSection('notes')">✖</div>
+<div class="section" id="notesSection">
+    <div class="close-btn" onclick="closeSection('notesSection')">✖</div>
     <h2>Notetaking</h2>
-    <p>Choose lined or square paper, customize colors, type or write notes.</p>
+    <p>Choose lined or square paper, customize colors, type notes. Simple math and conversions can be auto-solved.</p>
+
+    <button onclick="newNote()">New Note</button>
+    <button onclick="deleteAllNotes()">Delete All Notes</button>
+
+    <h3>Your Notes</h3>
+    <div id="notesList"></div>
+
+    <h3>Current Note</h3>
+    <div>
+        <button onclick="setPaper('lined')">Lined Paper</button>
+        <button onclick="setPaper('square')">Square Paper</button>
+        <button onclick="setPaperColor('#ffffff')">White</button>
+        <button onclick="setPaperColor('#fff7a1')">Pastel Yellow</button>
+        <button onclick="setPaperColor('#e0f7ff')">Pastel Blue</button>
+    </div>
+
+    <div id="notePaper" class="note-paper lined">
+        <textarea id="noteText" oninput="updateNoteContent()" placeholder="Type your notes here..."></textarea>
+    </div>
+
+    <button onclick="autoSolve()">Try Auto-Solve (fractions or 'kg to g')</button>
 </div>
 
 </body>
 </html>
-
-    
+        
