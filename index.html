@@ -1,289 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Personal Intelligence System</title>
-  <style>
+<meta charset="UTF-8">
+<title>Personal Intelligence System</title>
+<style>
+
     body {
-      margin: 0;
-      height: 100vh;
-      background: #050b1a;
-      color: #a8d8ff;
-      font-family: "Segoe UI", system-ui, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+        margin: 0;
+        background: #0a1a33; /* rich navy */
+        font-family: "Segoe UI", sans-serif;
+        overflow-x: hidden;
     }
 
-    .container {
-      text-align: center;
-      position: relative;
-      transform: scale(2.0);
-    }
-
+    /* Title */
     .title {
-      font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
-      font-size: 4rem;
-      color: #a8d8ff;
-      text-shadow: 0 0 15px #4fc3f7;
-      margin-bottom: 60px;
+        text-align: center;
+        margin-top: 60px;
+        font-size: 60px;
+        font-family: "Lucida Calligraphy", "Brush Script MT", cursive;
+        color: #7dd6ff;
+        text-shadow: 0 0 15px #7dd6ff;
     }
 
+    /* Robot container */
+    .robot-area {
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Robot body */
     .robot {
-      width: 240px;
-      height: 300px;
-      background: #e0f7fa;
-      border-radius: 40px;
-      margin: 80px auto 0 auto;
-      position: relative;
-      box-shadow: 0 0 20px rgba(79,195,247,0.6);
-      animation: float 3s ease-in-out infinite;
+        width: 120px;
+        height: 160px;
+        background: #cce7ff;
+        border-radius: 20px;
+        position: relative;
+        box-shadow: 0 0 10px #7dd6ff;
     }
 
-    .robot::before {
-      content: "";
-      position: absolute;
-      top: -80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 180px;
-      height: 120px;
-      background: #b2ebf2;
-      border-radius: 30px;
-      box-shadow: 0 0 15px rgba(79,195,247,0.6);
+    /* Robot head */
+    .robot-head {
+        width: 100px;
+        height: 80px;
+        background: #e0f7ff;
+        border-radius: 20px;
+        position: absolute;
+        top: -70px;
+        left: 10px;
+        box-shadow: 0 0 10px #7dd6ff;
     }
 
+    /* Robot eyes */
     .eye {
-      position: absolute;
-      top: -40px;
-      width: 25px;
-      height: 25px;
-      background: #004d40;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #00e5ff;
-    }
-    .eye.left { left: 45px; }
-    .eye.right { right: 45px; }
-
-    .smile {
-      position: absolute;
-      top: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70px;
-      height: 30px;
-      border-bottom: 6px solid #004d40;
-      border-radius: 0 0 50px 50px;
+        width: 20px;
+        height: 20px;
+        background: #7dd6ff;
+        border-radius: 50%;
+        position: absolute;
+        top: 25px;
+        animation: blink 3s infinite;
     }
 
-    .screwdriver {
-      position: absolute;
-      bottom: 20px;
-      right: -60px;
-      width: 25px;
-      height: 110px;
-      background: #ffab40;
-      border-radius: 12px;
-      transform-origin: top;
-      animation: fix 1.5s ease-in-out infinite;
-    }
-    .screwdriver::after {
-      content: "";
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 25px;
-      background: #b0bec5;
-      border-radius: 5px;
+    .eye.left { left: 20px; }
+    .eye.right { right: 20px; }
+
+    @keyframes blink {
+        0%, 90%, 100% { height: 20px; }
+        95% { height: 2px; }
     }
 
-    .gear {
-      font-size: 3.2rem;
-      color: #a8d8ff;
-      position: absolute;
-      animation: spin 4s linear infinite;
-    }
-    .gear.one { bottom: -20px; left: -80px; }
-    .gear.two { bottom: 40px; left: -140px; animation-duration: 6s; }
-    .gear.three { bottom: 110px; left: -80px; animation-duration: 5s; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
+    /* Screwdriver hand */
+    .hand {
+        width: 15px;
+        height: 60px;
+        background: #b0d9ff;
+        position: absolute;
+        right: -20px;
+        top: 40px;
+        border-radius: 10px;
+        transform-origin: top;
+        animation: fix 1.5s infinite alternate;
     }
 
     @keyframes fix {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(-30deg); }
+        from { transform: rotate(10deg); }
+        to { transform: rotate(-20deg); }
+    }
+
+    /* Gears */
+    .gears {
+        margin-top: 20px;
+        font-size: 40px;
+        color: #7dd6ff;
+        animation: spin 3s linear infinite;
     }
 
     @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
     }
 
+    /* Speech bubble */
     .bubble {
-      position: absolute;
-      top: -40px;
-      right: -420px;
-      width: 360px;
-      background: #050b1a;
-      border-radius: 20px;
-      border: 2px solid #a8d8ff;
-      padding: 20px;
-      color: #ffffff;
-      font-size: 1.3rem;
-      box-shadow: 0 0 15px rgba(168,216,255,0.5);
+        margin-top: 30px;
+        background: #0a1a33;
+        border: 2px solid #7dd6ff;
+        color: white;
+        padding: 20px;
+        width: 300px;
+        border-radius: 20px;
+        font-size: 18px;
+        text-align: center;
+        box-shadow: 0 0 10px #7dd6ff;
     }
 
-    .bubble::after {
-      content: "";
-      position: absolute;
-      left: -20px;
-      top: 60px;
-      border-width: 20px;
-      border-style: solid;
-      border-color: transparent #050b1a transparent transparent;
-    }
-
-    .menu-button {
-      position: fixed;
-      top: 20px;
-      right: 60px;
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      border: 3px solid #a8d8ff;
-      color: #a8d8ff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: 700;
-      font-size: 1.4rem;
-      cursor: pointer;
-      background: rgba(5,11,26,0.8);
-      box-shadow: 0 0 20px rgba(168,216,255,0.6);
-    }
-
-    .menu-panel {
-      position: fixed;
-      top: 200px;
-      right: 60px;
-      background: #050b1a;
-      border: 2px solid #a8d8ff;
-      border-radius: 15px;
-      padding: 20px 25px;
-      display: none;
-      box-shadow: 0 0 20px rgba(168,216,255,0.6);
-    }
-
-    .menu-link {
-      display: block;
-      margin: 12px 0;
-      color: #a8d8ff;
-      text-decoration: none;
-      font-size: 1.3rem;
-    }
-
-    .menu-link:hover {
-      text-decoration: underline;
-    }
-
-    /* MOBILE RESPONSIVE */
-    @media (max-width: 600px) {
-
-      body {
-        height: auto;
-        padding: 20px 0;
-        display: block;
-      }
-
-      .container {
-        transform: scale(1.0);
-        margin-top: 40px;
-      }
-
-      .title {
-        font-size: 2.2rem;
-        margin-bottom: 30px;
-      }
-
-      .robot {
-        margin: 40px auto 0 auto;
-        transform: scale(0.9);
-      }
-
-      .bubble {
-        right: -10px;
+    /* Menu button */
+    .menu-btn {
+        position: fixed;
         top: 20px;
-        width: 260px;
-        font-size: 1rem;
-      }
-
-      .menu-button {
+        right: 20px;
+        background: #7dd6ff;
+        color: #0a1a33;
         width: 90px;
         height: 90px;
-        font-size: 1rem;
-        right: 20px;
-        top: 20px;
-      }
-
-      .menu-panel {
-        right: 20px;
-        top: 130px;
-        padding: 15px;
-      }
-
-      .menu-link {
-        font-size: 1rem;
-      }
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 22px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 0 15px #7dd6ff;
+        transition: 0.3s;
     }
-  </style>
+
+    .menu-btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* Menu panel */
+    .menu-panel {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 300px;
+        height: 100%;
+        background: #11264d;
+        box-shadow: -5px 0 10px #000;
+        padding: 40px 20px;
+        transition: 0.4s;
+        color: white;
+        font-size: 20px;
+    }
+
+    .menu-panel a {
+        display: block;
+        margin: 20px 0;
+        color: #7dd6ff;
+        text-decoration: none;
+        font-size: 22px;
+    }
+
+</style>
 </head>
+
 <body>
 
-  <div class="menu-button" onclick="toggleMenu()">Menu</div>
+<div class="title">Personal Intelligence System</div>
 
-  <div class="menu-panel" id="menu">
-    <a class="menu-link" href="knowledge.html">📖 Knowledge Studio</a>
-    <a class="menu-link" href="luna.html">🤖 Luna AI Assistant</a>
-    <a class="menu-link" href="mind.html">🗺️ Mind Atlas</a>
-    <a class="menu-link" href="life.html">💚 Life Console</a>
-    <a class="menu-link" href="community.html">👫🏻 Community Insights</a>
-  </div>
+<div class="robot-area">
 
-  <div class="container">
-    <div class="title">Personal Intelligence System</div>
-
-    <div class="scene">
-      <div class="robot">
-        <div class="eye left"></div>
-        <div class="eye right"></div>
-        <div class="smile"></div>
-
-        <div class="screwdriver"></div>
-
-        <div class="gear one">⚙️</div>
-        <div class="gear two">⚙️</div>
-        <div class="gear three">⚙️</div>
-      </div>
-
-      <div class="bubble">
-        Hello!! My name is Luna!!<br>
-        Let’s chat, work or study together!! ✨💜
-      </div>
+    <div class="robot">
+        <div class="robot-head">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+        </div>
+        <div class="hand"></div>
     </div>
-  </div>
 
-  <script>
-    function toggleMenu() {
-      const menu = document.getElementById('menu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-  </script>
+    <div class="gears">⚙️⚙️⚙️</div>
+
+    <div class="bubble">
+        Hello!! My name is Luna!!<br>
+        Let's chat, work or study together!! ✨💜
+    </div>
+
+</div>
+
+<div class="menu-btn" onclick="openMenu()">Menu</div>
+
+<div class="menu-panel" id="menuPanel">
+    <a href="knowledge.html">Knowledge Studio 📖</a>
+    <a href="luna.html">Luna AI Assistant 🤖</a>
+    <a href="mind.html">Mind Atlas 🗺️</a>
+    <a href="life.html">Life Console 💚</a>
+    <a href="community.html">Community Insights 👫🏻</a>
+</div>
+
+<script>
+function openMenu() {
+    document.getElementById("menuPanel").style.right = "0";
+}
+</script>
 
 </body>
 </html>
-        
+                    
