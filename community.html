@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Community Insights 👫🏻</title>
+
+<style>
+body {
+  margin:0;
+  font-family:'Georgia', serif;
+  background:#ffd8b3; /* peachy pastel */
+  color:#3f2a24;
+}
+
+/* HEADER */
+.header {
+  display:flex;
+  align-items:center;
+  padding:30px 40px;
+  background:rgba(255, 220, 180, 0.9);
+  box-shadow:0 4px 16px rgba(0,0,0,0.25);
+}
+.back-arrow {
+  font-size:50px;
+  margin-right:25px;
+  cursor:pointer;
+}
+.title {
+  font-size:48px;
+  font-weight:bold;
+}
+
+/* MAIN */
+.main {
+  max-width:1100px;
+  margin:40px auto 60px;
+  padding:0 20px 40px;
+}
+
+/* INFO TEXT */
+.info {
+  font-size:24px;
+  margin-bottom:20px;
+}
+
+/* FACT CARDS */
+.fact-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:20px;
+}
+.fact-card {
+  background:#fff7ae; /* pastel yellow */
+  border-radius:24px;
+  padding:22px 24px;
+  box-shadow:0 0 24px rgba(0,0,0,0.2);
+  font-size:22px;
+}
+.fact-title {
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.fact-body {
+  font-size:22px;
+}
+
+/* FOOTNOTE */
+.footnote {
+  margin-top:30px;
+  font-size:20px;
+  color:#5b3b30;
+  text-align:center;
+}
+</style>
+
+<script>
+function goHome() {
+  window.location.href = "knowledge.html";
+}
+
+/* Helper: get localStorage JSON safely */
+function getJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
+/* Analyze Luna chats */
+function analyzeLuna() {
+  const history = getJSON("luna_history_local_smart", []);
+  const text = history.map(h => h.text.toLowerCase()).join(" ");
+
+  const stats = {
+    mentionsStudy: 0,
+    mentionsFaith: 0,
+    mentionsWork: 0,
+    mentionsSport: 0,
+    totalMessages: history.length
+  };
+
+  if (!text) return stats;
+
+  const countWord = w => (text.match(new RegExp("\\b" + w + "\\b", "g")) || []).length;
+
+  stats.mentionsStudy = countWord("study") + countWord("school") + countWord("homework") + countWord("exam");
+  stats.mentionsFaith = countWord("god") + countWord("jesus") + countWord("church") + countWord("christian");
+  stats.mentionsWork = countWord("business") + countWord("entrepreneur") + countWord("project") + countWord("work");
+  stats.mentionsSport = countWord("sport") + countWord("football") + countWord("basketball") + countWord("gym") + countWord("run");
+
+  return stats;
+}
+
+/* Analyze Mind Atlas diary */
+function analyzeMindAtlas() {
+  const entries = getJSON("mind_atlas_entries", []);
+  const text = entries.map(e => (e.thoughts || "") + " " + (e.selfcare || "")).join(" ").toLowerCase();
+
+  const stats = {
+    entriesCount: entries.length,
+    moodCounts: {},
+    dreamYes: 0,
+    dreamNo: 0,
+    dreamUnknown: 0
+  };
+
+  entries.forEach(e => {
+    const mood = (e.mood || "").toLowerCase();
+    if (mood) stats.moodCounts[mood] = (stats.moodCounts[mood] || 0) + 1;
+
+    const dream = (e.dream || "").toLowerCase();
+    if (dream.includes("yes")) stats.dreamYes++;
+    else if (dream.includes("no")) stats.dreamNo++;
+    else stats.dreamUnknown++;
+  });
+
+  return stats;
+}
+
+/* Analyze Life Console trackers */
+function analyzeLife() {
+  const trackers = getJSON("life_trackers", {
+    water:0, mood:"", habits:"", study:"", health:"", productivity:""
+  });
+
+  const stats = {
+    water: trackers.water || 0,
+    mood: trackers.mood || "",
+    habitsText: trackers.habits || "",
+    studyText: trackers.study || "",
+    healthText: trackers.health || "",
+    prodText: trackers.productivity || ""
+  };
+
+  return stats;
+}
+
+/* Build community-style insights from personal data */
+function buildInsights() {
+  const luna = analyzeLuna();
+  const mind = analyzeMindAtlas();
+  const life = analyzeLife();
+
+  const facts = [];
+
+  // "Community" based on study
+  if (luna.mentionsStudy > 0 || mind.entriesCount > 0 || life.studyText.trim()) {
+    facts.push({
+      title: "Student Community",
+      body: "Based on your chats, diary, and study tracker, you strongly match the student community—learning, exams, and school show up a lot."
+    });
+  }
+
+  // Faith
+  if (luna.mentionsFaith > 0) {
+    facts.push({
+      title: "Faith‑Based Community",
+      body: "You mention faith and spiritual topics in Luna conversations, which places you in a Christian / faith‑based community profile."
+    });
+  }
+
+  // Entrepreneur / project vibes
+  if (luna.mentionsWork > 0 || life.prodText.toLowerCase().includes("project")) {
+    facts.push({
+      title: "Entrepreneur / Project Community",
+      body: "Your focus on work, projects, and productivity suggests an entrepreneurial or project‑driven community vibe."
+    });
+  }
+
+  // Sport
+  if (luna.mentionsSport > 0 || life.healthText.toLowerCase().includes("sport") || life.healthText.toLowerCase().includes("gym")) {
+    facts.push({
+      title: "Sport & Movement Community",
+      body: "You talk about sport, movement, or gym, which aligns you with an active, sport‑loving community."
+    });
+  }
+
+  // Mood patterns
+  if (mind.entriesCount > 0) {
+    const totalMoods = Object.values(mind.moodCounts).reduce((a,b)=>a+b,0);
+    if (totalMoods > 0) {
+      const dominantMood = Object.entries(mind.moodCounts).sort((a,b)=>b[1]-a[1])[0][0];
+      facts.push({
+        title: "Mood Community",
+        body: `Your diary entries show a dominant mood of "${dominantMood}". That mood shapes the emotional community you belong to right now.`
+      });
+    }
+  }
+
+  // Dreams
+  if (mind.entriesCount > 0) {
+    facts.push({
+      title: "Dream Community",
+      body: `Across your diary entries: ${mind.dreamYes} nights with dreams, ${mind.dreamNo} without, and ${mind.dreamUnknown} where you weren’t sure.`
+    });
+  }
+
+  // Water
+  if (life.water > 0) {
+    facts.push({
+      title: "Hydration Community",
+      body: `Your water tracker shows ${life.water} glasses logged. That places you in a “trying to stay hydrated” community—which is a good one.`
+    });
+  }
+
+  // If no data at all
+  if (facts.length === 0) {
+    facts.push({
+      title: "Quiet Community",
+      body: "There isn’t enough data yet to build community insights. As you talk to Luna, write in Mind Atlas, and use Life Console, this page will grow with you."
+    });
+  }
+
+  return facts;
+}
+
+/* Render facts */
+function renderFacts() {
+  const facts = buildInsights();
+  const grid = document.getElementById("factGrid");
+  grid.innerHTML = "";
+
+  facts.forEach(f => {
+    const card = document.createElement("div");
+    card.className = "fact-card";
+
+    const title = document.createElement("div");
+    title.className = "fact-title";
+    title.textContent = f.title;
+
+    const body = document.createElement("div");
+    body.className = "fact-body";
+    body.textContent = f.body;
+
+    card.appendChild(title);
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+}
+
+/* Delete all community-related local data (but not the original sources) */
+function clearCommunityView() {
+  if (!confirm("This will clear the insights view, but not your original data in Luna, Mind Atlas, or Life Console. Continue?")) return;
+  document.getElementById("factGrid").innerHTML = "<p style='font-size:22px;'>Insights cleared. Reload the page to rebuild them from your saved data.</p>";
+}
+
+window.onload = function() {
+  renderFacts();
+};
+</script>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="back-arrow" onclick="goHome()">←</div>
+  <div class="title">Community Insights 👫🏻</div>
+</div>
+
+<div class="main">
+  <div class="info">
+    This page reads what you’ve shared with Luna, written in Mind Atlas, and tracked in Life Console,
+    and turns it into “community‑style” insights—without sending your data anywhere.
+  </div>
+
+  <div id="factGrid" class="fact-grid"></div>
+
+  <div class="footnote">
+    All insights are generated locally from your own data. Nothing leaves your device.  
+    As you keep living, studying, praying, moving, and tracking, this “community” will keep changing with you.
+    <br><br>
+    <button class="danger-btn" onclick="clearCommunityView()">Clear Insights View</button>
+  </div>
+</div>
+
+</body>
+</html>
