@@ -7,8 +7,23 @@
 <style>
 body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
 
-/* Title */
-.title { text-align:center; margin-top:20px; font-size:70px; text-shadow:0 0 30px #f5e9c8; }
+/* Title + back */
+.top-bar {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:30px;
+  margin-top:20px;
+}
+.back-arrow {
+  font-size:50px;
+  cursor:pointer;
+}
+.title {
+  text-align:center;
+  font-size:70px;
+  text-shadow:0 0 30px #f5e9c8;
+}
 
 /* Bookshelves */
 .library {
@@ -68,6 +83,7 @@ input, textarea, select {
 button {
   font-size:24px; padding:12px 20px; margin:10px 10px 10px 0;
   background:#d8c3a5; border:2px solid #b89b7a; border-radius:12px; color:#4a3b2b;
+  cursor:pointer;
 }
 button:hover { background:#e3d2bd; }
 
@@ -82,48 +98,99 @@ button:hover { background:#e3d2bd; }
   border:3px solid #c9b2e8; border-radius:16px;
   padding:20px; min-height:300px; background:#fffdf7;
 }
+#photosGallery img {
+  max-width:120px;
+  max-height:120px;
+  margin:8px;
+  border-radius:10px;
+  border:2px solid #c9b2e8;
+}
 </style>
 
 <script>
 const SERVER_URL = "http://localhost:8000";
 
+/* localStorage keys */
+const LS_KEYS = {
+  quizzes: "ks_quizzes",
+  flashcards: "ks_flashcards",
+  notes: "ks_notes",
+  teacher: "ks_teacher_explanation"
+};
+
 /* Section control */
 function openSection(id){document.getElementById(id).style.display="block";}
 function closeSection(id){document.getElementById(id).style.display="none";}
+function goHome(){window.location.href="index.html";}
 
 /* QUIZ */
 let quizzes=[];
 function addQuiz(){
-  quizzes.push({q:quizQ.value,c:quizC.value});
+  const q = document.getElementById("quizQ").value;
+  const c = document.getElementById("quizC").value;
+  if(!q.trim() || !c.trim()) return;
+  quizzes.push({q,c});
   renderQuiz();
 }
 function renderQuiz(){
+  const quizList = document.getElementById("quizList");
   quizList.innerHTML="";
-  quizzes.forEach((x,i)=>quizList.innerHTML+=
+  quizzes.forEach((x,i)=>{
+    quizList.innerHTML+=
     `<div class='item-row'><b>${x.q}</b><br>
-     <input placeholder='Your answer' onblur='check(${i},this.value)'></div>`);
+     <input placeholder='Your answer' onblur='check(${i},this.value)'></div>`;
+  });
 }
-function check(i,a){ quizResult.textContent = (a.trim()==quizzes[i].c.trim()) ? "Correct!" : "Wrong"; }
-
+function check(i,a){
+  const quizResult = document.getElementById("quizResult");
+  quizResult.textContent = (a.trim()==quizzes[i].c.trim()) ? "Correct!" : "Wrong";
+}
 async function aiQuiz(){
+  const quizResult = document.getElementById("quizResult");
+  const quizTopic = document.getElementById("quizTopic").value;
   quizResult.textContent="AI thinking...";
-  let r=await fetch(SERVER_URL+"/solve-text",{method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({mode:"quiz",content:quizTopic.value})});
-  let data=await r.json();
   try{
+    let r=await fetch(SERVER_URL+"/solve-text",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({mode:"quiz",content:quizTopic})});
+    let data=await r.json();
     JSON.parse(data.result).forEach(q=>quizzes.push({q:q.question,c:q.correct}));
     renderQuiz(); quizResult.textContent="AI quiz added!";
   }catch{quizResult.textContent="AI error";}
 }
+function saveQuizzes(){
+  localStorage.setItem(LS_KEYS.quizzes, JSON.stringify(quizzes));
+  document.getElementById("quizResult").textContent="Quizzes saved.";
+}
+function deleteQuizzes(){
+  if(!confirm("Delete all quizzes?")) return;
+  quizzes=[];
+  localStorage.removeItem(LS_KEYS.quizzes);
+  renderQuiz();
+  document.getElementById("quizResult").textContent="Quizzes deleted.";
+}
+function loadQuizzes(){
+  const raw = localStorage.getItem(LS_KEYS.quizzes);
+  quizzes = raw ? JSON.parse(raw) : [];
+  renderQuiz();
+}
 
 /* FLASHCARDS */
 let cards=[];
-function addCard(){ cards.push({f:flashF.value,b:flashB.value}); renderCards(); }
+function addCard(){
+  const f = document.getElementById("flashF").value;
+  const b = document.getElementById("flashB").value;
+  if(!f.trim() || !b.trim()) return;
+  cards.push({f,b});
+  renderCards();
+}
 function renderCards(){
+  const flashList = document.getElementById("flashList");
   flashList.innerHTML="";
-  cards.forEach((x,i)=>flashList.innerHTML+=
-    `<div class='item-row' onclick='flip(${i})' id='c${i}' data='f'><b>${x.f}</b></div>`);
+  cards.forEach((x,i)=>{
+    flashList.innerHTML+=
+    `<div class='item-row' onclick='flip(${i})' id='c${i}' data='f'><b>${x.f}</b></div>`;
+  });
 }
 function flip(i){
   let el=document.getElementById("c"+i),x=cards[i];
@@ -131,43 +198,172 @@ function flip(i){
   else{el.innerHTML="<b>"+x.f+"</b>"; el.dataset.data="f";}
 }
 async function aiCards(){
-  let r=await fetch(SERVER_URL+"/solve-text",{method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({mode:"flashcards",content:flashF.value})});
-  let data=await r.json();
+  const flashF = document.getElementById("flashF").value;
   try{
+    let r=await fetch(SERVER_URL+"/solve-text",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({mode:"flashcards",content:flashF})});
+    let data=await r.json();
     JSON.parse(data.result).forEach(c=>cards.push({f:c.front,b:c.back}));
     renderCards();
   }catch{alert("AI error");}
 }
+function saveFlashcards(){
+  localStorage.setItem(LS_KEYS.flashcards, JSON.stringify(cards));
+  alert("Flashcards saved.");
+}
+function deleteFlashcards(){
+  if(!confirm("Delete all flashcards?")) return;
+  cards=[];
+  localStorage.removeItem(LS_KEYS.flashcards);
+  renderCards();
+}
+function loadFlashcards(){
+  const raw = localStorage.getItem(LS_KEYS.flashcards);
+  cards = raw ? JSON.parse(raw) : [];
+  renderCards();
+}
 
 /* TEACHER — explains ANYTHING */
 async function teacherExplain(){
-  let file=teacherFile.files[0];
+  const fileInput = document.getElementById("teacherFile");
+  const teacherOut = document.getElementById("teacherOut");
+  let file=fileInput.files[0];
   if(!file){ teacherOut.textContent="Upload something first."; return; }
   teacherOut.textContent="Thinking...";
-  let fd=new FormData(); fd.append("image",file);
-  let r=await fetch(SERVER_URL+"/solve-image",{method:"POST",body:fd});
-  let data=await r.json();
-  teacherOut.textContent=data.result;
+  try{
+    let fd=new FormData(); fd.append("image",file);
+    let r=await fetch(SERVER_URL+"/solve-image",{method:"POST",body:fd});
+    let data=await r.json();
+    teacherOut.textContent=data.result;
+  }catch{
+    teacherOut.textContent="AI error.";
+  }
+}
+function saveTeacher(){
+  const teacherOut = document.getElementById("teacherOut").textContent;
+  localStorage.setItem(LS_KEYS.teacher, teacherOut);
+  alert("Explanation saved.");
+}
+function deleteTeacher(){
+  if(!confirm("Delete saved explanation?")) return;
+  localStorage.removeItem(LS_KEYS.teacher);
+  document.getElementById("teacherOut").textContent="";
+}
+function loadTeacher(){
+  const saved = localStorage.getItem(LS_KEYS.teacher);
+  if(saved) document.getElementById("teacherOut").textContent = saved;
 }
 
 /* NOTES */
 let notes=[],cur=null;
-function newNote(){cur=notes.length; notes.push({c:""}); loadNote(); renderNotes();}
-function loadNote(){noteText.value=notes[cur].c;}
-function saveNote(){notes[cur].c=noteText.value;}
-function renderNotes(){
-  notesList.innerHTML="";
-  notes.forEach((x,i)=>notesList.innerHTML+=
-    `<div class='item-row'><b>Note ${i+1}</b> <button onclick='cur=${i};loadNote()'>Open</button></div>`);
+
+function newNote(){
+  cur = notes.length;
+  notes.push({c:"", photos:[]});
+  renderNotes();
+  loadNote();
 }
+function loadNote(){
+  if(cur===null || !notes[cur]) {
+    document.getElementById("noteText").value="";
+    document.getElementById("photosGallery").innerHTML="";
+    return;
+  }
+  document.getElementById("noteText").value = notes[cur].c;
+  renderPhotos();
+}
+function saveNote(){
+  if(cur===null || !notes[cur]) return;
+  notes[cur].c = document.getElementById("noteText").value;
+  localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
+}
+function renderNotes(){
+  const notesList = document.getElementById("notesList");
+  notesList.innerHTML="";
+  notes.forEach((x,i)=>{
+    notesList.innerHTML+=
+      `<div class='item-row'><b>Note ${i+1}</b> 
+        <button onclick='openNote(${i})'>Open</button>
+        <button onclick='deleteNote(${i})'>Delete</button>
+      </div>`;
+  });
+}
+function openNote(i){
+  cur = i;
+  loadNote();
+}
+function deleteNote(i){
+  if(!confirm("Delete this note?")) return;
+  notes.splice(i,1);
+  if(notes.length===0) cur=null;
+  else if(cur>=notes.length) cur = notes.length-1;
+  renderNotes();
+  loadNote();
+  localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
+}
+function handlePhotoUpload(){
+  if(cur===null || !notes[cur]) {
+    alert("Create or open a note first.");
+    return;
+  }
+  const fileInput = document.getElementById("notePhoto");
+  const file = fileInput.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    notes[cur].photos.push(e.target.result);
+    localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
+    renderPhotos();
+  };
+  reader.readAsDataURL(file);
+}
+function renderPhotos(){
+  const gallery = document.getElementById("photosGallery");
+  gallery.innerHTML="";
+  if(cur===null || !notes[cur] || !notes[cur].photos) return;
+  notes[cur].photos.forEach(src=>{
+    const img = document.createElement("img");
+    img.src = src;
+    gallery.appendChild(img);
+  });
+}
+function saveNotesAll(){
+  localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
+  alert("All notes saved.");
+}
+function deleteNotesAll(){
+  if(!confirm("Delete ALL notes?")) return;
+  notes=[];
+  cur=null;
+  localStorage.removeItem(LS_KEYS.notes);
+  renderNotes();
+  loadNote();
+}
+function loadNotes(){
+  const raw = localStorage.getItem(LS_KEYS.notes);
+  notes = raw ? JSON.parse(raw) : [];
+  if(notes.length>0) cur=0;
+  renderNotes();
+  loadNote();
+}
+
+/* INIT */
+window.onload = function(){
+  loadQuizzes();
+  loadFlashcards();
+  loadNotes();
+  loadTeacher();
+};
 </script>
 </head>
 
 <body>
 
-<div class="title">Knowledge Studio</div>
+<div class="top-bar">
+  <div class="back-arrow" onclick="goHome()">←</div>
+  <div class="title">Knowledge Studio</div>
+</div>
 
 <!-- BOOKSHELVES -->
 <div class="library">
@@ -205,6 +401,8 @@ for(let s=0;s<4;s++){
   <input id="quizQ" placeholder="Question">
   <input id="quizC" placeholder="Correct Answer">
   <button onclick="addQuiz()">Add</button>
+  <button onclick="saveQuizzes()">Save Quizzes</button>
+  <button onclick="deleteQuizzes()">Delete Quizzes</button>
   <div id="quizList"></div>
   <div id="quizResult"></div>
 </div>
@@ -217,6 +415,8 @@ for(let s=0;s<4;s++){
   <input id="flashB" placeholder="Back">
   <button onclick="addCard()">Add</button>
   <button onclick="aiCards()">AI Generate</button>
+  <button onclick="saveFlashcards()">Save Flashcards</button>
+  <button onclick="deleteFlashcards()">Delete Flashcards</button>
   <div id="flashList"></div>
 </div>
 
@@ -226,6 +426,8 @@ for(let s=0;s<4;s++){
   <h2>Virtual Teacher</h2>
   <input type="file" id="teacherFile">
   <button onclick="teacherExplain()">Explain</button>
+  <button onclick="saveTeacher()">Save Explanation</button>
+  <button onclick="deleteTeacher()">Delete Explanation</button>
   <p id="teacherOut" style="white-space:pre-wrap;"></p>
 </div>
 
@@ -234,12 +436,19 @@ for(let s=0;s<4;s++){
   <div class="close-btn" onclick="closeSection('notesSection')">✖</div>
   <h2>Notes</h2>
   <button onclick="newNote()">New Note</button>
+  <button onclick="saveNotesAll()">Save All Notes</button>
+  <button onclick="deleteNotesAll()">Delete All Notes</button>
   <div id="notesList"></div>
   <div class="note-paper">
     <textarea id="noteText" oninput="saveNote()" style="width:100%;height:250px;"></textarea>
+    <hr>
+    <label>Photos for this note (gallery at bottom):</label>
+    <input type="file" id="notePhoto" accept="image/*">
+    <button onclick="handlePhotoUpload()">Add Photo</button>
+    <div id="photosGallery"></div>
   </div>
 </div>
 
 </body>
 </html>
-  
+    
