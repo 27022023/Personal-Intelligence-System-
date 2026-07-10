@@ -111,18 +111,17 @@ button {
 </style>
 
 <script>
-const SERVER_URL = "http://localhost:8000";
 let history = [];
 
 /* Load history */
 function loadHistory() {
-  const raw = localStorage.getItem("luna_history");
+  const raw = localStorage.getItem("luna_history_level3");
   history = raw ? JSON.parse(raw) : [];
 }
 
 /* Save history */
 function saveHistory() {
-  localStorage.setItem("luna_history", JSON.stringify(history));
+  localStorage.setItem("luna_history_level3", JSON.stringify(history));
 }
 
 /* Render messages */
@@ -138,8 +137,140 @@ function renderMessages() {
   box.scrollTop = box.scrollHeight;
 }
 
+/* Utility: simple math evaluator (very basic) */
+function tryMath(text) {
+  // Only allow digits, + - * / ( ) and spaces
+  if (!/^[0-9+\-*/().\s]+$/.test(text)) return null;
+  try {
+    // VERY basic, not safe for real use, but fine for local toy
+    // eslint-disable-next-line no-eval
+    const result = eval(text);
+    if (isNaN(result)) return null;
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+/* Break text into sentences */
+function splitSentences(text) {
+  return text
+    .split(/[\.\!\?]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+}
+
+/* Summarize text */
+function summarize(text) {
+  const sentences = splitSentences(text);
+  if (sentences.length === 0) return "There isn’t much to summarize here.";
+  if (sentences.length === 1) return "In short: " + sentences[0];
+
+  const first = sentences[0];
+  const last = sentences[sentences.length - 1];
+  return "In short: " + first + " ... " + last;
+}
+
+/* Explain text */
+function explain(text) {
+  return "Let me explain that in simpler words:\n\n" +
+         text +
+         "\n\nBasically, it means:\n- There is a main idea.\n- There are details that support it.\n- If you want, I can turn this into steps or a study guide.";
+}
+
+/* Essay generator */
+function essay(text) {
+  return "Here’s a structured mini‑essay about: " + text + "\n\n" +
+         "Introduction:\n" +
+         "This topic matters because it affects how we think, learn, or live every day.\n\n" +
+         "Main Idea:\n" +
+         "At its core, \"" + text + "\" is about understanding the key principles and how they connect.\n\n" +
+         "Details:\n" +
+         "- First, there is usually a definition or core concept.\n" +
+         "- Second, there are examples that show how it works in real life.\n" +
+         "- Third, there may be challenges, exceptions, or things to be careful about.\n\n" +
+         "Conclusion:\n" +
+         "If you remember the main idea, a few strong examples, and why it matters, you’ll have a solid grasp of \"" + text + "\".";
+}
+
+/* Emotional response */
+function emotional(text) {
+  return "You sound like you’re carrying a lot.\n\n" +
+         "Whatever it is, it’s valid. You’re allowed to feel exactly how you feel.\n" +
+         "If you want, you can tell me more, and I’ll help you break it into smaller, gentler pieces.";
+}
+
+/* Study helper */
+function study(text) {
+  return "Let’s turn this into a study plan:\n\n" +
+         "1. Write the main topic at the top: \"" + text + "\".\n" +
+         "2. Under it, list 3–5 subtopics you need to understand.\n" +
+         "3. For each subtopic, find one definition and one example.\n" +
+         "4. Turn each subtopic into a question you can answer.\n" +
+         "5. Review your questions tomorrow and see which ones feel harder.\n\n" +
+         "If you paste your notes here, I can help you turn them into questions.";
+}
+
+/* Ultra‑smart simulated brain */
+function lunaReply(text) {
+  const t = text.toLowerCase();
+
+  // Greetings
+  if (t.includes("hello") || t.includes("hi") || t.includes("hey")) {
+    return "Hi, love. I’m Luna. You can throw anything at me—thoughts, problems, feelings—and I’ll walk with you through it.";
+  }
+
+  // Emotional
+  if (t.includes("sad") || t.includes("tired") || t.includes("overwhelmed") || t.includes("anxious")) {
+    return emotional(text);
+  }
+
+  // Study / school
+  if (t.includes("study") || t.includes("school") || t.includes("homework") || t.includes("exam") || t.includes("test")) {
+    return study(text);
+  }
+
+  // Math detection
+  const mathResult = tryMath(text);
+  if (mathResult !== null) {
+    return "Let’s do this step by step.\n\n" +
+           "You gave me: " + text + "\n" +
+           "A simple evaluation of that expression is: " + mathResult + "\n\n" +
+           "If you want, you can ask me to explain how we got there, and I’ll break it into smaller steps.";
+  }
+
+  // Summarize
+  if (t.includes("summarize") || t.includes("summary")) {
+    const cleaned = text.replace(/summarize|summary/gi, "").trim();
+    return summarize(cleaned || text);
+  }
+
+  // Explain
+  if (t.includes("explain")) {
+    const cleaned = text.replace(/explain/gi, "").trim();
+    return explain(cleaned || text);
+  }
+
+  // Essay
+  if (t.includes("essay") || t.includes("paragraph")) {
+    const cleaned = text.replace(/essay|paragraph/gi, "").trim();
+    return essay(cleaned || text);
+  }
+
+  // Default: thoughtful reflection
+  return "Okay, here’s how I’m reading what you said:\n\n" +
+         text +
+         "\n\nIf you want, you can ask me to:\n" +
+         "- explain this more simply\n" +
+         "- summarize it\n" +
+         "- turn it into an essay\n" +
+         "- turn it into a study plan\n" +
+         "- or even treat it like a math expression.\n\n" +
+         "You don’t have to be perfect here. Just type like you think, and I’ll adapt.";
+}
+
 /* Send message */
-async function sendMessage() {
+function sendMessage() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
   if (!text) return;
@@ -149,26 +280,10 @@ async function sendMessage() {
   renderMessages();
   input.value = "";
 
-  try {
-    const res = await fetch(SERVER_URL + "/solve-text", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mode: "chat", content: text })
-    });
-    const data = await res.json();
-    const reply = data.result || "(No reply)";
-
-    history.push({ role: "luna", text: reply });
-    saveHistory();
-    renderMessages();
-  } catch (e) {
-    history.push({
-      role: "luna",
-      text: "I couldn’t reach the server. Make sure your server is running."
-    });
-    saveHistory();
-    renderMessages();
-  }
+  const reply = lunaReply(text);
+  history.push({ role: "luna", text: reply });
+  saveHistory();
+  renderMessages();
 }
 
 /* Delete all */
@@ -204,13 +319,13 @@ window.onload = function() {
 </div>
 
 <div class="saved-label">
-  All conversations with Luna are saved automatically.
+  Luna Level 3: ultra‑smart local simulation. All conversations are saved in your browser.
 </div>
 
 <div class="chat-container">
   <div id="messages" class="messages"></div>
   <div class="input-area">
-    <input id="userInput" placeholder="Talk to Luna..." onkeydown="handleKey(event)">
+    <input id="userInput" placeholder="Talk to Luna about anything..." onkeydown="handleKey(event)">
     <button class="send-btn" onclick="sendMessage()">Send</button>
     <button class="delete-btn" onclick="deleteAll()">Delete All</button>
   </div>
@@ -218,4 +333,5 @@ window.onload = function() {
 
 </body>
 </html>
-    
+  
+  
