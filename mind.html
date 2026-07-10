@@ -7,9 +7,10 @@
 <style>
 body {
   margin:0;
-  font-family:Georgia, serif;
-  background:#f7c9d8; /* pastel pink */
+  font-family:'Georgia', serif;
+  background:#ffd9e8; /* pastel pink */
   color:#4a3b47;
+  overflow-x:hidden;
 }
 
 /* Notebook lines */
@@ -18,55 +19,86 @@ body {
   inset:0;
   background: repeating-linear-gradient(
     to bottom,
-    #f7c9d8,
-    #f7c9d8 28px,
-    #f3b9cc 29px
+    #ffd9e8,
+    #ffd9e8 40px,
+    #f7c9d8 41px
   );
   z-index:-1;
+}
+
+/* Cute stickers */
+.sticker {
+  position:absolute;
+  width:120px;
+  height:120px;
+  opacity:0.8;
+  transform:rotate(-10deg);
+  animation:float 4s ease-in-out infinite;
+}
+.sticker2 {
+  position:absolute;
+  width:140px;
+  height:140px;
+  opacity:0.8;
+  right:40px;
+  top:180px;
+  transform:rotate(8deg);
+  animation:float2 5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform:translateY(0px) rotate(-10deg); }
+  50% { transform:translateY(-12px) rotate(-8deg); }
+  100% { transform:translateY(0px) rotate(-10deg); }
+}
+@keyframes float2 {
+  0% { transform:translateY(0px) rotate(8deg); }
+  50% { transform:translateY(10px) rotate(10deg); }
+  100% { transform:translateY(0px) rotate(8deg); }
 }
 
 /* HEADER */
 .header {
   display:flex;
   align-items:center;
-  padding:25px 30px;
-  background:#f3b9cc;
+  padding:35px 40px;
+  background:#f7c9d8;
   box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 .back-arrow {
-  font-size:50px;
-  margin-right:25px;
+  font-size:60px;
+  margin-right:35px;
   cursor:pointer;
   color:#4a3b47;
 }
 .title {
-  font-size:48px;
+  font-size:60px;
   font-weight:bold;
 }
 
 /* LOCK SCREEN */
 .lock-screen {
-  max-width:600px;
-  margin:120px auto;
+  max-width:700px;
+  margin:160px auto;
   background:white;
-  padding:40px;
-  border-radius:30px;
-  box-shadow:0 0 40px rgba(0,0,0,0.25);
+  padding:60px;
+  border-radius:40px;
+  box-shadow:0 0 50px rgba(0,0,0,0.25);
   text-align:center;
 }
 .lock-screen input {
-  width:80%;
-  font-size:32px;
-  padding:20px;
-  border-radius:20px;
-  border:3px solid #f3b9cc;
-  margin-top:20px;
+  width:85%;
+  font-size:40px;
+  padding:25px;
+  border-radius:30px;
+  border:4px solid #f3b9cc;
+  margin-top:30px;
 }
 .lock-screen button {
-  margin-top:30px;
-  font-size:32px;
-  padding:20px 40px;
-  border-radius:20px;
+  margin-top:40px;
+  font-size:40px;
+  padding:25px 50px;
+  border-radius:30px;
   border:none;
   background:#f3b9cc;
   color:#4a3b47;
@@ -75,48 +107,49 @@ body {
 
 /* MAIN CONTAINER */
 .container {
-  max-width:900px;
-  margin:40px auto;
+  max-width:1100px;
+  margin:60px auto;
   background:white;
-  padding:40px;
-  border-radius:30px;
-  box-shadow:0 0 40px rgba(0,0,0,0.25);
+  padding:60px;
+  border-radius:40px;
+  box-shadow:0 0 50px rgba(0,0,0,0.25);
 }
 
 /* SECTION LABEL */
 .section-label {
-  font-size:32px;
-  margin-bottom:20px;
+  font-size:48px;
+  margin-bottom:40px;
   font-weight:bold;
   text-align:center;
+  color:#4a3b47;
 }
 
 /* INPUTS */
 label {
-  font-size:26px;
-  margin-top:20px;
+  font-size:36px;
+  margin-top:40px;
   display:block;
 }
 input, textarea, select {
   width:100%;
-  font-size:26px;
-  padding:16px;
-  border-radius:20px;
-  border:3px solid #f3b9cc;
+  font-size:32px;
+  padding:25px;
+  border-radius:30px;
+  border:4px solid #f3b9cc;
   background:#ffe6f0;
   color:#4a3b47;
 }
 textarea {
-  min-height:160px;
+  min-height:200px;
   resize:vertical;
 }
 
 /* BUTTONS */
 button {
-  margin-top:30px;
-  font-size:28px;
-  padding:18px 30px;
-  border-radius:20px;
+  margin-top:40px;
+  font-size:36px;
+  padding:25px 40px;
+  border-radius:30px;
   border:none;
   cursor:pointer;
 }
@@ -129,28 +162,39 @@ button {
   color:#3a1f24;
 }
 
+/* DAILY QUOTE */
+.quote-box {
+  background:#ffe6f0;
+  padding:30px;
+  border-radius:30px;
+  font-size:32px;
+  margin-bottom:40px;
+  box-shadow:0 0 20px rgba(0,0,0,0.15);
+  text-align:center;
+}
+
 /* SAVED ENTRIES */
 .entry {
   background:#ffe6f0;
-  padding:20px;
-  border-radius:20px;
-  margin-top:20px;
+  padding:30px;
+  border-radius:30px;
+  margin-top:40px;
   box-shadow:0 0 20px rgba(0,0,0,0.15);
 }
 .entry-title {
-  font-size:28px;
+  font-size:40px;
   font-weight:bold;
 }
 .entry-body {
-  font-size:22px;
-  margin-top:10px;
+  font-size:30px;
+  margin-top:20px;
   white-space:pre-wrap;
 }
 .entry button {
-  margin-top:10px;
-  font-size:20px;
-  padding:10px 20px;
-  border-radius:16px;
+  margin-top:20px;
+  font-size:28px;
+  padding:15px 30px;
+  border-radius:20px;
   background:#ffb7c3;
   color:#3a1f24;
 }
@@ -160,19 +204,30 @@ button {
 let unlocked = false;
 let atlas = [];
 
+/* Cute daily quotes */
+const quotes = [
+  "You’re growing quietly, beautifully, even when you don’t notice.",
+  "Soft hearts are strong hearts.",
+  "You deserve gentleness today.",
+  "Your feelings matter. All of them.",
+  "You’re allowed to rest without earning it.",
+  "You are becoming someone you can be proud of.",
+  "Small steps count too.",
+  "You’re doing better than you think."
+];
+
 /* Load */
 function loadAtlas() {
   const raw = localStorage.getItem("mind_atlas_entries");
   atlas = raw ? JSON.parse(raw) : [];
 
   const code = localStorage.getItem("mind_atlas_code");
-  if (!code) {
-    document.getElementById("lock").style.display = "block";
-    document.getElementById("main").style.display = "none";
-  } else {
-    document.getElementById("lock").style.display = "block";
-    document.getElementById("main").style.display = "none";
-  }
+  document.getElementById("lock").style.display = "block";
+  document.getElementById("main").style.display = "none";
+
+  // Daily quote
+  const q = quotes[Math.floor(Math.random() * quotes.length)];
+  document.getElementById("quote").textContent = q;
 }
 
 /* Save */
@@ -186,17 +241,11 @@ function unlockAtlas() {
   let savedCode = localStorage.getItem("mind_atlas_code");
 
   if (!savedCode) {
-    // First time: set code
     localStorage.setItem("mind_atlas_code", inputCode);
     unlocked = true;
   } else {
-    // Check code
-    if (inputCode === savedCode) {
-      unlocked = true;
-    } else {
-      alert("Wrong code.");
-      return;
-    }
+    if (inputCode === savedCode) unlocked = true;
+    else { alert("Wrong code."); return; }
   }
 
   document.getElementById("lock").style.display = "none";
@@ -250,7 +299,7 @@ function renderAtlas() {
   box.innerHTML = "";
 
   if (atlas.length === 0) {
-    box.innerHTML = "<p style='font-size:22px;'>No entries yet.</p>";
+    box.innerHTML = "<p style='font-size:32px;'>No entries yet.</p>";
     return;
   }
 
@@ -287,10 +336,14 @@ window.onload = loadAtlas;
 
 <div class="notebook"></div>
 
+<!-- Stickers -->
+<div class="sticker" style="left:40px; top:200px; background:url('https://i.imgur.com/1Q9Zq7k.png') no-repeat center/cover;"></div>
+<div class="sticker2" style="background:url('https://i.imgur.com/7mYpX6F.png') no-repeat center/cover;"></div>
+
 <!-- LOCK SCREEN -->
 <div id="lock" class="lock-screen" style="display:none;">
-  <h1>Mind Atlas 🗺️✨</h1>
-  <p style="font-size:26px;">Enter your secret code to unlock your diary.</p>
+  <h1 style="font-size:60px;">Mind Atlas 🗺️✨</h1>
+  <p style="font-size:36px;">Enter your secret code to unlock your diary.</p>
   <input id="unlockCode" placeholder="Your code...">
   <button onclick="unlockAtlas()">Unlock</button>
 </div>
@@ -304,6 +357,8 @@ window.onload = loadAtlas;
   </div>
 
   <div class="container">
+    <div class="quote-box" id="quote"></div>
+
     <div class="section-label">Write about your day, thoughts, feelings...</div>
 
     <label>Mood</label>
@@ -343,3 +398,5 @@ window.onload = loadAtlas;
 
 </body>
 </html>
+
+
