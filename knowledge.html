@@ -87,7 +87,7 @@ button {
 }
 button:hover { background:#e3d2bd; }
 
-/* Lavender Question Boxes */
+/* Lavender Boxes */
 .item-row {
   background:#e6d6f5; border:2px solid #c9b2e8;
   padding:20px; margin:15px 0; border-radius:16px; font-size:22px;
@@ -110,7 +110,6 @@ button:hover { background:#e3d2bd; }
 <script>
 const SERVER_URL = "http://localhost:8000";
 
-/* localStorage keys */
 const LS_KEYS = {
   quizzes: "ks_quizzes",
   flashcards: "ks_flashcards",
@@ -118,7 +117,7 @@ const LS_KEYS = {
   teacher: "ks_teacher_explanation"
 };
 
-/* Section control */
+/* Section + home */
 function openSection(id){document.getElementById(id).style.display="block";}
 function closeSection(id){document.getElementById(id).style.display="none";}
 function goHome(){window.location.href="index.html";}
@@ -224,7 +223,7 @@ function loadFlashcards(){
   renderCards();
 }
 
-/* TEACHER — explains ANYTHING */
+/* TEACHER */
 async function teacherExplain(){
   const fileInput = document.getElementById("teacherFile");
   const teacherOut = document.getElementById("teacherOut");
@@ -260,30 +259,40 @@ let notes=[],cur=null;
 
 function newNote(){
   cur = notes.length;
-  notes.push({c:"", photos:[]});
+  notes.push({title:"Untitled note", c:"", photos:[]});
   renderNotes();
   loadNote();
 }
 function loadNote(){
+  const titleInput = document.getElementById("noteTitle");
+  const textArea = document.getElementById("noteText");
+  const gallery = document.getElementById("photosGallery");
+
   if(cur===null || !notes[cur]) {
-    document.getElementById("noteText").value="";
-    document.getElementById("photosGallery").innerHTML="";
+    titleInput.value="";
+    textArea.value="";
+    gallery.innerHTML="";
     return;
   }
-  document.getElementById("noteText").value = notes[cur].c;
+  titleInput.value = notes[cur].title || "";
+  textArea.value = notes[cur].c || "";
   renderPhotos();
 }
 function saveNote(){
   if(cur===null || !notes[cur]) return;
+  notes[cur].title = document.getElementById("noteTitle").value;
   notes[cur].c = document.getElementById("noteText").value;
   localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
+  renderNotes();
 }
 function renderNotes(){
   const notesList = document.getElementById("notesList");
   notesList.innerHTML="";
   notes.forEach((x,i)=>{
+    const displayTitle = x.title && x.title.trim() ? x.title : `Note ${i+1}`;
     notesList.innerHTML+=
-      `<div class='item-row'><b>Note ${i+1}</b> 
+      `<div class='item-row'>
+        <b>${displayTitle}</b> 
         <button onclick='openNote(${i})'>Open</button>
         <button onclick='deleteNote(${i})'>Delete</button>
       </div>`;
@@ -292,15 +301,16 @@ function renderNotes(){
 function openNote(i){
   cur = i;
   loadNote();
+  openSection('notesSection');
 }
 function deleteNote(i){
   if(!confirm("Delete this note?")) return;
   notes.splice(i,1);
   if(notes.length===0) cur=null;
   else if(cur>=notes.length) cur = notes.length-1;
+  localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
   renderNotes();
   loadNote();
-  localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
 }
 function handlePhotoUpload(){
   if(cur===null || !notes[cur]) {
@@ -365,7 +375,6 @@ window.onload = function(){
   <div class="title">Knowledge Studio</div>
 </div>
 
-<!-- BOOKSHELVES -->
 <div class="library">
 <script>
 const colors=["red","blue","green","yellow","purple"];
@@ -383,7 +392,6 @@ for(let s=0;s<4;s++){
 
 <div class="desk"></div>
 
-<!-- MAIN BUTTONS -->
 <div class="notes">
   <div class="note" onclick="openSection('quizSection')">Quiz</div>
   <div class="note" onclick="openSection('flashSection')">Flashcards</div>
@@ -440,6 +448,7 @@ for(let s=0;s<4;s++){
   <button onclick="deleteNotesAll()">Delete All Notes</button>
   <div id="notesList"></div>
   <div class="note-paper">
+    <input id="noteTitle" placeholder="Note title..." oninput="saveNote()">
     <textarea id="noteText" oninput="saveNote()" style="width:100%;height:250px;"></textarea>
     <hr>
     <label>Photos for this note (gallery at bottom):</label>
@@ -451,4 +460,4 @@ for(let s=0;s<4;s++){
 
 </body>
 </html>
-    
+        
