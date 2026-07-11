@@ -1,94 +1,684 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Knowledge Studio 📖</title><style>
-body{margin:0;font-family:Georgia;background:#15100b;color:#f5e9c8;}
-.top-bar{display:flex;align-items:center;justify-content:center;gap:30px;margin-top:20px;z-index:9999;position:relative;}
-.back-arrow{font-size:50px;cursor:pointer;}
-.title{text-align:center;font-size:70px;text-shadow:0 0 30px #f5e9c8;}
-.library{position:fixed;top:140px;left:0;width:100%;height:calc(100% - 140px);background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);z-index:1;}
-.shelf{width:90%;height:200px;background:#3b2a15;margin:30px auto;border-radius:12px;box-shadow:inset 0 0 25px rgba(0,0,0,0.8),0 12px 25px rgba(0,0,0,0.7);display:flex;align-items:flex-end;padding:22px 32px;gap:18px;}
-.book{width:52px;height:150px;border-radius:4px;border:2px solid rgba(0,0,0,0.6);box-shadow:inset 0 0 12px rgba(0,0,0,0.5);}
-.tall{height:170px;}
-.short{height:120px;}
-.red{background:#7b2e2e;}
-.blue{background:#2e4a7b;}
-.green{background:#2e7b4a;}
-.yellow{background:#b89b3b;}
-.purple{background:#5b2e7b;}
-.desk{width:100%;height:340px;background:#3f2b17;position:absolute;bottom:0;z-index:2;}
-.notes{position:absolute;bottom:40px;width:100%;display:flex;justify-content:center;gap:40px;z-index:9999;}
-.note{width:280px;height:280px;background:#d8c3a5;border:3px solid #b89b7a;border-radius:16px;box-shadow:0 0 25px rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:bold;cursor:pointer;color:#4a3b2b;transition:0.2s;text-align:center;}
-.note:hover{transform:scale(1.1);background:#e3d2bd;}
-.section{display:none;position:absolute;top:160px;left:50%;transform:translateX(-50%);width:85%;max-height:60%;overflow-y:auto;background:white;color:#2b1f10;padding:30px;border-radius:20px;box-shadow:0 0 30px black;font-size:24px;z-index:9999;}
-.close-btn{float:right;font-size:40px;cursor:pointer;}
-input,textarea,select{width:100%;font-size:26px;padding:18px;margin:14px 0;border-radius:14px;border:2px solid #c9b2e8;background:#f7f2ff;}
-button{font-size:24px;padding:12px 20px;margin:10px 10px 10px 0;background:#d8c3a5;border:2px solid #b89b7a;border-radius:12px;color:#4a3b2b;cursor:pointer;}
-button:hover{background:#e3d2bd;}
-.item-row{background:#e6d6f5;border:2px solid #c9b2e8;padding:26px;margin:18px 0;border-radius:18px;font-size:24px;}
-.notebook{width:90%;max-width:900px;margin:40px auto;background:white;border-radius:12px;padding:20px;box-shadow:0 0 20px rgba(0,0,0,0.4);background-image:repeating-linear-gradient(to bottom,white 0px,white 28px,#e8e8e8 29px);}
-#note{width:100%;min-height:70vh;font-size:22px;line-height:29px;outline:none;border:none;background:transparent;color:#3b2f2f;}
-.tools{display:flex;gap:15px;margin:20px auto;justify-content:center;}
-.hl-btn{padding:10px 20px;font-size:20px;border:none;border-radius:10px;cursor:pointer;color:white;}
-.yellow{background:#f7d96f;}
-.pink{background:#f7a6c7;}
-.green{background:#9adf9a;}
-.blue{background:#9ac7df;}
-.clear{background:#b0a8a8;}
-.pages{display:flex;justify-content:center;gap:10px;margin-bottom:20px;}
-.page-btn{background:#d8c3a5;border:2px solid #b89b7a;color:#4a3b2b;padding:10px 15px;font-size:20px;border-radius:10px;cursor:pointer;}
-.page-btn:hover{background:#e3d2bd;}
-.active{background:#b89b7a!important;color:white!important;}
-.quiz-answer{display:inline-block;margin:6px 8px 6px 0;padding:8px 14px;border-radius:10px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;}
-.quiz-answer.correct{background:#9adf9a;}
-.quiz-answer.wrong{background:#f7a6c7;}
-.match-container{display:flex;gap:40px;margin-top:20px;}
-.match-column{flex:1;}
-.match-item{padding:10px 14px;margin:6px 0;border-radius:10px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;}
-.match-item.selected{background:#9ac7df;}
-.match-item.matched{background:#9adf9a;}
-</style><script>
-function openSection(id){document.querySelectorAll('.section').forEach(s=>s.style.display='none');document.getElementById(id).style.display='block';}
-function closeSection(id){document.getElementById(id).style.display='none';}
-function goHome(){window.location.href="index.html";}
-let currentQuiz={mcq:[],tf:[],matchA:[],matchB:[],pairs:[]},matchSelection={a:null,b:null};
-function classifyTopic(topic){const t=topic.toLowerCase();if(t.match(/photosynthesis|cell|chlorophyll|plant/))return"biology";if(t.match(/fraction|algebra|equation|geometry|angle|triangle|integral|derivative/))return"math";if(t.match(/world war|revolution|empire|ancient|medieval|history/))return"history";if(t.match(/atom|force|energy|velocity|gravity|motion|physics/))return"physics";if(t.match(/climate|ecosystem|environment|pollution|sustainability/))return"environment";return"general";}
-function generateQuiz(){const topic=document.getElementById("quizTopic").value.trim(),out=document.getElementById("quizList"),result=document.getElementById("quizResult");if(!topic){out.innerHTML="";result.textContent="Type a topic first.";return;}const domain=classifyTopic(topic);let mcq=[],tf=[],matchA=[],matchB=[];if(domain==="biology"){mcq=[{q:`What is the main purpose of ${topic}?`,options:["To convert light energy into chemical energy (glucose).","To break down glucose into ATP in mitochondria.","To transport water through xylem.","To store genetic information."],correct:0},{q:`Where does ${topic} mainly occur in plants?`,options:["In the chloroplasts of leaf cells.","In the nucleus of root cells.","In the cell membrane of stem cells.","In the vacuoles of flower cells."],correct:0}];tf=[{q:`${topic} requires light, water, and carbon dioxide.`,correct:true},{q:`Oxygen is the main product of ${topic} and no glucose is formed.`,correct:false}];matchA=["Chlorophyll","Chloroplast","Carbon dioxide","Glucose"];matchB=["Pigment that absorbs light energy.","Organelle where photosynthesis happens.","Gas taken in from the air for photosynthesis.","Sugar produced as chemical energy."];}else if(domain==="math"){mcq=[{q:`What does ${topic} usually help you do?`,options:["Represent and solve numerical relationships or problems.","Describe historical events.","Explain chemical reactions.","Measure only physical forces."],correct:0},{q:`Which statement about ${topic} is most accurate?`,options:["It often involves symbols and rules to manipulate them.","It is only about drawing shapes.","It never uses numbers.","It is only used in art."],correct:0}];tf=[{q:`${topic} can be used to model real-world situations.`,correct:true},{q:`${topic} is never connected to graphs or visual representations.`,correct:false}];matchA=["Variable","Equation","Fraction","Function"];matchB=["Symbol that can represent different values.","Statement showing two expressions are equal.","Number written as a ratio of two integers.","Rule that assigns each input exactly one output."];}else if(domain==="history"){mcq=[{q:`What is a key idea related to ${topic}?`,options:["It changed political or social structures significantly.","It only affected one single person.","It had no impact on any country.","It was purely fictional."],correct:0},{q:`How is ${topic} usually studied?`,options:["By looking at causes, events, and consequences.","By ignoring primary sources.","By focusing only on myths.","By avoiding timelines."],correct:0}];tf=[{q:`${topic} is connected to specific dates and places.`,correct:true},{q:`Historians never disagree about interpretations of ${topic}.`,correct:false}];matchA=["Cause","Event","Consequence","Primary source"];matchB=["Reason why something happened.","What actually took place.","Result or impact after the event.","Original document or record from the time."];}else if(domain==="physics"){mcq=[{q:`What does ${topic} mainly deal with?`,options:["How matter and energy behave.","Only how plants grow.","Only how languages change.","Only how computers store data."],correct:0},{q:`Which statement about ${topic} is most accurate?`,options:["It often uses formulas to describe motion or forces.","It never uses numbers.","It ignores experiments.","It is purely about art."],correct:0}];tf=[{q:`${topic} can be tested with experiments and measurements.`,correct:true},{q:`${topic} never uses units like meters or seconds.`,correct:false}];matchA=["Force","Velocity","Acceleration","Energy"];matchB=["Push or pull acting on an object.","Speed with a direction.","Rate of change of velocity.","Capacity to do work."];}else if(domain==="environment"){mcq=[{q:`What is a central idea of ${topic}?`,options:["How living things and their surroundings interact.","Only how numbers are added.","Only how stories are written.","Only how machines are built."],correct:0},{q:`Why is ${topic} important today?`,options:["It helps us understand and protect ecosystems.","It has no impact on real life.","It is only used in games.","It is only about ancient myths."],correct:0}];tf=[{q:`${topic} can be affected by human activities.`,correct:true},{q:`Pollution never changes anything related to ${topic}.`,correct:false}];matchA=["Ecosystem","Climate change","Pollution","Sustainability"];matchB=["Community of living things and their environment.","Long-term change in temperature and weather patterns.","Introduction of harmful substances into environment.","Using resources so they last for future generations."];}else{mcq=[{q:`Which statement best describes ${topic}?`,options:[`${topic} is a concept with specific meaning in its field.`,`${topic} is random and has no definition.`,`${topic} is only used in jokes.`,`${topic} is a secret code with no rules.`],correct:0},{q:`How should you study ${topic}?`,options:["By learning its definition, examples, and how it is used.","By memorizing it without understanding.","By ignoring any examples.","By never asking questions about it."],correct:0}];tf=[{q:`${topic} has a definition you can look up and understand.`,correct:true},{q:`There is no way to find information about ${topic}.`,correct:false}];matchA=[`${topic} – definition`,`${topic} – example`,`${topic} – key idea`];matchB=[`Clear statement of what ${topic} means.`,`A situation where ${topic} appears in real life.`,`The most important thing to remember about ${topic}.`];}
-currentQuiz.mcq=mcq;currentQuiz.tf=tf;currentQuiz.matchA=matchA;currentQuiz.matchB=matchB;currentQuiz.pairs=matchA.map((_,i)=>i);renderQuiz();result.textContent="Quiz generated!";}
-function renderQuiz(){const out=document.getElementById("quizList");out.innerHTML="";currentQuiz.mcq.forEach((qObj,qi)=>{let html=`<div class="item-row"><b>Q: ${qObj.q}</b><br>`;qObj.options.forEach((opt,oi)=>{html+=`<span class="quiz-answer" onclick="checkMCQ(${qi},${oi},this)">${opt}</span>`;});html+="</div>";out.innerHTML+=html;});currentQuiz.tf.forEach((qObj,qi)=>{let html=`<div class="item-row"><b>Q: ${qObj.q}</b><br>`;html+=`<span class="quiz-answer" onclick="checkTF(${qi},true,this)">True</span>`;html+=`<span class="quiz-answer" onclick="checkTF(${qi},false,this)">False</span>`;html+="</div>";out.innerHTML+=html;});let html=`<div class="item-row"><b>Match the items:</b><div class="match-container"><div class="match-column"><b>Pile A</b>`;currentQuiz.matchA.forEach((item,i)=>{html+=`<div class="match-item" onclick="selectMatch('a',${i},this)" data-index="${i}">${item}</div>`;});html+=`</div><div class="match-column"><b>Pile B</b>`;currentQuiz.matchB.forEach((item,i)=>{html+=`<div class="match-item" onclick="selectMatch('b',${i},this)" data-index="${i}">${item}</div>`;});html+="</div></div></div>";out.innerHTML+=html;matchSelection={a:null,b:null};}
-function checkMCQ(qIndex,optIndex,el){const q=currentQuiz.mcq[qIndex],correct=(optIndex===q.correct),parent=el.parentElement;parent.querySelectorAll('.quiz-answer').forEach(a=>{a.classList.remove('correct','wrong');});el.classList.add(correct?'correct':'wrong');}
-function checkTF(qIndex,answer,el){const q=currentQuiz.tf[qIndex],correct=(answer===q.correct),parent=el.parentElement;parent.querySelectorAll('.quiz-answer').forEach(a=>{a.classList.remove('correct','wrong');});el.classList.add(correct?'correct':'wrong');}
-function selectMatch(side,index,el){if(el.classList.contains('matched'))return;const container=el.parentElement;container.querySelectorAll('.match-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected');matchSelection[side]={index,el};if(matchSelection.a&&matchSelection.b){const aIndex=matchSelection.a.index,bIndex=matchSelection.b.index,correctPairIndex=currentQuiz.pairs[aIndex];if(bIndex===correctPairIndex){matchSelection.a.el.classList.remove('selected');matchSelection.b.el.classList.remove('selected');matchSelection.a.el.classList.add('matched');matchSelection.b.el.classList.add('matched');}else{matchSelection.a.el.classList.add('wrong');matchSelection.b.el.classList.add('wrong');setTimeout(()=>{matchSelection.a.el.classList.remove('selected','wrong');matchSelection.b.el.classList.remove('selected','wrong');},600);}matchSelection={a:null,b:null};}}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Knowledge Studio 📖</title>
+
+<style>
+body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
+
+/* Title + back */
+.top-bar {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:30px;
+  margin-top:20px;
+  z-index:9999;
+  position:relative;
+}
+.back-arrow { font-size:50px; cursor:pointer; }
+.title { text-align:center; font-size:70px; text-shadow:0 0 30px #f5e9c8; }
+
+/* Bookshelves */
+.library {
+  position:fixed;
+  top:140px;
+  left:0;
+  width:100%;
+  height:calc(100% - 140px);
+  background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);
+  z-index:1;
+}
+.shelf {
+  width:90%; height:200px; background:#3b2a15; margin:30px auto; border-radius:12px;
+  box-shadow:inset 0 0 25px rgba(0,0,0,0.8),0 12px 25px rgba(0,0,0,0.7);
+  display:flex; align-items:flex-end; padding:22px 32px; gap:18px;
+}
+.book {
+  width:52px; height:150px; border-radius:4px; border:2px solid rgba(0,0,0,0.6);
+  box-shadow:inset 0 0 12px rgba(0,0,0,0.5);
+}
+.tall { height:170px; }
+.short { height:120px; }
+.red { background:#7b2e2e; }
+.blue { background:#2e4a7b; }
+.green { background:#2e7b4a; }
+.yellow { background:#b89b3b; }
+.purple { background:#5b2e7b; }
+
+/* Desk */
+.desk { width:100%; height:340px; background:#3f2b17; position:absolute; bottom:0; z-index:2; }
+
+/* Buttons (Pastel Brown) */
+.notes {
+  position:absolute;
+  bottom:40px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  z-index:9999;
+}
+.note {
+  width:280px; height:280px; background:#d8c3a5; border:3px solid #b89b7a;
+  border-radius:16px; box-shadow:0 0 25px rgba(0,0,0,0.5);
+  display:flex; justify-content:center; align-items:center;
+  font-size:32px; font-weight:bold; cursor:pointer; color:#4a3b2b;
+  transition:0.2s; text-align:center;
+}
+.note:hover { transform:scale(1.1); background:#e3d2bd; }
+
+/* Sections */
+.section {
+  display:none;
+  position:absolute;
+  top:160px;
+  left:50%;
+  transform:translateX(-50%);
+  width:85%;
+  max-height:60%;
+  overflow-y:auto;
+  background:white;
+  color:#2b1f10;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 0 30px black;
+  font-size:24px;
+  z-index:9999;
+}
+.close-btn { float:right; font-size:40px; cursor:pointer; }
+
+/* Inputs (Lavender, bigger) */
+input, textarea, select {
+  width:100%;
+  font-size:26px;
+  padding:18px;
+  margin:14px 0;
+  border-radius:14px;
+  border:2px solid #c9b2e8;
+  background:#f7f2ff;
+}
+
+/* Buttons */
+button {
+  font-size:24px; padding:12px 20px; margin:10px 10px 10px 0;
+  background:#d8c3a5; border:2px solid #b89b7a; border-radius:12px; color:#4a3b2b;
+  cursor:pointer;
+}
+button:hover { background:#e3d2bd; }
+
+/* Lavender Boxes (bigger) */
+.item-row {
+  background:#e6d6f5;
+  border:2px solid #c9b2e8;
+  padding:26px;
+  margin:18px 0;
+  border-radius:18px;
+  font-size:24px;
+}
+
+/* NOTEBOOK BOOK */
+.notebook {
+  width:90%;
+  max-width:900px;
+  margin:40px auto;
+  background:white;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.4);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    white 0px,
+    white 28px,
+    #e8e8e8 29px
+  );
+}
+#note {
+  width:100%;
+  min-height:70vh;
+  font-size:22px;
+  line-height:29px;
+  outline:none;
+  border:none;
+  background:transparent;
+  color:#3b2f2f;
+}
+
+/* Highlighters */
+.tools {
+  display:flex;
+  gap:15px;
+  margin:20px auto;
+  justify-content:center;
+}
+.hl-btn {
+  padding:10px 20px;
+  font-size:20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  color:white;
+}
+.yellow { background:#f7d96f; }
+.pink { background:#f7a6c7; }
+.green { background:#9adf9a; }
+.blue { background:#9ac7df; }
+.clear { background:#b0a8a8; }
+
+/* Page buttons */
+.pages {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:20px;
+}
+.page-btn {
+  background:#d8c3a5;
+  border:2px solid #b89b7a;
+  color:#4a3b2b;
+  padding:10px 15px;
+  font-size:20px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.page-btn:hover { background:#e3d2bd; }
+.active { background:#b89b7a !important; color:white !important; }
+
+/* Quiz answer buttons */
+.quiz-answer {
+  display:inline-block;
+  margin:6px 8px 6px 0;
+  padding:8px 14px;
+  border-radius:10px;
+  background:#f7f2ff;
+  border:2px solid #c9b2e8;
+  cursor:pointer;
+}
+.quiz-answer.correct { background:#9adf9a; }
+.quiz-answer.wrong { background:#f7a6c7; }
+
+/* Matching piles */
+.match-container {
+  display:flex;
+  gap:40px;
+  margin-top:20px;
+}
+.match-column {
+  flex:1;
+}
+.match-item {
+  padding:10px 14px;
+  margin:6px 0;
+  border-radius:10px;
+  background:#f7f2ff;
+  border:2px solid #c9b2e8;
+  cursor:pointer;
+}
+.match-item.selected { background:#9ac7df; }
+.match-item.matched { background:#9adf9a; }
+</style>
+
+<script>
+function openSection(id){
+  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+function closeSection(id){
+  document.getElementById(id).style.display = 'none';
+}
+function goHome(){ window.location.href = "index.html"; }
+
+/* QUIZ – automated, interactive, mixed, more specific */
+let currentQuiz = { mcq: [], tf: [], matchA: [], matchB: [], pairs: [] };
+let matchSelection = { a: null, b: null };
+
+function classifyTopic(topic){
+  const t = topic.toLowerCase();
+  if(t.match(/photosynthesis|cell|chlorophyll|plant/)) return "biology";
+  if(t.match(/fraction|algebra|equation|geometry|angle|triangle|integral|derivative/)) return "math";
+  if(t.match(/world war|revolution|empire|ancient|medieval|history/)) return "history";
+  if(t.match(/atom|force|energy|velocity|gravity|motion|physics/)) return "physics";
+  if(t.match(/climate|ecosystem|environment|pollution|sustainability/)) return "environment";
+  return "general";
+}
+
+function generateQuiz(){
+  const topic = document.getElementById("quizTopic").value.trim();
+  const out = document.getElementById("quizList");
+  const result = document.getElementById("quizResult");
+  if(!topic){
+    out.innerHTML = "";
+    result.textContent = "Type a topic first.";
+    return;
+  }
+
+  const domain = classifyTopic(topic);
+
+  let mcq = [];
+  let tf = [];
+  let matchA = [];
+  let matchB = [];
+
+  if(domain === "biology"){
+    mcq = [
+      {
+        q: `What is the main purpose of ${topic}?`,
+        options: [
+          "To convert light energy into chemical energy (glucose).",
+          "To break down glucose into ATP in mitochondria.",
+          "To transport water through xylem.",
+          "To store genetic information."
+        ],
+        correct: 0
+      },
+      {
+        q: `Where does ${topic} mainly occur in plants?`,
+        options: [
+          "In the chloroplasts of leaf cells.",
+          "In the nucleus of root cells.",
+          "In the cell membrane of stem cells.",
+          "In the vacuoles of flower cells."
+        ],
+        correct: 0
+      }
+    ];
+    tf = [
+      { q: `${topic} requires light, water, and carbon dioxide.`, correct: true },
+      { q: `Oxygen is the main product of ${topic} and no glucose is formed.`, correct: false }
+    ];
+    matchA = [
+      "Chlorophyll",
+      "Chloroplast",
+      "Carbon dioxide",
+      "Glucose"
+    ];
+    matchB = [
+      "Pigment that absorbs light energy.",
+      "Organelle where photosynthesis happens.",
+      "Gas taken in from the air for photosynthesis.",
+      "Sugar produced as chemical energy."
+    ];
+  } else if(domain === "math"){
+    mcq = [
+      {
+        q: `What does ${topic} usually help you do?`,
+        options: [
+          "Represent and solve numerical relationships or problems.",
+          "Describe historical events.",
+          "Explain chemical reactions.",
+          "Measure only physical forces."
+        ],
+        correct: 0
+      },
+      {
+        q: `Which statement about ${topic} is most accurate?`,
+        options: [
+          "It often involves symbols and rules to manipulate them.",
+          "It is only about drawing shapes.",
+          "It never uses numbers.",
+          "It is only used in art."
+        ],
+        correct: 0
+      }
+    ];
+    tf = [
+      { q: `${topic} can be used to model real-world situations.`, correct: true },
+      { q: `${topic} is never connected to graphs or visual representations.`, correct: false }
+    ];
+    matchA = [
+      "Variable",
+      "Equation",
+      "Fraction",
+      "Function"
+    ];
+    matchB = [
+      "Symbol that can represent different values.",
+      "Statement showing two expressions are equal.",
+      "Number written as a ratio of two integers.",
+      "Rule that assigns each input exactly one output."
+    ];
+  } else if(domain === "history"){
+    mcq = [
+      {
+        q: `What is a key idea related to ${topic}?`,
+        options: [
+          "It changed political or social structures significantly.",
+          "It only affected one single person.",
+          "It had no impact on any country.",
+          "It was purely fictional."
+        ],
+        correct: 0
+      },
+      {
+        q: `How is ${topic} usually studied?`,
+        options: [
+          "By looking at causes, events, and consequences.",
+          "By ignoring primary sources.",
+          "By focusing only on myths.",
+          "By avoiding timelines."
+        ],
+        correct: 0
+      }
+    ];
+    tf = [
+      { q: `${topic} is connected to specific dates and places.`, correct: true },
+      { q: `Historians never disagree about interpretations of ${topic}.`, correct: false }
+    ];
+    matchA = [
+      "Cause",
+      "Event",
+      "Consequence",
+      "Primary source"
+    ];
+    matchB = [
+      "Reason why something happened.",
+      "What actually took place.",
+      "Result or impact after the event.",
+      "Original document or record from the time."
+    ];
+  } else if(domain === "physics"){
+    mcq = [
+      {
+        q: `What does ${topic} mainly deal with?`,
+        options: [
+          "How matter and energy behave.",
+          "Only how plants grow.",
+          "Only how languages change.",
+          "Only how computers store data."
+        ],
+        correct: 0
+      },
+      {
+        q: `Which statement about ${topic} is most accurate?`,
+        options: [
+          "It often uses formulas to describe motion or forces.",
+          "It never uses numbers.",
+          "It ignores experiments.",
+          "It is purely about art."
+        ],
+        correct: 0
+      }
+    ];
+    tf = [
+      { q: `${topic} can be tested with experiments and measurements.`, correct: true },
+      { q: `${topic} never uses units like meters or seconds.`, correct: false }
+    ];
+    matchA = [
+      "Force",
+      "Velocity",
+      "Acceleration",
+      "Energy"
+    ];
+    matchB = [
+      "Push or pull acting on an object.",
+      "Speed with a direction.",
+      "Rate of change of velocity.",
+      "Capacity to do work."
+    ];
+  } else if(domain === "environment"){
+    mcq = [
+      {
+        q: `What is a central idea of ${topic}?`,
+        options: [
+          "How living things and their surroundings interact.",
+          "Only how numbers are added.",
+          "Only how stories are written.",
+          "Only how machines are built."
+        ],
+        correct: 0
+      },
+      {
+        q: `Why is ${topic} important today?`,
+        options: [
+          "It helps us understand and protect ecosystems.",
+          "It has no impact on real life.",
+          "It is only used in games.",
+          "It is only about ancient myths."
+        ],
+        correct: 0
+      }
+    ];
+    tf = [
+      { q: `${topic} can be affected by human activities.`, correct: true },
+      { q: `Pollution never changes anything related to ${topic}.`, correct: false }
+    ];
+    matchA = [
+      "Ecosystem",
+      "Climate change",
+      "Pollution",
+      "Sustainability"
+    ];
+    matchB = [
+      "Community of living things and their environment.",
+      "Long-term change in temperature and weather patterns.",
+      "Introduction of harmful substances into environment.",
+      "Using resources so they last for future generations."
+    ];
+  } else {
+    mcq = [
+      {
+        q: `Which statement best describes ${topic}?`,
+        options: [
+          `${topic} is a concept with specific meaning in its field.`,
+          `${topic} is random and has no definition.`,
+          `${topic} is only used in jokes.`,
+          `${topic} is a secret code with no rules.`
+        ],
+        correct: 0
+      },
+      {
+        q: `How should you study ${topic}?`,
+        options: [
+          "By learning its definition, examples, and how it is used.",
+          "By memorizing it without understanding.",
+          "By ignoring any examples.",
+          "By never asking questions about it."
+        ],
+        correct: 0
+      }
+    ];
+    tf = [
+      { q: `${topic} has a definition you can look up and understand.`, correct: true },
+      { q: `There is no way to find information about ${topic}.`, correct: false }
+    ];
+    matchA = [
+      `${topic} – definition`,
+      `${topic} – example`,
+      `${topic} – key idea`
+    ];
+    matchB = [
+      `Clear statement of what ${topic} means.`,
+      `A situation where ${topic} appears in real life.`,
+      `The most important thing to remember about ${topic}.`
+    ];
+  }
+
+  currentQuiz.mcq = mcq;
+  currentQuiz.tf = tf;
+  currentQuiz.matchA = matchA;
+  currentQuiz.matchB = matchB;
+  currentQuiz.pairs = matchA.map((_, i) => i);
+
+  renderQuiz();
+  result.textContent = "Quiz generated!";
+}
+
+function renderQuiz(){
+  const out = document.getElementById("quizList");
+  out.innerHTML = "";
+
+  currentQuiz.mcq.forEach((qObj, qi) => {
+    let html = `<div class="item-row"><b>Q: ${qObj.q}</b><br>`;
+    qObj.options.forEach((opt, oi) => {
+      html += `<span class="quiz-answer" onclick="checkMCQ(${qi},${oi},this)">${opt}</span>`;
+    });
+    html += `</div>`;
+    out.innerHTML += html;
+  });
+
+  currentQuiz.tf.forEach((qObj, qi) => {
+    let html = `<div class="item-row"><b>Q: ${qObj.q}</b><br>`;
+    html += `<span class="quiz-answer" onclick="checkTF(${qi},true,this)">True</span>`;
+    html += `<span class="quiz-answer" onclick="checkTF(${qi},false,this)">False</span>`;
+    html += `</div>`;
+    out.innerHTML += html;
+  });
+
+  let html = `<div class="item-row"><b>Match the items:</b>
+  <div class="match-container">
+    <div class="match-column"><b>Pile A</b>`;
+  currentQuiz.matchA.forEach((item, i) => {
+    html += `<div class="match-item" onclick="selectMatch('a',${i},this)" data-index="${i}">${item}</div>`;
+  });
+  html += `</div><div class="match-column"><b>Pile B</b>`;
+  currentQuiz.matchB.forEach((item, i) => {
+    html += `<div class="match-item" onclick="selectMatch('b',${i},this)" data-index="${i}">${item}</div>`;
+  });
+  html += `</div></div></div>`;
+  out.innerHTML += html;
+
+  matchSelection = { a: null, b: null };
+}
+
+function checkMCQ(qIndex, optIndex, el){
+  const q = currentQuiz.mcq[qIndex];
+  const correct = (optIndex === q.correct);
+  const parent = el.parentElement;
+  parent.querySelectorAll('.quiz-answer').forEach(a => {
+    a.classList.remove('correct','wrong');
+  });
+  el.classList.add(correct ? 'correct' : 'wrong');
+}
+
+function checkTF(qIndex, answer, el){
+  const q = currentQuiz.tf[qIndex];
+  const correct = (answer === q.correct);
+  const parent = el.parentElement;
+  parent.querySelectorAll('.quiz-answer').forEach(a => {
+    a.classList.remove('correct','wrong');
+  });
+  el.classList.add(correct ? 'correct' : 'wrong');
+}
+
+function selectMatch(side, index, el){
+  if(el.classList.contains('matched')) return;
+
+  const container = el.parentElement;
+  container.querySelectorAll('.match-item').forEach(i => i.classList.remove('selected'));
+
+  el.classList.add('selected');
+  matchSelection[side] = { index, el };
+
+  if(matchSelection.a && matchSelection.b){
+    const aIndex = matchSelection.a.index;
+    const bIndex = matchSelection.b.index;
+    const correctPairIndex = currentQuiz.pairs[aIndex];
+
+    if(bIndex === correctPairIndex){
+      matchSelection.a.el.classList.remove('selected');
+      matchSelection.b.el.classList.remove('selected');
+      matchSelection.a.el.classList.add('matched');
+      matchSelection.b.el.classList.add('matched');
+    } else {
+      matchSelection.a.el.classList.add('wrong');
+      matchSelection.b.el.classList.add('wrong');
+      setTimeout(() => {
+        matchSelection.a.el.classList.remove('selected','wrong');
+        matchSelection.b.el.classList.remove('selected','wrong');
+      }, 600);
+    }
+    matchSelection = { a:null, b:null };
+  }
+}
+
+/* FLASHCARDS */
 let cards=[];
-function addCard(){const f=document.getElementById("flashF").value,b=document.getElementById("flashB").value;if(!f.trim()||!b.trim())return;cards.push({f,b});renderCards();}
-function renderCards(){const flashList=document.getElementById("flashList");flashList.innerHTML="";cards.forEach((x,i)=>{flashList.innerHTML+=`<div class='item-row' onclick='flip(${i})' id='c${i}' data='f'><b>${x.f}</b></div>`;});}
-function flip(i){let el=document.getElementById("c"+i),x=cards[i];if(el.dataset.data=="f"){el.innerHTML="<b>"+x.b+"</b>";el.dataset.data="b";}else{el.innerHTML="<b>"+x.f+"</b>";el.dataset.data="f";}}
-function saveFlashcards(){localStorage.setItem("ks_flashcards",JSON.stringify(cards));}
-function deleteFlashcards(){if(!confirm("Delete all flashcards?"))return;cards=[];localStorage.removeItem("ks_flashcards");renderCards();}
-function loadFlashcards(){const raw=localStorage.getItem("ks_flashcards");cards=raw?JSON.parse(raw):[];renderCards();}
-function teacherExplain(){const question=document.getElementById("teacherQuestion").value.trim(),out=document.getElementById("teacherOut");if(!question){out.textContent="Type what you want explained.";return;}const domain=classifyTopic(question);let explanation="";if(domain==="biology"){explanation=`Topic: ${question}\n\n1. What it is:\n   This belongs to biology and is connected to living things and their processes.\n   Often it involves cells, organs, or systems in plants or animals.\n\n2. Core idea:\n   Try to identify: Is it about how something grows, how energy is used,\n   or how information is passed in living organisms?\n\n3. Example:\n   Imagine a real organism (like a plant or an animal) where ${question} appears.\n   Describe what happens step by step.\n\n4. How to remember:\n   Turn it into a short sentence: “${question} is the process/idea that …”\n`;}else if(domain==="math"){explanation=`Topic: ${question}\n\n1. What it is:\n   This is a mathematical idea. It usually involves numbers, symbols, or shapes.\n   It follows rules that let you solve problems or describe relationships.\n\n2. Core idea:\n   Ask: Is it about measuring, comparing, changing, or representing quantities?\n\n3. Example:\n   Create a simple problem using ${question}. Solve it step by step and\n   explain why each step is allowed.\n\n4. How to remember:\n   Write: “${question} helps me understand how … changes or relates to …”\n`;}else if(domain==="history"){explanation=`Topic: ${question}\n\n1. What it is:\n   This is a historical topic. It is tied to specific times, places, and people.\n\n2. Core idea:\n   Think in terms of causes (why it happened), events (what happened),\n   and consequences (what changed afterward).\n\n3. Example:\n   Place ${question} on a timeline. What came before it? What came after?\n   How did it affect everyday life or politics?\n\n4. How to remember:\n   Summarize it in three parts: “Before, During, After ${question} …”\n`;}else if(domain==="physics"){explanation=`Topic: ${question}\n\n1. What it is:\n   This is a physics concept. It describes how matter or energy behaves.\n\n2. Core idea:\n   Ask: Is it about motion, forces, energy, or interactions between objects?\n\n3. Example:\n   Imagine a simple experiment or situation (like a ball being thrown)\n   where ${question} appears. Describe what changes and why.\n\n4. How to remember:\n   Connect it to a formula or rule, then explain that rule in words.\n`;}else if(domain==="environment"){explanation=`Topic: ${question}\n\n1. What it is:\n   This is an environmental topic. It relates to ecosystems, climate,\n   or human impact on nature.\n\n2. Core idea:\n   Ask: Is it about how living things interact, how the climate changes,\n   or how pollution affects the environment?\n\n3. Example:\n   Think of a real place (forest, city, ocean) where ${question} is visible.\n   Describe what is happening there.\n\n4. How to remember:\n   Write: “${question} shows how our actions change the environment by …”\n`;}else{explanation=`Topic: ${question}\n\n1. What it is:\n   This is a concept with a specific meaning in its own field.\n\n2. Core idea:\n   Find its definition, then rewrite it in your own words.\n\n3. Example:\n   Think of a situation where ${question} appears. Describe what happens\n   and why this topic matters there.\n\n4. How to remember:\n   Create a one-sentence summary: “${question} is important because …”\n`;}out.textContent=explanation;}
-function saveTeacher(){localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);}
-function deleteTeacher(){if(!confirm("Delete explanation?"))return;localStorage.removeItem("ks_teacher");document.getElementById("teacherOut").textContent="";}
-function loadTeacher(){const saved=localStorage.getItem("ks_teacher");if(saved)document.getElementById("teacherOut").textContent=saved;}
-let pages=[],currentPage=0;
-function loadNotebook(){const saved=localStorage.getItem("KS_Notebook_Pages");pages=saved?JSON.parse(saved):[""];renderPages();loadPage(0);}
-function savePages(){localStorage.setItem("KS_Notebook_Pages",JSON.stringify(pages));}
-function loadPage(i){currentPage=i;document.getElementById("note").innerHTML=pages[i];updateActiveButton();}
-function saveCurrentPage(){pages[currentPage]=document.getElementById("note").innerHTML;savePages();}
-function addPage(){pages.push("");savePages();renderPages();loadPage(pages.length-1);}
-function renderPages(){const container=document.getElementById("pageButtons");container.innerHTML="";pages.forEach((_,i)=>{container.innerHTML+=`<button class="page-btn" onclick="loadPage(${i})">Page ${i+1}</button>`;});}
-function highlight(color){let sel=window.getSelection();if(!sel.rangeCount)return;let range=sel.getRangeAt(0),span=document.createElement("span");span.style.backgroundColor=(color==="clear")?"transparent":color;range.surroundContents(span);saveCurrentPage();}
-function updateActiveButton(){const buttons=document.querySelectorAll(".page-btn");buttons.forEach((btn,i)=>{btn.classList.toggle('active',i===currentPage);});}
-window.onload=function(){loadFlashcards();loadTeacher();loadNotebook();};
-</script></head><body>
-<div class="top-bar"><div class="back-arrow" onclick="goHome()">←</div><div class="title">Knowledge Studio</div></div>
-<div class="library"><script>
-const colors=["red","blue","green","yellow","purple"];for(let s=0;s<4;s++){document.write('<div class="shelf">');for(let b=0;b<14;b++){let c=colors[Math.floor(Math.random()*colors.length)],h=[""," tall"," short"][Math.floor(Math.random()*3)];document.write(`<div class="book ${c}${h}"></div>`);}document.write('</div>');}
-</script></div>
-<div class="desk"></div>
-<div class="notes">
-  <div class="note" onclick="openSection('quizSection')">Quiz</div>
-  <div class="note" onclick="openSection('flashSection')">Flashcards</div>
-  <div class="note" onclick="openSection('teacherSection')">Teacher</div>
-  <div class="note" onclick="openSection('notebookSection')">Notebook</div>
-</div>
-<div class="section" id="quizSection">
-  <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
-            
+function addCard(){
+  const f=document.getElementById("flashF").value;
+  const b=document.getElementById("flashB").value;
+  if(!f.trim()||!b.trim())return;
+  cards.push({f,b});
+  renderCards();
+}
+function renderCards(){
+  const flashList=document.getElementById("flashList");
+  flashList.innerHTML="";
+  cards.forEach((x,i)=>{
+    flashList.innerHTML+=`<div class='item-row' onclick='flip(${i})' id='c${i}' data='f'><b>${x.f}</b></div>`;
+  });
+}
+function flip(i){
+  let el=document.getElementById("c"+i),x=cards[i];
+  if(el.dataset.data=="f"){el.innerHTML="<b>"+x.b+"</b>";el.dataset.data="b";}
+  else{el.innerHTML="<b>"+x.f+"</b>";el.dataset.data="f";}
+}
+function saveFlashcards(){
+  localStorage.setItem("ks_flashcards",JSON.stringify(cards));
+}
+function deleteFlashcards(){
+  if(!confirm("Delete all flashcards?"))return;
+  cards=[];
+  localStorage.removeItem("ks_flashcards");
+  renderCards();
+}
+function loadFlashcards(){
+  const raw=localStorage.getItem("ks_flashcards");
+  cards=raw?JSON.parse(raw):[];
+  renderCards();
+}
+
+/* TEACHER – topic-aware explanation */
+function teacherExplain(){
+  const question = document.getElementById("teacherQuestion").value.trim();
+  const out = document.getElementById("teacherOut");
+  if(!question){
+    out.textContent = "Type what you want explained.";
+    return;
+  }
+
+  const domain = classifyTopic(question);
+  let explanation = "";
+
+  if(domain === "biology"){
+    explanation =
+      `Topic: ${question}\n\n` +
+      `1. What it is:\n` +
+      `   This belongs to biology and is connected to living things and their processes.\n` +
+      `   Often it involves cells, organs, or systems in plants or animals.\n\n` +
+      `2. Core idea:\n` +
+      `   Try to identify: Is it about how something grows, how energy is used,\n` +
+      `   or how information is passed in living organisms?\n\n` +
+      `3. Example:\n` +
+      `   Imagine a real organism (like a plant or an animal) where ${question} appears.\n` +
+      `   Describe what happens step by step.\n\n` +
+      `4. How to remember:\n` +
+      `   Turn it into a short sentence: “${question} is the process/idea that …”\n`;
+  } else if(domain === "math"){
+    explanation =
+      `Topic: ${question}\n\n` +
+      `1. What it is:\n` +
+      `   This is a mathematical idea. It usually involves numbers, symbols, or shapes.\n` +
+      `   It follows rules that let you solve problems or describe relationships.\n\n` +
+      `2. Core idea:\n` +
+      `   Ask: Is it about measuring, comparing, changing, or representing quantities?\n\n` +
+      `3. Example:\n` +
+      `   Create a simple problem using ${question}. Solve it step by step and\n` +
+      `   explain why each step is allowed.\n\n` +
+      `4. How to remember:\n` +
+      `   Write: “${question} helps me understand how … changes or relates to …”\n`;
+  } else if(domain === "history"){
+    explanation =
+      `Topic: ${question}\n\n` +
+      `1. What it is:\n` +
+      `   This is a historical topic. It is tied to specific times, places, and people.\n\n` +
+      `2. Core idea:\n` +
+      `   Think in terms of causes (why it happened), events (what happened),\n` +
+      `   and consequences (what changed afterward).\n\n` +
+      `3. Example:\n` +
+      `   Place ${question} on a timeline. What came before it? What came after?\n` +
+      `   How did it affect everyday life or politics?\n\n` +
+      `4. How to remember:\n` +
+      `   Summarize it in three parts: “Before, During, After ${question} …”\n`;
+  } else if(domain === "physics"){
+    
