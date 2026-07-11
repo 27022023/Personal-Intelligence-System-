@@ -298,108 +298,131 @@ function detectMode(text) {
   };
 }
 
-/* Local smart Luna brain – upgraded */
 function lunaReplyLocal(text) {
   const mode = detectMode(text);
-  const t = text.toLowerCase();
+  const lower = text.toLowerCase();
 
-  // Greeting
-  if (mode.isGreeting) {
-    let base = "Hi, love. I’m Luna.\n\nYou can use me like a **thinking partner**:\n" +
-               "• Turn your notes into questions.\n" +
-               "• Break big topics into clear steps.\n" +
-               "• Practice explaining things like you’re in an interview.\n\n";
-    if (lunaMemory.length > 0) {
-      base += "I already remember something about you: \"" + lunaMemory[lunaMemory.length - 1] + "\".\n";
-    }
-    return base + "What do you want to work on first—school, future, or feelings?";
-  }
+  const memoryHint = lunaMemory.length
+    ? `\n\nI’m also keeping in mind something you told me earlier: "${lunaMemory[lunaMemory.length - 1]}".`
+    : "";
 
-  // Emotional
   if (mode.isEmotional) {
-    let base = "You sound like you’re carrying a lot—and that’s not a failure, it’s a signal.\n";
-    if (lunaMemory.length > 0) {
-      base += "\nYou once told me: \"" + lunaMemory[lunaMemory.length - 1] + "\".\nThat still matters to who you are.\n";
-    }
-    return base +
-           "\nLet’s do this in a way that respects you:\n" +
-           "1. Name one thing that feels heavy.\n" +
-           "2. Name one thing that still gives you a tiny bit of hope.\n" +
-           "3. We’ll build one small step from there.";
+    return (
+      "I’m reading your message like someone who actually cares about how you feel.\n" +
+      "You’re not failing — you’re overwhelmed, and that’s human.\n\n" +
+      "Let’s stabilize your mind:\n" +
+      "• Name the exact feeling.\n" +
+      "• Name what triggered it.\n" +
+      "• Name what you wish would happen instead.\n\n" +
+      "We’ll build your next step together." +
+      memoryHint
+    );
   }
 
-  // Study / school
-  if (mode.isStudy) {
-    return studyPlan(text);
+  if (mode.isGreeting) {
+    return (
+      "Hey, love. I’m Luna.\n" +
+      "I’m not just a chatbot — I’m your thinking partner.\n\n" +
+      "I can:\n" +
+      "• break down complex topics\n" +
+      "• generate exam‑level questions\n" +
+      "• turn your notes into essays\n" +
+      "• help you plan your future\n" +
+      "• reflect your emotions with clarity\n" +
+      "• teach you like a tutor\n" +
+      "• think with you like a coach\n\n" +
+      "So… what do you want to do first?" +
+      memoryHint
+    );
   }
 
-  // Math
   if (mode.isMath) {
-    const mathResult = tryMath(text);
-    if (mathResult !== null) {
-      return "Let’s do this like a tutor:\n\n" +
-             text + " = " + mathResult + "\n\n" +
-             "To train your brain for harder math, try:\n" +
-             "• Explaining each operation in words.\n" +
-             "• Checking if there’s another way to reach the same result.\n" +
-             "If you paste a full problem, I’ll walk through it step by step.";
+    const result = tryMath(text);
+    if (result !== null) {
+      return (
+        "Let’s solve this like a tutor who actually explains things:\n\n" +
+        `${text} = ${result}\n\n` +
+        "Want:\n" +
+        "• step‑by‑step?\n" +
+        "• why it works?\n" +
+        "• a harder version?\n"
+      );
     }
   }
 
-  // Summarize
+  if (mode.isStudy) {
+    return (
+      studyPlan(text) +
+      "\n\nIf you paste your notes, I’ll turn them into:\n" +
+      "• exam questions\n" +
+      "• explanations\n" +
+      "• summaries\n" +
+      "• essay outlines\n" +
+      "• memory tricks\n" +
+      "• revision schedules"
+    );
+  }
+
   if (mode.isSummarize) {
     const cleaned = text.replace(/summarize|summary/gi, "").trim();
     return summarize(cleaned || text);
   }
 
-  // Explain
   if (mode.isExplain) {
     const cleaned = text.replace(/explain/gi, "").trim();
-    return explainConcept(cleaned || text);
+    return (
+      explainConcept(cleaned || text) +
+      "\n\nI can also give:\n" +
+      "• examples\n" +
+      "• misconceptions\n" +
+      "• connections to other topics\n" +
+      "• a mini‑lesson\n" +
+      "• exam questions"
+    );
   }
 
-  // Essay
   if (mode.isEssay) {
     const cleaned = text.replace(/essay|paragraph/gi, "").trim();
     return miniEssay(cleaned || text);
   }
 
-  // Generate questions / active recall
   if (mode.isQuestionGen) {
     const cleaned = text.replace(/questions|quiz|active recall/gi, "").trim();
-    return generateQuestions(cleaned || text);
+    return (
+      generateQuestions(cleaned || text) +
+      "\n\nI can also generate:\n" +
+      "• multiple‑choice\n" +
+      "• true/false\n" +
+      "• matching\n" +
+      "• open‑ended exam questions\n" +
+      "• challenge questions"
+    );
   }
 
-  // Goals / future / career
   if (mode.isGoal) {
-    return "Okay, let’s treat this like a **future‑planning session**:\n\n" +
-           "1. Write your big goal in one sentence (e.g. \"Get into a top university\" or \"Start my own company\").\n" +
-           "2. Under it, list 3–5 skills you’d need (e.g. discipline, writing, math, communication).\n" +
-           "3. For each skill, write one habit you could build.\n" +
-           "4. Turn those habits into tiny daily actions.\n\n" +
-           "If you tell me your exact goal, I’ll help you break it into steps and checkpoints.";
+    return (
+      "Let’s build your future like a strategist:\n\n" +
+      "1. Define the target.\n" +
+      "2. Identify the skills.\n" +
+      "3. Build habits.\n" +
+      "4. Create checkpoints.\n\n" +
+      "Tell me your goal and I’ll build the roadmap."
+    );
   }
 
-  // If we have memory, use it to go deeper
-  if (lunaMemory.length > 0) {
-    const last = lunaMemory[lunaMemory.length - 1];
-    return "I’m reading what you just said alongside something you told me before: \"" + last + "\".\n\n" +
-           "Here’s how I’d turn this into growth:\n" +
-           "• First, write what you believe about yourself right now.\n" +
-           "• Second, write what you *want* to believe about yourself in a year.\n" +
-           "• Third, we’ll turn the gap between those two into a plan.\n\n" +
-           "Paste a paragraph about where you are, and I’ll respond like a coach.";
-  }
-
-  // Default – reflective, study‑friendly
-  return "Okay, here’s how I’m reading what you said:\n\n" +
-         text +
-         "\n\nWe can do a few things with this:\n" +
-         "• Turn it into questions (active recall).\n" +
-         "• Turn it into a study plan.\n" +
-         "• Turn it into a mini‑essay.\n" +
-         "• Or break it into definition / example / connection.\n\n" +
-         "Tell me which mode you want: **questions**, **study plan**, **essay**, or **explain**.";
+  return (
+    "Here’s how I’m interpreting what you said:\n\n" +
+    text +
+    "\n\nWe can turn this into:\n" +
+    "• a study plan\n" +
+    "• a set of questions\n" +
+    "• an explanation\n" +
+    "• an essay\n" +
+    "• a future plan\n" +
+    "• a reflection\n\n" +
+    "Tell me which direction you want to go." +
+    memoryHint
+  );
 }
 
 /* Send message */
