@@ -2,117 +2,87 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Knowledge Studio</title>
+<title>knowledge</title>
 <style>
-/* BACKGROUND */
 body{margin:0;font-family:Georgia;background:#15100b;color:#f5e9c8;}
-/* TOP BAR */
-.top-bar{display:flex;align-items:center;justify-content:center;gap:30px;margin-top:20px;}
-.back-arrow{font-size:40px;cursor:pointer;}
-.title{text-align:center;font-size:48px;text-shadow:0 0 20px #f5e9c8;}
-/* LIBRARY BACKGROUND */
-.library{position:fixed;top:120px;left:0;width:100%;height:calc(100% - 120px);background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);z-index:1;}
-/* SHELVES */
-.shelf{width:90%;height:160px;background:#3b2a15;margin:20px auto;border-radius:12px;box-shadow:inset 0 0 20px rgba(0,0,0,0.8),0 10px 20px rgba(0,0,0,0.7);display:flex;align-items:flex-end;padding:20px;gap:12px;}
-.book{width:40px;height:120px;border-radius:4px;border:2px solid rgba(0,0,0,0.6);box-shadow:inset 0 0 10px rgba(0,0,0,0.5);}
-.tall{height:140px;}
-.short{height:100px;}
+.top-bar{display:flex;align-items:center;justify-content:center;gap:30px;margin-top:10px;}
+.back-arrow{font-size:32px;cursor:pointer;}
+.title{text-align:center;font-size:40px;text-shadow:0 0 20px #f5e9c8;}
+.library{position:fixed;top:80px;left:0;width:100%;height:calc(100% - 80px);background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);z-index:1;}
+.shelf{width:94%;height:120px;background:#3b2a15;margin:10px auto;border-radius:12px;box-shadow:inset 0 0 20px rgba(0,0,0,0.8),0 8px 16px rgba(0,0,0,0.7);display:flex;align-items:flex-end;padding:14px;gap:8px;}
+.book{width:26px;height:90px;border-radius:4px;border:2px solid rgba(0,0,0,0.6);box-shadow:inset 0 0 10px rgba(0,0,0,0.5);}
+.tall{height:105px;}
+.short{height:75px;}
 .red{background:#7b2e2e;}
 .blue{background:#2e4a7b;}
 .green{background:#2e7b4a;}
 .yellow{background:#b89b3b;}
 .purple{background:#5b2e7b;}
-/* DESK */
-.desk{width:100%;height:260px;background:#3f2b17;position:absolute;bottom:0;z-index:2;}
-/* NOTES BUTTONS */
-.notes{position:absolute;bottom:40px;width:100%;display:flex;justify-content:center;gap:20px;z-index:9999;}
-.note{width:200px;height:200px;background:#d8c3a5;border:3px solid #b89b7a;border-radius:16px;box-shadow:0 0 15px rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:24px;font-weight:bold;cursor:pointer;color:#4a3b2b;text-align:center;}
+.desk{width:100%;height:190px;background:#3f2b17;position:absolute;bottom:0;z-index:2;}
+.notes{position:absolute;bottom:20px;width:100%;display:flex;justify-content:center;gap:10px;z-index:3;flex-wrap:wrap;}
+.note{width:140px;height:140px;background:#d8c3a5;border:3px solid #b89b7a;border-radius:16px;box-shadow:0 0 15px rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:bold;cursor:pointer;color:#4a3b2b;text-align:center;}
 .note:hover{transform:scale(1.05);background:#e3d2bd;}
-/* POPUP SECTIONS */
-.section{display:none;position:absolute;top:140px;left:50%;transform:translateX(-50%);width:85%;max-height:60%;overflow-y:auto;background:white;color:#2b1f10;padding:20px;border-radius:16px;box-shadow:0 0 20px black;font-size:18px;z-index:9999;}
-.close-btn{float:right;font-size:28px;cursor:pointer;}
-/* INPUTS */
-input,textarea{width:100%;font-size:18px;padding:10px;margin:10px 0;border-radius:10px;border:2px solid #c9b2e8;background:#f7f2ff;}
-/* BUTTONS */
-button{font-size:16px;padding:8px 14px;margin:8px 8px 8px 0;background:#d8c3a5;border:2px solid #b89b7a;border-radius:10px;color:#4a3b2b;cursor:pointer;}
+.section{display:none;position:absolute;top:90px;left:50%;transform:translateX(-50%);width:92%;max-height:65%;overflow-y:auto;background:white;color:#2b1f10;padding:14px;border-radius:16px;box-shadow:0 0 20px black;font-size:16px;z-index:4;}
+.close-btn{float:right;font-size:24px;cursor:pointer;}
+input,textarea{width:100%;font-size:16px;padding:8px;margin:8px 0;border-radius:10px;border:2px solid #c9b2e8;background:#f7f2ff;}
+button{font-size:15px;padding:6px 10px;margin:6px 6px 6px 0;background:#d8c3a5;border:2px solid #b89b7a;border-radius:10px;color:#4a3b2b;cursor:pointer;}
 button:hover{background:#e3d2bd;}
-/* QUIZ ITEMS */
-.item-row{background:#e6d6f5;border:2px solid #c9b2e8;padding:14px;margin:10px 0;border-radius:12px;font-size:16px;}
-.quiz-answer{display:inline-block;margin:4px 6px;padding:6px 10px;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;}
+.item-row{background:#e6d6f5;border:2px solid #c9b2e8;padding:10px;margin:8px 0;border-radius:12px;font-size:14px;}
+.quiz-answer{display:inline-block;margin:3px 4px;padding:5px 8px;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;}
 .quiz-answer.correct{background:#9adf9a;}
 .quiz-answer.wrong{background:#f7a6c7;}
-/* MATCHING */
-.match-container{display:flex;gap:20px;margin-top:10px;}
+.match-container{display:flex;gap:10px;margin-top:8px;}
 .match-column{flex:1;}
-.match-item{padding:6px 10px;margin:4px 0;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;}
+.match-item{padding:5px 8px;margin:3px 0;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;font-size:14px;}
 .match-item.selected{background:#9ac7df;}
 .match-item.matched{background:#9adf9a;}
-/* NOTEBOOK */
-.notebook{width:90%;max-width:900px;margin:20px auto;background:white;border-radius:12px;padding:16px;box-shadow:0 0 15px rgba(0,0,0,0.4);}
-#note{width:100%;min-height:40vh;font-size:16px;line-height:22px;outline:none;border:none;background:transparent;color:#3b2f2f;}
-/* PAGE BUTTONS */
-.page-btn{background:#d8c3a5;border:2px solid #b89b7a;color:#4a3b2b;padding:6px 10px;font-size:14px;border-radius:8px;cursor:pointer;margin:0 4px;}
+.notebook{width:100%;margin:10px auto;background:white;border-radius:12px;padding:10px;box-shadow:0 0 15px rgba(0,0,0,0.4);}
+#note{width:100%;min-height:40vh;font-size:15px;line-height:20px;outline:none;border:none;background:transparent;color:#3b2f2f;}
+.page-btn{background:#d8c3a5;border:2px solid #b89b7a;color:#4a3b2b;padding:5px 8px;font-size:13px;border-radius:8px;cursor:pointer;margin:0 3px;}
 .page-btn:hover{background:#e3d2bd;}
 .active{background:#b89b7a!important;color:white!important;}
+.tools{margin-bottom:8px;}
+.hl-btn{border-radius:8px;border:1px solid #4a3b2b;padding:4px 6px;font-size:12px;margin-right:4px;cursor:pointer;}
 </style>
 <script>
 function openSection(id){document.querySelectorAll('.section').forEach(s=>s.style.display='none');document.getElementById(id).style.display='block';}
 function closeSection(id){document.getElementById(id).style.display='none';}
 function goHome(){location.reload();}
 
-/* UNIVERSAL QUIZ ENGINE */
+/* QUIZ */
 let currentQuiz={mcq:[],tf:[],matchA:[],matchB:[],pairs:[]},matchSelection={a:null,b:null};
-
 function generateQuiz(){
   const t=document.getElementById("quizTopic").value.trim();
   const out=document.getElementById("quizList");
   const result=document.getElementById("quizResult");
   if(!t){out.innerHTML="";result.textContent="Type a topic first.";return;}
-
+  const core=t.split(" ").pop();
   const mcq=[
-    {
-      q:`What describes ${t} best?`,
-      options:[
-        `${t} is an important concept with a specific meaning.`,
-        `${t} is random and undefined.`,
-        `${t} is only used in jokes.`,
-        `${t} has no real-world relevance.`
-      ],
-      correct:0
-    },
-    {
-      q:`How is ${t} usually used?`,
-      options:[
-        `To explain or understand something in real life.`,
-        `To confuse people.`,
-        `To avoid learning.`,
-        `To replace facts with fiction.`
-      ],
-      correct:0
-    }
+    {q:`What is the main idea behind ${t}?`,
+     options:[
+       `${t} explains how ${core} behaves or affects something.`,
+       `${t} is random and has no meaning.`,
+       `${t} is only used in jokes.`,
+       `${t} cannot be studied or understood.`
+     ],correct:0},
+    {q:`Where does ${t} usually appear?`,
+     options:[
+       `In real situations involving ${core}.`,
+       `Only in fictional stories.`,
+       `Only in ancient myths.`,
+       `It never appears anywhere.`
+     ],correct:0}
   ];
-
   const tf=[
-    {q:`${t} has a definition you can learn.`,correct:true},
-    {q:`${t} cannot be explained or understood.`,correct:false}
+    {q:`${t} has real applications.`,correct:true},
+    {q:`${t} cannot be explained or used.`,correct:false}
   ];
-
-  const matchA=[
-    `${t} – definition`,
-    `${t} – example`,
-    `${t} – key idea`
-  ];
-  const matchB=[
-    `What ${t} means.`,
-    `Where ${t} appears in real life.`,
-    `The most important thing about ${t}.`
-  ];
-
+  const matchA=[`${t} – definition`,`${t} – example`,`${t} – key idea`];
+  const matchB=[`What ${t} means.`,`Where ${t} appears in real life.`,`The most important thing about ${t}.`];
   currentQuiz={mcq,tf,matchA,matchB,pairs:[0,1,2]};
   renderQuiz();
   result.textContent="Quiz generated!";
 }
-
 function renderQuiz(){
   const out=document.getElementById("quizList");
   out.innerHTML="";
@@ -143,7 +113,6 @@ function renderQuiz(){
   out.innerHTML+=html;
   matchSelection={a:null,b:null};
 }
-
 function checkMCQ(qIndex,optIndex,el){
   const q=currentQuiz.mcq[qIndex];
   const correct=(optIndex===q.correct);
@@ -220,23 +189,32 @@ function loadFlashcards(){
   renderCards();
 }
 
-/* UNIVERSAL TEACHER */
+/* TEACHER */
 function teacherExplain(){
   const t=document.getElementById("teacherQuestion").value.trim();
   const out=document.getElementById("teacherOut");
-  if(!t){out.textContent="Type what you want explained.";return;}
+  if(!t){out.textContent="Type a topic.";return;}
+  const words=t.split(" ");
+  const main=words[words.length-1];
   out.textContent=
     `Topic: ${t}\n\n`+
-    `1. Definition:\n`+
-    `   Describe what ${t} means in simple terms.\n\n`+
-    `2. Core idea:\n`+
-    `   Identify what ${t} tries to explain, measure, or describe.\n\n`+
+    `1. What it means:\n`+
+    `   ${t} refers to a concept involving ${main}. It is used to\n`+
+    `   describe, measure, or explain something in its field.\n\n`+
+    `2. Why it matters:\n`+
+    `   Understanding ${t} helps you see how ${main} affects real situations,\n`+
+    `   decisions, or systems.\n\n`+
     `3. How it works:\n`+
-    `   Break ${t} into steps, parts, or rules.\n\n`+
+    `   Break ${t} into smaller parts:\n`+
+    `   - What it describes\n`+
+    `   - What causes it\n`+
+    `   - What changes it\n`+
+    `   - What results from it\n\n`+
     `4. Real example:\n`+
-    `   Show ${t} happening in real life or in a typical situation.\n\n`+
-    `5. How to remember:\n`+
-    `   Create a short sentence summarizing ${t} in your own words.`;
+    `   Think of a real scenario where ${t} appears. Describe what happens,\n`+
+    `   why it happens, and what ${main} influences.\n\n`+
+    `5. How to remember it:\n`+
+    `   Create a short rule: “${t} is the idea that explains how ${main} behaves.”`;
 }
 function saveTeacher(){localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);}
 function deleteTeacher(){
@@ -249,7 +227,7 @@ function loadTeacher(){
   if(saved)document.getElementById("teacherOut").textContent=saved;
 }
 
-/* NOTEBOOK */
+/* NOTEBOOK + HIGHLIGHTER */
 let pages=[],currentPage=0;
 function loadNotebook(){
   const saved=localStorage.getItem("KS_Notebook_Pages");
@@ -284,6 +262,15 @@ function updateActiveButton(){
   const buttons=document.querySelectorAll(".page-btn");
   buttons.forEach((btn,i)=>btn.classList.toggle('active',i===currentPage));
 }
+function highlight(color){
+  let sel=window.getSelection();
+  if(!sel.rangeCount)return;
+  let range=sel.getRangeAt(0);
+  let span=document.createElement("span");
+  span.style.backgroundColor=(color==="clear")?"transparent":color;
+  range.surroundContents(span);
+  saveCurrentPage();
+}
 
 /* INIT */
 window.onload=function(){
@@ -302,9 +289,9 @@ window.onload=function(){
 <div class="library">
 <script>
 const colors=["red","blue","green","yellow","purple"];
-for(let s=0;s<4;s++){
+for(let s=0;s<5;s++){
   document.write('<div class="shelf">');
-  for(let b=0;b<14;b++){
+  for(let b=0;b<12;b++){
     let c=colors[Math.floor(Math.random()*colors.length)];
     let h=[""," tall"," short"][Math.floor(Math.random()*3)];
     document.write(`<div class="book ${c}${h}"></div>`);
@@ -326,10 +313,10 @@ for(let s=0;s<4;s++){
 <div class="section" id="quizSection">
   <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
   <h2>Automated Interactive Quiz</h2>
-  <input id="quizTopic" placeholder="Type any topic (e.g. photosynthesis, fractions, World War II, velocity, ecosystem)">
+  <input id="quizTopic" placeholder="Type any topic">
   <button onclick="generateQuiz()">Generate Quiz</button>
   <div id="quizList"></div>
-  <div id="quizResult" style="margin-top:8px;"></div>
+  <div id="quizResult" style="margin-top:6px;"></div>
 </div>
 
 <div class="section" id="flashSection">
@@ -346,24 +333,30 @@ for(let s=0;s<4;s++){
 <div class="section" id="teacherSection">
   <div class="close-btn" onclick="closeSection('teacherSection')">✖</div>
   <h2>Teacher Helper</h2>
-  <input id="teacherQuestion" placeholder="What do you want explained? (any concept)">
+  <input id="teacherQuestion" placeholder="What do you want explained?">
   <button onclick="teacherExplain()">Explain</button>
   <button onclick="saveTeacher()">Save Explanation</button>
   <button onclick="deleteTeacher()">Delete Explanation</button>
-  <p id="teacherOut" style="white-space:pre-wrap;margin-top:12px;"></p>
+  <p id="teacherOut" style="white-space:pre-wrap;margin-top:8px;"></p>
 </div>
 
 <div class="section" id="notebookSection">
   <div class="close-btn" onclick="closeSection('notebookSection')">✖</div>
   <h2>Notebook</h2>
-  <div id="pageButtons" style="margin-bottom:10px;"></div>
+  <div id="pageButtons" style="margin-bottom:6px;"></div>
+  <div class="tools">
+    <button class="hl-btn" style="background:#f7d96f" onclick="highlight('#f7d96f')">Yellow</button>
+    <button class="hl-btn" style="background:#f7a6c7" onclick="highlight('#f7a6c7')">Pink</button>
+    <button class="hl-btn" style="background:#9adf9a" onclick="highlight('#9adf9a')">Green</button>
+    <button class="hl-btn" style="background:#9ac7df" onclick="highlight('#9ac7df')">Blue</button>
+    <button class="hl-btn" style="background:#b0a8a8" onclick="highlight('clear')">Clear</button>
+  </div>
   <div class="notebook">
     <div id="note" contenteditable="true" oninput="saveCurrentPage()"></div>
   </div>
-  <div style="text-align:center;margin-top:10px;">
+  <div style="text-align:center;margin-top:6px;">
     <button class="page-btn" onclick="addPage()">➕ Add Page</button>
   </div>
 </div>
 </body>
 </html>
-                      
