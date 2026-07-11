@@ -10,14 +10,16 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "luna-icon.png",
+      "src": "icon_1783778969546.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "luna-icon-192.png",
+      "src": "icon_1783778969546.png",
       "sizes": "192x192",
       "type": "image/png"
     }
   ]
 }
+
+  
