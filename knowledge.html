@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Knowledge Studio</title>
+<title>Knowledge Studio 📖</title>
 
 <style>
 body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
@@ -93,273 +93,235 @@ button:hover { background:#e3d2bd; }
   padding:20px; margin:15px 0; border-radius:16px; font-size:22px;
 }
 
-/* Note Paper */
-.note-paper {
-  border:3px solid #c9b2e8; border-radius:16px;
-  padding:20px; min-height:300px; background:#fffdf7;
+/* NOTEBOOK BOOK */
+.notebook {
+  width:90%;
+  max-width:900px;
+  margin:40px auto;
+  background:white;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.4);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    white 0px,
+    white 28px,
+    #e8e8e8 29px
+  );
 }
-#photosGallery img {
-  max-width:120px;
-  max-height:120px;
-  margin:8px;
+
+#note {
+  width:100%;
+  min-height:70vh;
+  font-size:22px;
+  line-height:29px;
+  outline:none;
+  border:none;
+  background:transparent;
+  color:#3b2f2f;
+}
+
+/* Highlighters */
+.tools {
+  display:flex;
+  gap:15px;
+  margin:20px auto;
+  justify-content:center;
+}
+.hl-btn {
+  padding:10px 20px;
+  font-size:20px;
+  border:none;
   border-radius:10px;
-  border:2px solid #c9b2e8;
+  cursor:pointer;
+  color:white;
 }
+.yellow { background:#f7d96f; }
+.pink { background:#f7a6c7; }
+.green { background:#9adf9a; }
+.blue { background:#9ac7df; }
+.clear { background:#b0a8a8; }
+
+/* Page buttons */
+.pages {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:20px;
+}
+.page-btn {
+  background:#d8c3a5;
+  border:2px solid #b89b7a;
+  color:#4a3b2b;
+  padding:10px 15px;
+  font-size:20px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.page-btn:hover { background:#e3d2bd; }
+.active { background:#b89b7a !important; color:white !important; }
 </style>
 
 <script>
-const LS_KEYS = {
-  quizzes: "ks_quizzes",
-  flashcards: "ks_flashcards",
-  notes: "ks_notes",
-  teacher: "ks_teacher_explanation"
-};
-
-/* Section + home */
-function openSection(id){document.getElementById(id).style.display="block";}
-function closeSection(id){document.getElementById(id).style.display="none";}
-function goHome(){window.location.href="index.html";}
-
 /* QUIZ */
 let quizzes=[];
 function addQuiz(){
-  const q = document.getElementById("quizQ").value;
-  const c = document.getElementById("quizC").value;
-  if(!q.trim() || !c.trim()) return;
+  const q=document.getElementById("quizQ").value;
+  const c=document.getElementById("quizC").value;
+  if(!q.trim()||!c.trim())return;
   quizzes.push({q,c});
   renderQuiz();
 }
 function renderQuiz(){
-  const quizList = document.getElementById("quizList");
+  const quizList=document.getElementById("quizList");
   quizList.innerHTML="";
   quizzes.forEach((x,i)=>{
-    quizList.innerHTML+=
-    `<div class='item-row'><b>${x.q}</b><br>
-     <input placeholder='Your answer' onblur='check(${i},this.value)'></div>`;
+    quizList.innerHTML+=`<div class='item-row'><b>${x.q}</b><br>
+    <input placeholder='Your answer' onblur='check(${i},this.value)'></div>`;
   });
 }
 function check(i,a){
-  const quizResult = document.getElementById("quizResult");
-  quizResult.textContent = (a.trim()==quizzes[i].c.trim()) ? "Correct!" : "Wrong";
+  const quizResult=document.getElementById("quizResult");
+  quizResult.textContent=(a.trim()==quizzes[i].c.trim())?"Correct!":"Wrong";
 }
 function saveQuizzes(){
-  localStorage.setItem(LS_KEYS.quizzes, JSON.stringify(quizzes));
-  document.getElementById("quizResult").textContent="Quizzes saved.";
+  localStorage.setItem("ks_quizzes",JSON.stringify(quizzes));
+  document.getElementById("quizResult").textContent="Saved!";
 }
 function deleteQuizzes(){
-  if(!confirm("Delete all quizzes?")) return;
+  if(!confirm("Delete all quizzes?"))return;
   quizzes=[];
-  localStorage.removeItem(LS_KEYS.quizzes);
+  localStorage.removeItem("ks_quizzes");
   renderQuiz();
-  document.getElementById("quizResult").textContent="Quizzes deleted.";
 }
 function loadQuizzes(){
-  const raw = localStorage.getItem(LS_KEYS.quizzes);
-  quizzes = raw ? JSON.parse(raw) : [];
+  const raw=localStorage.getItem("ks_quizzes");
+  quizzes=raw?JSON.parse(raw):[];
   renderQuiz();
 }
 
 /* FLASHCARDS */
 let cards=[];
 function addCard(){
-  const f = document.getElementById("flashF").value;
-  const b = document.getElementById("flashB").value;
-  if(!f.trim() || !b.trim()) return;
+  const f=document.getElementById("flashF").value;
+  const b=document.getElementById("flashB").value;
+  if(!f.trim()||!b.trim())return;
   cards.push({f,b});
   renderCards();
 }
 function renderCards(){
-  const flashList = document.getElementById("flashList");
+  const flashList=document.getElementById("flashList");
   flashList.innerHTML="";
   cards.forEach((x,i)=>{
-    flashList.innerHTML+=
-    `<div class='item-row' onclick='flip(${i})' id='c${i}' data='f'><b>${x.f}</b></div>`;
+    flashList.innerHTML+=`<div class='item-row' onclick='flip(${i})' id='c${i}' data='f'><b>${x.f}</b></div>`;
   });
 }
 function flip(i){
   let el=document.getElementById("c"+i),x=cards[i];
-  if(el.dataset.data=="f"){el.innerHTML="<b>"+x.b+"</b>"; el.dataset.data="b";}
-  else{el.innerHTML="<b>"+x.f+"</b>"; el.dataset.data="f";}
+  if(el.dataset.data=="f"){el.innerHTML="<b>"+x.b+"</b>";el.dataset.data="b";}
+  else{el.innerHTML="<b>"+x.f+"</b>";el.dataset.data="f";}
 }
 function saveFlashcards(){
-  localStorage.setItem(LS_KEYS.flashcards, JSON.stringify(cards));
-  alert("Flashcards saved.");
+  localStorage.setItem("ks_flashcards",JSON.stringify(cards));
 }
 function deleteFlashcards(){
-  if(!confirm("Delete all flashcards?")) return;
+  if(!confirm("Delete all flashcards?"))return;
   cards=[];
-  localStorage.removeItem(LS_KEYS.flashcards);
+  localStorage.removeItem("ks_flashcards");
   renderCards();
 }
 function loadFlashcards(){
-  const raw = localStorage.getItem(LS_KEYS.flashcards);
-  cards = raw ? JSON.parse(raw) : [];
+  const raw=localStorage.getItem("ks_flashcards");
+  cards=raw?JSON.parse(raw):[];
   renderCards();
 }
 
 /* TEACHER */
 function teacherExplain(){
-  const fileInput = document.getElementById("teacherFile");
-  const teacherOut = document.getElementById("teacherOut");
-  let file=fileInput.files[0];
-  if(!file){ teacherOut.textContent="Upload something first."; return; }
-  teacherOut.textContent="(AI explanation would appear here if server was connected)";
+  const file=document.getElementById("teacherFile").files[0];
+  const out=document.getElementById("teacherOut");
+  if(!file){out.textContent="Upload something first.";return;}
+  out.textContent="(AI explanation would appear here)";
 }
 function saveTeacher(){
-  const teacherOut = document.getElementById("teacherOut").textContent;
-  localStorage.setItem(LS_KEYS.teacher, teacherOut);
-  alert("Explanation saved.");
+  localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);
 }
 function deleteTeacher(){
-  if(!confirm("Delete saved explanation?")) return;
-  localStorage.removeItem(LS_KEYS.teacher);
+  if(!confirm("Delete explanation?"))return;
+  localStorage.removeItem("ks_teacher");
   document.getElementById("teacherOut").textContent="";
 }
 function loadTeacher(){
-  const saved = localStorage.getItem(LS_KEYS.teacher);
-  if(saved) document.getElementById("teacherOut").textContent = saved;
+  const saved=localStorage.getItem("ks_teacher");
+  if(saved)document.getElementById("teacherOut").textContent=saved;
 }
 
-/* NOTES */
-let notes = [];
-let cur = null;
+/* NOTEBOOK BOOK */
+let pages=[];
+let currentPage=0;
 
-/* FIX: Convert old notes to new format */
-function normalizeNotes(){
-  notes = notes.map(n => {
-    return {
-      title: n.title ? n.title : "New Note",
-      content: n.content ? n.content : (n.c ? n.c : ""),
-      photos: n.photos ? n.photos : []
-    };
-  });
-}
-
-function newNote(){
-  cur = notes.length;
-  notes.push({title:"New Note", content:"", photos:[]});
-  saveNotesAll();
-  renderNotes();
-  loadNote();
-}
-
-function renderNotes(){
-  const notesList = document.getElementById("notesList");
-  notesList.innerHTML = "";
-  notes.forEach((note, i) => {
-    const displayTitle = note.title && note.title.trim() ? note.title : `Note ${i+1}`;
-    notesList.innerHTML += `
-      <div class="item-row">
-        <b>${displayTitle}</b>
-        <button onclick="openNote(${i})">Open</button>
-        <button onclick="deleteNote(${i})">Delete</button>
-      </div>`;
-  });
-}
-
-function openNote(i){
-  cur = i;
-  loadNote();
-  openSection('notesSection');
-}
-
-function loadNote(){
-  const titleInput = document.getElementById("noteTitle");
-  const textArea = document.getElementById("noteText");
-  const gallery = document.getElementById("photosGallery");
-
-  if(cur === null || !notes[cur]) {
-    titleInput.value = "";
-    textArea.value = "";
-    gallery.innerHTML = "";
-    return;
-  }
-
-  titleInput.value = notes[cur].title;
-  textArea.value = notes[cur].content;
-  renderPhotos();
-}
-
-function saveCurrentNote(){
-  if(cur === null || !notes[cur]) return;
-  notes[cur].title = document.getElementById("noteTitle").value;
-  notes[cur].content = document.getElementById("noteText").value;
-  saveNotesAll();
-  renderNotes();
-  alert("Note saved.");
-}
-
-function deleteNote(i){
-  if(!confirm("Delete this note?")) return;
-  notes.splice(i, 1);
-  if(notes.length === 0) cur = null;
-  else if(cur >= notes.length) cur = notes.length - 1;
-  saveNotesAll();
-  renderNotes();
-  loadNote();
-}
-
-function handlePhotoUpload(){
-  if(cur === null || !notes[cur]) {
-    alert("Create or open a note first.");
-    return;
-  }
-  const fileInput = document.getElementById("notePhoto");
-  const file = fileInput.files[0];
-  if(!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e){
-    notes[cur].photos.push(e.target.result);
-    saveNotesAll();
-    renderPhotos();
-  };
-  reader.readAsDataURL(file);
-}
-
-function renderPhotos(){
-  const gallery = document.getElementById("photosGallery");
-  gallery.innerHTML = "";
-  if(cur === null || !notes[cur] || !notes[cur].photos) return;
-  notes[cur].photos.forEach(src => {
-    const img = document.createElement("img");
-    img.src = src;
-    gallery.appendChild(img);
-  });
-}
-
-function saveNotesAll(){
-  localStorage.setItem(LS_KEYS.notes, JSON.stringify(notes));
-}
-
-function deleteNotesAll(){
-  if(!confirm("Delete ALL notes?")) return;
-  notes = [];
-  cur = null;
-  localStorage.removeItem(LS_KEYS.notes);
-  renderNotes();
-  loadNote();
-}
-
-function loadNotes(){
-  const raw = localStorage.getItem(LS_KEYS.notes);
-  notes = raw ? JSON.parse(raw) : [];
-
-  normalizeNotes();  /* FIX APPLIED HERE */
-
-  if(notes.length > 0) cur = 0;
-
-  renderNotes();
-  loadNote();
-}
-
-/* INIT */
-window.onload = function(){
+window.onload=function(){
   loadQuizzes();
   loadFlashcards();
-  loadNotes();
   loadTeacher();
+  loadNotebook();
 };
+
+function loadNotebook(){
+  const saved=localStorage.getItem("KS_Notebook_Pages");
+  pages=saved?JSON.parse(saved):[""];
+  renderPages();
+  loadPage(0);
+}
+
+function savePages(){
+  localStorage.setItem("KS_Notebook_Pages",JSON.stringify(pages));
+}
+
+function loadPage(i){
+  currentPage=i;
+  document.getElementById("note").innerHTML=pages[i];
+  updateActiveButton();
+}
+
+function saveCurrentPage(){
+  pages[currentPage]=document.getElementById("note").innerHTML;
+  savePages();
+}
+
+function addPage(){
+  pages.push("");
+  savePages();
+  renderPages();
+  loadPage(pages.length-1);
+}
+
+function renderPages(){
+  const container=document.getElementById("pageButtons");
+  container.innerHTML="";
+  pages.forEach((_,i)=>{
+    container.innerHTML+=`<button class="page-btn" onclick="loadPage(${i})">Page ${i+1}</button>`;
+  });
+}
+
+function highlight(color){
+  let sel=window.getSelection();
+  if(!sel.rangeCount)return;
+  let range=sel.getRangeAt(0);
+  let span=document.createElement("span");
+  span.style.backgroundColor=(color==="clear")?"transparent":color;
+  range.surroundContents(span);
+  saveCurrentPage();
+}
+
+function updateActiveButton(){
+  const buttons=document.querySelectorAll(".page-btn");
+  buttons.forEach((btn,i)=>{
+    btn.classList.toggle("active",i===currentPage);
+  });
+}
+
+function goHome(){window.location.href="index.html";}
 </script>
 </head>
 
@@ -391,7 +353,7 @@ for(let s=0;s<4;s++){
   <div class="note" onclick="openSection('quizSection')">Quiz</div>
   <div class="note" onclick="openSection('flashSection')">Flashcards</div>
   <div class="note" onclick="openSection('teacherSection')">Teacher</div>
-  <div class="note" onclick="openSection('notesSection')">Notes</div>
+  <div class="note" onclick="openSection('notebookSection')">Notebook</div>
 </div>
 
 <!-- QUIZ -->
@@ -399,13 +361,12 @@ for(let s=0;s<4;s++){
   <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
   <h2>Quiz Generator</h2>
   <input id="quizTopic" placeholder="AI Topic">
-  <button onclick="aiQuiz()">AI Generate</button>
   <hr>
   <input id="quizQ" placeholder="Question">
   <input id="quizC" placeholder="Correct Answer">
   <button onclick="addQuiz()">Add</button>
-  <button onclick="saveQuizzes()">Save Quizzes</button>
-  <button onclick="deleteQuizzes()">Delete Quizzes</button>
+  <button onclick="saveQuizzes()">Save</button>
+  <button onclick="deleteQuizzes()">Delete</button>
   <div id="quizList"></div>
   <div id="quizResult"></div>
 </div>
@@ -414,12 +375,11 @@ for(let s=0;s<4;s++){
 <div class="section" id="flashSection">
   <div class="close-btn" onclick="closeSection('flashSection')">✖</div>
   <h2>Flashcards</h2>
-  <input id="flashF" placeholder="Front / AI Topic">
+  <input id="flashF" placeholder="Front">
   <input id="flashB" placeholder="Back">
   <button onclick="addCard()">Add</button>
-  <button onclick="aiCards()">AI Generate</button>
-  <button onclick="saveFlashcards()">Save Flashcards</button>
-  <button onclick="deleteFlashcards()">Delete Flashcards</button>
+  <button onclick="saveFlashcards()">Save</button>
+  <button onclick="deleteFlashcards()">Delete</button>
   <div id="flashList"></div>
 </div>
 
@@ -429,28 +389,32 @@ for(let s=0;s<4;s++){
   <h2>Virtual Teacher</h2>
   <input type="file" id="teacherFile">
   <button onclick="teacherExplain()">Explain</button>
-  <button onclick="saveTeacher()">Save Explanation</button>
-  <button onclick="deleteTeacher()">Delete Explanation</button>
+  <button onclick="saveTeacher()">Save</button>
+  <button onclick="deleteTeacher()">Delete</button>
   <p id="teacherOut" style="white-space:pre-wrap;"></p>
 </div>
 
-<!-- NOTES -->
-<div class="section" id="notesSection">
-  <div class="close-btn" onclick="closeSection('notesSection')">✖</div>
-  <h2>Notes</h2>
-  <button onclick="newNote()">New Note</button>
-  <button onclick="saveNotesAll()">Save All Notes</button>
-  <button onclick="deleteNotesAll()">Delete All Notes</button>
-  <div id="notesList"></div>
-  <div class="note-paper">
-    <input id="noteTitle" placeholder="Note title...">
-    <textarea id="noteText" style="width:100%;height:250px;"></textarea>
-    <button onclick="saveCurrentNote()">Save This Note</button>
-    <hr>
-    <label>Photos for this note (gallery at bottom):</label>
-    <input type="file" id="notePhoto" accept="image/*">
-    <button onclick="handlePhotoUpload()">Add Photo</button>
-    <div id="photosGallery"></div>
+<!-- NOTEBOOK BOOK -->
+<div class="section" id="notebookSection">
+  <div class="close-btn" onclick="closeSection('notebookSection')">✖</div>
+  <h2>Notebook Book 📖</h2>
+
+  <div class="tools">
+    <button class="hl-btn yellow" onclick="highlight('#f7d96f')">Yellow</button>
+    <button class="hl-btn pink" onclick="highlight('#f7a6c7')">Pink</button>
+    <button class="hl-btn green" onclick="highlight('#9adf9a')">Green</button>
+    <button class="hl-btn blue" onclick="highlight('#9ac7df')">Blue</button>
+    <button class="hl-btn clear" onclick="highlight('clear')">Clear</button>
+  </div>
+
+  <div class="pages" id="pageButtons"></div>
+
+  <div class="notebook">
+    <div id="note" contenteditable="true" oninput="saveCurrentPage()"></div>
+  </div>
+
+  <div style="text-align:center; margin-bottom:40px;">
+    <button class="page-btn" onclick="addPage()">➕ Add Page</button>
   </div>
 </div>
 
