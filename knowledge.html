@@ -2,87 +2,328 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>knowledge</title>
+<title>Knowledge Studio (Big + Smarter)</title>
 <style>
-body{margin:0;font-family:Georgia;background:#15100b;color:#f5e9c8;}
-.top-bar{display:flex;align-items:center;justify-content:center;gap:30px;margin-top:10px;}
-.back-arrow{font-size:32px;cursor:pointer;}
-.title{text-align:center;font-size:40px;text-shadow:0 0 20px #f5e9c8;}
-.library{position:fixed;top:80px;left:0;width:100%;height:calc(100% - 80px);background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);z-index:1;}
-.shelf{width:94%;height:120px;background:#3b2a15;margin:10px auto;border-radius:12px;box-shadow:inset 0 0 20px rgba(0,0,0,0.8),0 8px 16px rgba(0,0,0,0.7);display:flex;align-items:flex-end;padding:14px;gap:8px;}
-.book{width:26px;height:90px;border-radius:4px;border:2px solid rgba(0,0,0,0.6);box-shadow:inset 0 0 10px rgba(0,0,0,0.5);}
-.tall{height:105px;}
-.short{height:75px;}
+body{
+  margin:0;
+  font-family:Georgia;
+  background:#15100b;
+  color:#f5e9c8;
+  font-size:22px;
+}
+.top-bar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:40px;
+  margin-top:20px;
+}
+.back-arrow{
+  font-size:40px;
+  cursor:pointer;
+}
+.title{
+  text-align:center;
+  font-size:52px;
+  text-shadow:0 0 30px #f5e9c8;
+}
+.library{
+  position:fixed;
+  top:120px;
+  left:0;
+  width:100%;
+  height:calc(100% - 120px);
+  background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);
+  z-index:1;
+}
+.shelf{
+  width:96%;
+  height:180px;
+  background:#3b2a15;
+  margin:18px auto;
+  border-radius:18px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,0.8),0 12px 24px rgba(0,0,0,0.7);
+  display:flex;
+  align-items:flex-end;
+  padding:20px;
+  gap:12px;
+}
+.book{
+  width:40px;
+  height:130px;
+  border-radius:6px;
+  border:3px solid rgba(0,0,0,0.6);
+  box-shadow:inset 0 0 14px rgba(0,0,0,0.5);
+}
+.tall{height:150px;}
+.short{height:110px;}
 .red{background:#7b2e2e;}
 .blue{background:#2e4a7b;}
 .green{background:#2e7b4a;}
 .yellow{background:#b89b3b;}
 .purple{background:#5b2e7b;}
-.desk{width:100%;height:190px;background:#3f2b17;position:absolute;bottom:0;z-index:2;}
-.notes{position:absolute;bottom:20px;width:100%;display:flex;justify-content:center;gap:10px;z-index:3;flex-wrap:wrap;}
-.note{width:140px;height:140px;background:#d8c3a5;border:3px solid #b89b7a;border-radius:16px;box-shadow:0 0 15px rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:bold;cursor:pointer;color:#4a3b2b;text-align:center;}
-.note:hover{transform:scale(1.05);background:#e3d2bd;}
-.section{display:none;position:absolute;top:90px;left:50%;transform:translateX(-50%);width:92%;max-height:65%;overflow-y:auto;background:white;color:#2b1f10;padding:14px;border-radius:16px;box-shadow:0 0 20px black;font-size:16px;z-index:4;}
-.close-btn{float:right;font-size:24px;cursor:pointer;}
-input,textarea{width:100%;font-size:16px;padding:8px;margin:8px 0;border-radius:10px;border:2px solid #c9b2e8;background:#f7f2ff;}
-button{font-size:15px;padding:6px 10px;margin:6px 6px 6px 0;background:#d8c3a5;border:2px solid #b89b7a;border-radius:10px;color:#4a3b2b;cursor:pointer;}
-button:hover{background:#e3d2bd;}
-.item-row{background:#e6d6f5;border:2px solid #c9b2e8;padding:10px;margin:8px 0;border-radius:12px;font-size:14px;}
-.quiz-answer{display:inline-block;margin:3px 4px;padding:5px 8px;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;}
+.desk{
+  width:100%;
+  height:260px;
+  background:#3f2b17;
+  position:absolute;
+  bottom:0;
+  z-index:2;
+}
+.notes{
+  position:absolute;
+  bottom:40px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  z-index:3;
+  flex-wrap:wrap;
+}
+.note{
+  width:190px;
+  height:190px;
+  background:#d8c3a5;
+  border:4px solid #b89b7a;
+  border-radius:22px;
+  box-shadow:0 0 20px rgba(0,0,0,0.6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:26px;
+  font-weight:bold;
+  cursor:pointer;
+  color:#4a3b2b;
+  text-align:center;
+}
+.note:hover{
+  transform:scale(1.08);
+  background:#e3d2bd;
+}
+.section{
+  display:none;
+  position:absolute;
+  top:130px;
+  left:50%;
+  transform:translateX(-50%);
+  width:94%;
+  max-height:68%;
+  overflow-y:auto;
+  background:white;
+  color:#2b1f10;
+  padding:20px;
+  border-radius:22px;
+  box-shadow:0 0 26px black;
+  font-size:20px;
+  z-index:4;
+}
+.close-btn{
+  float:right;
+  font-size:32px;
+  cursor:pointer;
+}
+input,textarea{
+  width:100%;
+  font-size:20px;
+  padding:10px;
+  margin:10px 0;
+  border-radius:12px;
+  border:3px solid #c9b2e8;
+  background:#f7f2ff;
+}
+button{
+  font-size:18px;
+  padding:8px 14px;
+  margin:8px 8px 8px 0;
+  background:#d8c3a5;
+  border:3px solid #b89b7a;
+  border-radius:12px;
+  color:#4a3b2b;
+  cursor:pointer;
+}
+button:hover{
+  background:#e3d2bd;
+}
+.item-row{
+  background:#e6d6f5;
+  border:3px solid #c9b2e8;
+  padding:14px;
+  margin:10px 0;
+  border-radius:16px;
+  font-size:18px;
+}
+.quiz-answer{
+  display:inline-block;
+  margin:5px 6px;
+  padding:7px 10px;
+  border-radius:10px;
+  background:#f7f2ff;
+  border:3px solid #c9b2e8;
+  cursor:pointer;
+  font-size:18px;
+}
 .quiz-answer.correct{background:#9adf9a;}
 .quiz-answer.wrong{background:#f7a6c7;}
-.match-container{display:flex;gap:10px;margin-top:8px;}
+.match-container{
+  display:flex;
+  gap:16px;
+  margin-top:10px;
+}
 .match-column{flex:1;}
-.match-item{padding:5px 8px;margin:3px 0;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;font-size:14px;}
+.match-item{
+  padding:7px 10px;
+  margin:5px 0;
+  border-radius:10px;
+  background:#f7f2ff;
+  border:3px solid #c9b2e8;
+  cursor:pointer;
+  font-size:18px;
+}
 .match-item.selected{background:#9ac7df;}
 .match-item.matched{background:#9adf9a;}
-.notebook{width:100%;margin:10px auto;background:white;border-radius:12px;padding:10px;box-shadow:0 0 15px rgba(0,0,0,0.4);}
-#note{width:100%;min-height:40vh;font-size:15px;line-height:20px;outline:none;border:none;background:transparent;color:#3b2f2f;}
-.page-btn{background:#d8c3a5;border:2px solid #b89b7a;color:#4a3b2b;padding:5px 8px;font-size:13px;border-radius:8px;cursor:pointer;margin:0 3px;}
+.notebook{
+  width:100%;
+  margin:14px auto;
+  background:white;
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+#note{
+  width:100%;
+  min-height:50vh;
+  font-size:18px;
+  line-height:26px;
+  outline:none;
+  border:none;
+  background:transparent;
+  color:#3b2f2f;
+}
+.page-btn{
+  background:#d8c3a5;
+  border:3px solid #b89b7a;
+  color:#4a3b2b;
+  padding:7px 10px;
+  font-size:16px;
+  border-radius:10px;
+  cursor:pointer;
+  margin:0 5px;
+}
 .page-btn:hover{background:#e3d2bd;}
-.active{background:#b89b7a!important;color:white!important;}
-.tools{margin-bottom:8px;}
-.hl-btn{border-radius:8px;border:1px solid #4a3b2b;padding:4px 6px;font-size:12px;margin-right:4px;cursor:pointer;}
+.active{
+  background:#b89b7a!important;
+  color:white!important;
+}
+.tools{margin-bottom:10px;}
+.hl-btn{
+  border-radius:10px;
+  border:2px solid #4a3b2b;
+  padding:6px 8px;
+  font-size:14px;
+  margin-right:6px;
+  cursor:pointer;
+}
 </style>
 <script>
-function openSection(id){document.querySelectorAll('.section').forEach(s=>s.style.display='none');document.getElementById(id).style.display='block';}
+function openSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+  document.getElementById(id).style.display='block';
+}
 function closeSection(id){document.getElementById(id).style.display='none';}
 function goHome(){location.reload();}
 
-/* QUIZ */
+/* "AI-like" helpers (no API) */
+function analyzeTopic(t){
+  const lower=t.toLowerCase();
+  const words=lower.split(/\s+/).filter(w=>w.length>2);
+  const main=words[words.length-1] || t;
+  const subtopics=[];
+  if(words.length>1){
+    subtopics.push(words[0]);
+    if(words.length>2) subtopics.push(words[1]);
+  }
+  return {topic:t, main, words, subtopics};
+}
+
+/* QUIZ – more topic-specific */
 let currentQuiz={mcq:[],tf:[],matchA:[],matchB:[],pairs:[]},matchSelection={a:null,b:null};
+
 function generateQuiz(){
   const t=document.getElementById("quizTopic").value.trim();
   const out=document.getElementById("quizList");
   const result=document.getElementById("quizResult");
   if(!t){out.innerHTML="";result.textContent="Type a topic first.";return;}
-  const core=t.split(" ").pop();
+
+  const info=analyzeTopic(t);
+  const topic=info.topic;
+  const main=info.main;
+  const subs=info.subtopics;
+
   const mcq=[
-    {q:`What is the main idea behind ${t}?`,
-     options:[
-       `${t} explains how ${core} behaves or affects something.`,
-       `${t} is random and has no meaning.`,
-       `${t} is only used in jokes.`,
-       `${t} cannot be studied or understood.`
-     ],correct:0},
-    {q:`Where does ${t} usually appear?`,
-     options:[
-       `In real situations involving ${core}.`,
-       `Only in fictional stories.`,
-       `Only in ancient myths.`,
-       `It never appears anywhere.`
-     ],correct:0}
+    {
+      q:`Which statement best describes ${topic}?`,
+      options:[
+        `${topic} is a concept that focuses on ${main} and how it affects real situations.`,
+        `${topic} is only a random idea with no structure or meaning.`,
+        `${topic} is a joke and is never used seriously.`,
+        `${topic} is a secret term that nobody can define.`
+      ],
+      correct:0
+    },
+    {
+      q:`In which context would you most likely encounter ${topic}?`,
+      options:[
+        `When studying or working with ideas related to ${main}.`,
+        `Only when reading fantasy novels.`,
+        `Only in ancient legends with no modern use.`,
+        `Never, because ${topic} does not appear in real life.`
+      ],
+      correct:0
+    },
+    {
+      q:`What is a key question you can ask to understand ${topic} better?`,
+      options:[
+        `“How does ${topic} change when ${main} changes?”`,
+        `“Can ${topic} be ignored completely?”`,
+        `“Is ${topic} just a random word?”`,
+        `“Should I avoid learning about ${topic}?”`
+      ],
+      correct:0
+    }
   ];
+
   const tf=[
-    {q:`${t} has real applications.`,correct:true},
-    {q:`${t} cannot be explained or used.`,correct:false}
+    {
+      q:`${topic} can be broken down into smaller ideas such as causes, effects, and examples.`,
+      correct:true
+    },
+    {
+      q:`${topic} has no connection to real-world situations involving ${main}.`,
+      correct:false
+    },
+    {
+      q:`Learning about ${topic} can help you make better decisions in contexts related to ${main}.`,
+      correct:true
+    }
   ];
-  const matchA=[`${t} – definition`,`${t} – example`,`${t} – key idea`];
-  const matchB=[`What ${t} means.`,`Where ${t} appears in real life.`,`The most important thing about ${t}.`];
-  currentQuiz={mcq,tf,matchA,matchB,pairs:[0,1,2]};
+
+  const matchA=[
+    `${topic} – definition`,
+    `${topic} – real example`,
+    `${topic} – key question`,
+    `${topic} – main element`
+  ];
+  const matchB=[
+    `What ${topic} means and how it relates to ${main}.`,
+    `A situation where ${topic} appears in practice.`,
+    `A guiding question that helps you explore ${topic}.`,
+    `The central idea or element (like ${main}) that ${topic} focuses on.`
+  ];
+  currentQuiz={mcq,tf,matchA,matchB,pairs:[0,1,2,3]};
   renderQuiz();
-  result.textContent="Quiz generated!";
+  result.textContent="Topic-based quiz generated!";
 }
+
 function renderQuiz(){
   const out=document.getElementById("quizList");
   out.innerHTML="";
@@ -113,6 +354,7 @@ function renderQuiz(){
   out.innerHTML+=html;
   matchSelection={a:null,b:null};
 }
+
 function checkMCQ(qIndex,optIndex,el){
   const q=currentQuiz.mcq[qIndex];
   const correct=(optIndex===q.correct);
@@ -148,7 +390,7 @@ function selectMatch(side,index,el){
       setTimeout(()=>{
         matchSelection.a.el.classList.remove('selected','wrong');
         matchSelection.b.el.classList.remove('selected','wrong');
-      },500);
+      },600);
     }
     matchSelection={a:null,b:null};
   }
@@ -189,32 +431,46 @@ function loadFlashcards(){
   renderCards();
 }
 
-/* TEACHER */
+/* TEACHER – richer, topic-focused explanation */
 function teacherExplain(){
   const t=document.getElementById("teacherQuestion").value.trim();
   const out=document.getElementById("teacherOut");
   if(!t){out.textContent="Type a topic.";return;}
-  const words=t.split(" ");
-  const main=words[words.length-1];
-  out.textContent=
-    `Topic: ${t}\n\n`+
+
+  const info=analyzeTopic(t);
+  const topic=info.topic;
+  const main=info.main;
+  const subs=info.subtopics;
+
+  const subText = subs.length
+    ? `Some related ideas you might explore are: ${subs.join(", ")}.`
+    : `You can explore related ideas by asking how ${topic} connects to other concepts you know.`;
+
+  out.textContent =
+    `Topic: ${topic}\n\n`+
     `1. What it means:\n`+
-    `   ${t} refers to a concept involving ${main}. It is used to\n`+
-    `   describe, measure, or explain something in its field.\n\n`+
+    `   ${topic} is a concept that focuses on ${main}. It is used to\n`+
+    `   describe, analyze, or understand situations where ${main} plays a role.\n\n`+
     `2. Why it matters:\n`+
-    `   Understanding ${t} helps you see how ${main} affects real situations,\n`+
-    `   decisions, or systems.\n\n`+
+    `   Understanding ${topic} helps you see how ${main} influences real decisions,\n`+
+    `   systems, or phenomena. When you know what ${topic} is, you can explain\n`+
+    `   why certain things happen and predict what might happen next.\n\n`+
     `3. How it works:\n`+
-    `   Break ${t} into smaller parts:\n`+
-    `   - What it describes\n`+
-    `   - What causes it\n`+
-    `   - What changes it\n`+
-    `   - What results from it\n\n`+
+    `   To understand ${topic}, break it into smaller parts:\n`+
+    `   - What it describes (what kind of situation or idea)\n`+
+    `   - What causes it (which factors or conditions make it appear)\n`+
+    `   - What changes it (how different choices or conditions affect it)\n`+
+    `   - What results from it (what outcomes or effects it leads to)\n\n`+
+    `   ${subText}\n\n`+
     `4. Real example:\n`+
-    `   Think of a real scenario where ${t} appears. Describe what happens,\n`+
-    `   why it happens, and what ${main} influences.\n\n`+
+    `   Imagine a real situation where ${topic} appears. Describe:\n`+
+    `   - What is happening\n`+
+    `   - How ${main} is involved\n`+
+    `   - Why ${topic} helps you understand or improve that situation\n\n`+
     `5. How to remember it:\n`+
-    `   Create a short rule: “${t} is the idea that explains how ${main} behaves.”`;
+    `   Create a short rule or sentence:\n`+
+    `   “${topic} is the idea that explains how ${main} affects what happens.”\n`+
+    `   Repeat this rule and connect it to examples from your own life or studies.`;
 }
 function saveTeacher(){localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);}
 function deleteTeacher(){
@@ -291,7 +547,7 @@ window.onload=function(){
 const colors=["red","blue","green","yellow","purple"];
 for(let s=0;s<5;s++){
   document.write('<div class="shelf">');
-  for(let b=0;b<12;b++){
+  for(let b=0;b<14;b++){
     let c=colors[Math.floor(Math.random()*colors.length)];
     let h=[""," tall"," short"][Math.floor(Math.random()*3)];
     document.write(`<div class="book ${c}${h}"></div>`);
@@ -312,16 +568,16 @@ for(let s=0;s<5;s++){
 
 <div class="section" id="quizSection">
   <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
-  <h2>Automated Interactive Quiz</h2>
-  <input id="quizTopic" placeholder="Type any topic">
+  <h2 style="font-size:28px;">Automated Topic-Based Quiz</h2>
+  <input id="quizTopic" placeholder="Type any topic (e.g. photosynthesis, supply and demand, World War II)">
   <button onclick="generateQuiz()">Generate Quiz</button>
   <div id="quizList"></div>
-  <div id="quizResult" style="margin-top:6px;"></div>
+  <div id="quizResult" style="margin-top:8px;"></div>
 </div>
 
 <div class="section" id="flashSection">
   <div class="close-btn" onclick="closeSection('flashSection')">✖</div>
-  <h2>Flashcards</h2>
+  <h2 style="font-size:28px;">Flashcards</h2>
   <input id="flashF" placeholder="Front">
   <input id="flashB" placeholder="Back">
   <button onclick="addCard()">Add</button>
@@ -332,18 +588,18 @@ for(let s=0;s<5;s++){
 
 <div class="section" id="teacherSection">
   <div class="close-btn" onclick="closeSection('teacherSection')">✖</div>
-  <h2>Teacher Helper</h2>
-  <input id="teacherQuestion" placeholder="What do you want explained?">
+  <h2 style="font-size:28px;">Teacher Helper</h2>
+  <input id="teacherQuestion" placeholder="What do you want explained? (any topic)">
   <button onclick="teacherExplain()">Explain</button>
   <button onclick="saveTeacher()">Save Explanation</button>
   <button onclick="deleteTeacher()">Delete Explanation</button>
-  <p id="teacherOut" style="white-space:pre-wrap;margin-top:8px;"></p>
+  <p id="teacherOut" style="white-space:pre-wrap;margin-top:10px;"></p>
 </div>
 
 <div class="section" id="notebookSection">
   <div class="close-btn" onclick="closeSection('notebookSection')">✖</div>
-  <h2>Notebook</h2>
-  <div id="pageButtons" style="margin-bottom:6px;"></div>
+  <h2 style="font-size:28px;">Notebook</h2>
+  <div id="pageButtons" style="margin-bottom:10px;"></div>
   <div class="tools">
     <button class="hl-btn" style="background:#f7d96f" onclick="highlight('#f7d96f')">Yellow</button>
     <button class="hl-btn" style="background:#f7a6c7" onclick="highlight('#f7a6c7')">Pink</button>
@@ -354,9 +610,10 @@ for(let s=0;s<5;s++){
   <div class="notebook">
     <div id="note" contenteditable="true" oninput="saveCurrentPage()"></div>
   </div>
-  <div style="text-align:center;margin-top:6px;">
+  <div style="text-align:center;margin-top:8px;">
     <button class="page-btn" onclick="addPage()">➕ Add Page</button>
   </div>
 </div>
 </body>
 </html>
+          
