@@ -14,6 +14,8 @@ body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
   justify-content:center;
   gap:30px;
   margin-top:20px;
+  z-index:9999;
+  position:relative;
 }
 .back-arrow {
   font-size:50px;
@@ -27,9 +29,13 @@ body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
 
 /* Bookshelves */
 .library {
-  position:fixed; top:140px; left:0; width:100%; height:calc(100% - 140px);
+  position:fixed;
+  top:140px;
+  left:0;
+  width:100%;
+  height:calc(100% - 140px);
   background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);
-  z-index:-1;
+  z-index:1;
 }
 .shelf {
   width:90%; height:200px; background:#3b2a15; margin:30px auto; border-radius:12px;
@@ -49,11 +55,17 @@ body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
 .purple { background:#5b2e7b; }
 
 /* Desk */
-.desk { width:100%; height:340px; background:#3f2b17; position:absolute; bottom:0; }
+.desk { width:100%; height:340px; background:#3f2b17; position:absolute; bottom:0; z-index:2; }
 
 /* Buttons (Pastel Brown) */
 .notes {
-  position:absolute; bottom:40px; width:100%; display:flex; justify-content:center; gap:40px;
+  position:absolute;
+  bottom:40px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  z-index:9999;
 }
 .note {
   width:280px; height:280px; background:#d8c3a5; border:3px solid #b89b7a;
@@ -66,10 +78,21 @@ body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
 
 /* Sections */
 .section {
-  display:none; position:absolute; top:160px; left:50%; transform:translateX(-50%);
-  width:85%; max-height:60%; overflow-y:auto;
-  background:white; color:#2b1f10; padding:30px; border-radius:20px;
-  box-shadow:0 0 30px black; font-size:24px;
+  display:none;
+  position:absolute;
+  top:160px;
+  left:50%;
+  transform:translateX(-50%);
+  width:85%;
+  max-height:60%;
+  overflow-y:auto;
+  background:white;
+  color:#2b1f10;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 0 30px black;
+  font-size:24px;
+  z-index:9999;
 }
 .close-btn { float:right; font-size:40px; cursor:pointer; }
 
@@ -109,7 +132,6 @@ button:hover { background:#e3d2bd; }
     #e8e8e8 29px
   );
 }
-
 #note {
   width:100%;
   min-height:70vh;
@@ -163,6 +185,16 @@ button:hover { background:#e3d2bd; }
 </style>
 
 <script>
+/* SECTION CONTROL */
+function openSection(id){
+  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+function closeSection(id){
+  document.getElementById(id).style.display = 'none';
+}
+function goHome(){ window.location.href = "index.html"; }
+
 /* QUIZ */
 let quizzes=[];
 function addQuiz(){
@@ -193,6 +225,7 @@ function deleteQuizzes(){
   quizzes=[];
   localStorage.removeItem("ks_quizzes");
   renderQuiz();
+  document.getElementById("quizResult").textContent="Deleted.";
 }
 function loadQuizzes(){
   const raw=localStorage.getItem("ks_quizzes");
@@ -260,42 +293,30 @@ function loadTeacher(){
 let pages=[];
 let currentPage=0;
 
-window.onload=function(){
-  loadQuizzes();
-  loadFlashcards();
-  loadTeacher();
-  loadNotebook();
-};
-
 function loadNotebook(){
   const saved=localStorage.getItem("KS_Notebook_Pages");
   pages=saved?JSON.parse(saved):[""];
   renderPages();
   loadPage(0);
 }
-
 function savePages(){
   localStorage.setItem("KS_Notebook_Pages",JSON.stringify(pages));
 }
-
 function loadPage(i){
   currentPage=i;
   document.getElementById("note").innerHTML=pages[i];
   updateActiveButton();
 }
-
 function saveCurrentPage(){
   pages[currentPage]=document.getElementById("note").innerHTML;
   savePages();
 }
-
 function addPage(){
   pages.push("");
   savePages();
   renderPages();
   loadPage(pages.length-1);
 }
-
 function renderPages(){
   const container=document.getElementById("pageButtons");
   container.innerHTML="";
@@ -303,7 +324,6 @@ function renderPages(){
     container.innerHTML+=`<button class="page-btn" onclick="loadPage(${i})">Page ${i+1}</button>`;
   });
 }
-
 function highlight(color){
   let sel=window.getSelection();
   if(!sel.rangeCount)return;
@@ -313,7 +333,6 @@ function highlight(color){
   range.surroundContents(span);
   saveCurrentPage();
 }
-
 function updateActiveButton(){
   const buttons=document.querySelectorAll(".page-btn");
   buttons.forEach((btn,i)=>{
@@ -321,7 +340,13 @@ function updateActiveButton(){
   });
 }
 
-function goHome(){window.location.href="index.html";}
+/* INIT */
+window.onload=function(){
+  loadQuizzes();
+  loadFlashcards();
+  loadTeacher();
+  loadNotebook();
+};
 </script>
 </head>
 
