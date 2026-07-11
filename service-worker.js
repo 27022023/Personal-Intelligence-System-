@@ -4,9 +4,9 @@ const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./luna-icon.png",
-  "./luna-icon-192.png"
+  "./icon_1783778969546.png"
 ];
+
 
 // Install
 self.addEventListener("install", event => {
