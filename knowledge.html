@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Knowledge Studio (Big + Smarter)</title>
+<title>Knowledge Studio – Deep Topic Engine</title>
 <style>
 body{
   margin:0;
@@ -232,20 +232,50 @@ function openSection(id){
 function closeSection(id){document.getElementById(id).style.display='none';}
 function goHome(){location.reload();}
 
-/* "AI-like" helpers (no API) */
-function analyzeTopic(t){
-  const lower=t.toLowerCase();
-  const words=lower.split(/\s+/).filter(w=>w.length>2);
-  const main=words[words.length-1] || t;
-  const subtopics=[];
-  if(words.length>1){
-    subtopics.push(words[0]);
-    if(words.length>2) subtopics.push(words[1]);
-  }
-  return {topic:t, main, words, subtopics};
+/* Topic analysis + simple subject classification */
+function analyzeTopic(raw){
+  const topic = raw.trim();
+  const lower = topic.toLowerCase();
+  const words = lower.split(/\s+/).filter(w=>w.length>2);
+  const main = words[words.length-1] || topic;
+
+  const bio = ["cell","organism","photosynthesis","dna","rna","protein","enzyme","plant","animal","bacteria","virus","ecosystem","evolution","genetics"];
+  const chem = ["molecule","reaction","acid","base","atom","bond","compound","solution","chemical","periodic","element"];
+  const phys = ["force","energy","gravity","motion","velocity","acceleration","mass","light","electric","magnetic","quantum"];
+  const math = ["theorem","equation","algebra","geometry","calculus","integral","derivative","matrix","probability","statistics","triangle","function"];
+  const hist = ["war","revolution","empire","kingdom","treaty","independence","civil","ancient","medieval","modern","cold war","world war","wwi","wwii"];
+  const econ = ["market","inflation","demand","supply","price","cost","profit","capital","trade","economy","recession","growth"];
+  const lit = ["novel","poem","poetry","play","shakespeare","metaphor","symbolism","character","plot","narrative","drama"];
+  const psych = ["behavior","cognition","memory","emotion","motivation","personality","therapy","mental","perception","learning"];
+  const cs = ["algorithm","data","programming","computer","software","hardware","network","database","ai","machine learning","code"];
+  const pol = ["democracy","constitution","rights","law","government","election","policy","state","power","justice"];
+  const geo = ["continent","climate","river","mountain","ocean","country","city","tectonic","plate","earthquake","volcano"];
+  const phil = ["ethics","logic","metaphysics","epistemology","morality","existence","truth","reason"];
+  const astro = ["star","planet","galaxy","universe","cosmos","orbit","telescope","black hole","nebula"];
+  const med = ["disease","anatomy","treatment","therapy","diagnosis","symptom","infection","immune","surgery"];
+
+  function hasAny(list){return list.some(k=>lower.includes(k));}
+
+  let subject = "general";
+  if(hasAny(bio)) subject="biology";
+  else if(hasAny(chem)) subject="chemistry";
+  else if(hasAny(phys)) subject="physics";
+  else if(hasAny(math)) subject="mathematics";
+  else if(hasAny(hist)) subject="history";
+  else if(hasAny(econ)) subject="economics";
+  else if(hasAny(lit)) subject="literature";
+  else if(hasAny(psych)) subject="psychology";
+  else if(hasAny(cs)) subject="computer science";
+  else if(hasAny(pol)) subject="political science";
+  else if(hasAny(geo)) subject="geography";
+  else if(hasAny(phil)) subject="philosophy";
+  else if(hasAny(astro)) subject="astronomy";
+  else if(hasAny(med)) subject="medicine";
+
+  return {topic, lower, words, main, subject};
 }
 
-/* QUIZ – more topic-specific */
+/* QUIZ – deeper, topic-aware (rule-based) */
 let currentQuiz={mcq:[],tf:[],matchA:[],matchB:[],pairs:[]},matchSelection={a:null,b:null};
 
 function generateQuiz(){
@@ -257,71 +287,216 @@ function generateQuiz(){
   const info=analyzeTopic(t);
   const topic=info.topic;
   const main=info.main;
-  const subs=info.subtopics;
+  const subject=info.subject;
 
-  const mcq=[
-    {
-      q:`Which statement best describes ${topic}?`,
-      options:[
-        `${topic} is a concept that focuses on ${main} and how it affects real situations.`,
-        `${topic} is only a random idea with no structure or meaning.`,
-        `${topic} is a joke and is never used seriously.`,
-        `${topic} is a secret term that nobody can define.`
-      ],
-      correct:0
-    },
-    {
-      q:`In which context would you most likely encounter ${topic}?`,
-      options:[
-        `When studying or working with ideas related to ${main}.`,
-        `Only when reading fantasy novels.`,
-        `Only in ancient legends with no modern use.`,
-        `Never, because ${topic} does not appear in real life.`
-      ],
-      correct:0
-    },
-    {
-      q:`What is a key question you can ask to understand ${topic} better?`,
-      options:[
-        `“How does ${topic} change when ${main} changes?”`,
-        `“Can ${topic} be ignored completely?”`,
-        `“Is ${topic} just a random word?”`,
-        `“Should I avoid learning about ${topic}?”`
-      ],
-      correct:0
-    }
-  ];
+  let mcq=[], tf=[], matchA=[], matchB=[];
 
-  const tf=[
-    {
-      q:`${topic} can be broken down into smaller ideas such as causes, effects, and examples.`,
-      correct:true
-    },
-    {
-      q:`${topic} has no connection to real-world situations involving ${main}.`,
-      correct:false
-    },
-    {
-      q:`Learning about ${topic} can help you make better decisions in contexts related to ${main}.`,
-      correct:true
-    }
-  ];
+  if(subject==="biology"){
+    mcq=[
+      {
+        q:`Which statement best describes ${topic}?`,
+        options:[
+          `${topic} is a biological concept that involves ${main} and helps explain how living systems work.`,
+          `${topic} is a random idea with no connection to biology.`,
+          `${topic} is only used in jokes about science.`,
+          `${topic} cannot be studied or observed in real organisms.`
+        ],
+        correct:0
+      },
+      {
+        q:`Where would you most likely encounter ${topic}?`,
+        options:[
+          `In biology classes, research about living organisms, or discussions of how ${main} affects life.`,
+          `Only in fantasy stories with magical creatures.`,
+          `Only in ancient myths with no scientific basis.`,
+          `Never, because ${topic} is not a real biological idea.`
+        ],
+        correct:0
+      },
+      {
+        q:`Which question helps you understand ${topic} more deeply?`,
+        options:[
+          `“How does ${topic} change when conditions around ${main} change?”`,
+          `“Can I ignore ${topic} completely?”`,
+          `“Is ${topic} just a random word?”`,
+          `“Should I avoid learning about ${topic}?”`
+        ],
+        correct:0
+      }
+    ];
+    tf=[
+      {q:`${topic} is related to living organisms or their processes.`,correct:true},
+      {q:`${topic} has no connection to real biological systems.`,correct:false},
+      {q:`Understanding ${topic} can help explain how ${main} affects life.`,correct:true}
+    ];
+    matchA=[
+      `${topic} – definition`,
+      `${topic} – biological level`,
+      `${topic} – example`,
+      `${topic} – key process`
+    ];
+    matchB=[
+      `What ${topic} means in biology and how it relates to ${main}.`,
+      `Whether ${topic} happens at the cellular, organism, or ecosystem level.`,
+      `A real situation where ${topic} appears in living organisms.`,
+      `The main process or mechanism that ${topic} describes.`
+    ];
+  } else if(subject==="history"){
+    mcq=[
+      {
+        q:`What kind of historical idea is ${topic}?`,
+        options:[
+          `${topic} is a historical event or concept that involves ${main} and shapes how we understand the past.`,
+          `${topic} is a random story with no historical importance.`,
+          `${topic} is only a rumor with no records.`,
+          `${topic} cannot be studied using historical sources.`
+        ],
+        correct:0
+      },
+      {
+        q:`Where does ${topic} usually appear in history?`,
+        options:[
+          `In discussions of time periods, conflicts, or changes involving ${main}.`,
+          `Only in fictional novels with no real basis.`,
+          `Only in legends that historians ignore.`,
+          `It never appears in serious historical study.`
+        ],
+        correct:0
+      },
+      {
+        q:`Which question helps you analyze ${topic}?`,
+        options:[
+          `“What caused ${topic}, and what were its consequences?”`,
+          `“Can I ignore all sources about ${topic}?”`,
+          `“Is ${topic} just a random date?”`,
+          `“Should I avoid reading about ${topic}?”`
+        ],
+        correct:0
+      }
+    ];
+    tf=[
+      {q:`${topic} is connected to real people, places, or events.`,correct:true},
+      {q:`${topic} has no impact on how societies changed over time.`,correct:false},
+      {q:`Studying ${topic} can help explain how ${main} influenced history.`,correct:true}
+    ];
+    matchA=[
+      `${topic} – time period`,
+      `${topic} – cause`,
+      `${topic} – consequence`,
+      `${topic} – key figure`
+    ];
+    matchB=[
+      `When ${topic} happened or was most important.`,
+      `What led to ${topic} and made it possible.`,
+      `What changed because ${topic} happened.`,
+      `A person or group strongly connected to ${topic}.`
+    ];
+  } else if(subject==="mathematics"){
+    mcq=[
+      {
+        q:`What kind of mathematical idea is ${topic}?`,
+        options:[
+          `${topic} is a mathematical concept or tool that involves ${main} and helps solve problems.`,
+          `${topic} is a random number with no meaning.`,
+          `${topic} is only used in jokes about math.`,
+          `${topic} cannot be written or reasoned about formally.`
+        ],
+        correct:0
+      },
+      {
+        q:`Where would you most likely use ${topic}?`,
+        options:[
+          `When solving problems, proving results, or analyzing patterns involving ${main}.`,
+          `Only when telling funny stories about numbers.`,
+          `Only in games with no rules.`,
+          `Never, because ${topic} is not part of mathematics.`
+        ],
+        correct:0
+      },
+      {
+        q:`Which question helps you understand ${topic}?`,
+        options:[
+          `“What does ${topic} assume, and what does it let me calculate or prove?”`,
+          `“Can I ignore all rules about ${topic}?”`,
+          `“Is ${topic} just a random symbol?”`,
+          `“Should I avoid using ${topic} in problems?”`
+        ],
+        correct:0
+      }
+    ];
+    tf=[
+      {q:`${topic} follows clear rules or definitions.`,correct:true},
+      {q:`${topic} has no structure and cannot be explained.`,correct:false},
+      {q:`Understanding ${topic} can help solve problems involving ${main}.`,correct:true}
+    ];
+    matchA=[
+      `${topic} – definition`,
+      `${topic} – type of math`,
+      `${topic} – example problem`,
+      `${topic} – key formula or idea`
+    ];
+    matchB=[
+      `What ${topic} means and how it is defined.`,
+      `Whether ${topic} belongs to algebra, geometry, calculus, etc.`,
+      `A problem where ${topic} is used to find an answer.`,
+      `The main formula or reasoning pattern behind ${topic}.`
+    ];
+  } else {
+    // general subject fallback
+    mcq=[
+      {
+        q:`Which statement best describes ${topic}?`,
+        options:[
+          `${topic} is an idea that focuses on ${main} and helps explain or organize something in its field.`,
+          `${topic} is random and has no structure or meaning.`,
+          `${topic} is only used in jokes.`,
+          `${topic} cannot be studied or understood.`
+        ],
+        correct:0
+      },
+      {
+        q:`Where does ${topic} usually appear?`,
+        options:[
+          `In real situations, discussions, or studies involving ${main}.`,
+          `Only in fictional stories.`,
+          `Only in ancient myths.`,
+          `It never appears anywhere.`
+        ],
+        correct:0
+      },
+      {
+        q:`What is a good way to explore ${topic}?`,
+        options:[
+          `“Break ${topic} into smaller parts: causes, effects, examples, and rules.”`,
+          `“Ignore ${topic} completely.”`,
+          `“Treat ${topic} as a random word.”`,
+          `“Avoid asking questions about ${topic}.”`
+        ],
+        correct:0
+      }
+    ];
+    tf=[
+      {q:`${topic} has real applications or meaning in some field.`,correct:true},
+      {q:`${topic} cannot be explained or used in any way.`,correct:false},
+      {q:`Understanding ${topic} can help you think more clearly about ${main}.`,correct:true}
+    ];
+    matchA=[
+      `${topic} – definition`,
+      `${topic} – example`,
+      `${topic} – key idea`,
+      `${topic} – related concept`
+    ];
+    matchB=[
+      `What ${topic} means and how it relates to ${main}.`,
+      `A situation where ${topic} appears in real life.`,
+      `The most important thing ${topic} helps you understand.`,
+      `Another idea that often appears together with ${topic}.`
+    ];
+  }
 
-  const matchA=[
-    `${topic} – definition`,
-    `${topic} – real example`,
-    `${topic} – key question`,
-    `${topic} – main element`
-  ];
-  const matchB=[
-    `What ${topic} means and how it relates to ${main}.`,
-    `A situation where ${topic} appears in practice.`,
-    `A guiding question that helps you explore ${topic}.`,
-    `The central idea or element (like ${main}) that ${topic} focuses on.`
-  ];
   currentQuiz={mcq,tf,matchA,matchB,pairs:[0,1,2,3]};
   renderQuiz();
-  result.textContent="Topic-based quiz generated!";
+  result.textContent=`Quiz generated for subject: ${subject}.`;
 }
 
 function renderQuiz(){
@@ -431,7 +606,7 @@ function loadFlashcards(){
   renderCards();
 }
 
-/* TEACHER – richer, topic-focused explanation */
+/* TEACHER – deep, mixed-style explanation */
 function teacherExplain(){
   const t=document.getElementById("teacherQuestion").value.trim();
   const out=document.getElementById("teacherOut");
@@ -440,180 +615,13 @@ function teacherExplain(){
   const info=analyzeTopic(t);
   const topic=info.topic;
   const main=info.main;
-  const subs=info.subtopics;
+  const subject=info.subject;
 
-  const subText = subs.length
-    ? `Some related ideas you might explore are: ${subs.join(", ")}.`
-    : `You can explore related ideas by asking how ${topic} connects to other concepts you know.`;
+  let intro = `Let’s talk about ${topic}. This is an idea that centers around ${main}, and it shows up in the subject of ${subject}. We’ll start with a friendly overview, then go deeper into how it really works.\n\n`;
 
-  out.textContent =
-    `Topic: ${topic}\n\n`+
-    `1. What it means:\n`+
-    `   ${topic} is a concept that focuses on ${main}. It is used to\n`+
-    `   describe, analyze, or understand situations where ${main} plays a role.\n\n`+
-    `2. Why it matters:\n`+
-    `   Understanding ${topic} helps you see how ${main} influences real decisions,\n`+
-    `   systems, or phenomena. When you know what ${topic} is, you can explain\n`+
-    `   why certain things happen and predict what might happen next.\n\n`+
-    `3. How it works:\n`+
-    `   To understand ${topic}, break it into smaller parts:\n`+
-    `   - What it describes (what kind of situation or idea)\n`+
-    `   - What causes it (which factors or conditions make it appear)\n`+
-    `   - What changes it (how different choices or conditions affect it)\n`+
-    `   - What results from it (what outcomes or effects it leads to)\n\n`+
-    `   ${subText}\n\n`+
-    `4. Real example:\n`+
-    `   Imagine a real situation where ${topic} appears. Describe:\n`+
-    `   - What is happening\n`+
-    `   - How ${main} is involved\n`+
-    `   - Why ${topic} helps you understand or improve that situation\n\n`+
-    `5. How to remember it:\n`+
-    `   Create a short rule or sentence:\n`+
-    `   “${topic} is the idea that explains how ${main} affects what happens.”\n`+
-    `   Repeat this rule and connect it to examples from your own life or studies.`;
-}
-function saveTeacher(){localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);}
-function deleteTeacher(){
-  if(!confirm("Delete explanation?"))return;
-  localStorage.removeItem("ks_teacher");
-  document.getElementById("teacherOut").textContent="";
-}
-function loadTeacher(){
-  const saved=localStorage.getItem("ks_teacher");
-  if(saved)document.getElementById("teacherOut").textContent=saved;
-}
+  let body = "";
 
-/* NOTEBOOK + HIGHLIGHTER */
-let pages=[],currentPage=0;
-function loadNotebook(){
-  const saved=localStorage.getItem("KS_Notebook_Pages");
-  pages=saved?JSON.parse(saved):[""];
-  renderPages();
-  loadPage(0);
-}
-function savePages(){localStorage.setItem("KS_Notebook_Pages",JSON.stringify(pages));}
-function loadPage(i){
-  currentPage=i;
-  document.getElementById("note").innerHTML=pages[i];
-  updateActiveButton();
-}
-function saveCurrentPage(){
-  pages[currentPage]=document.getElementById("note").innerHTML;
-  savePages();
-}
-function addPage(){
-  pages.push("");
-  savePages();
-  renderPages();
-  loadPage(pages.length-1);
-}
-function renderPages(){
-  const container=document.getElementById("pageButtons");
-  container.innerHTML="";
-  pages.forEach((_,i)=>{
-    container.innerHTML+=`<button class="page-btn" onclick="loadPage(${i})">Page ${i+1}</button>`;
-  });
-}
-function updateActiveButton(){
-  const buttons=document.querySelectorAll(".page-btn");
-  buttons.forEach((btn,i)=>btn.classList.toggle('active',i===currentPage));
-}
-function highlight(color){
-  let sel=window.getSelection();
-  if(!sel.rangeCount)return;
-  let range=sel.getRangeAt(0);
-  let span=document.createElement("span");
-  span.style.backgroundColor=(color==="clear")?"transparent":color;
-  range.surroundContents(span);
-  saveCurrentPage();
-}
-
-/* INIT */
-window.onload=function(){
-  loadFlashcards();
-  loadTeacher();
-  loadNotebook();
-};
-</script>
-</head>
-<body>
-<div class="top-bar">
-  <div class="back-arrow" onclick="goHome()">←</div>
-  <div class="title">Knowledge Studio</div>
-</div>
-
-<div class="library">
-<script>
-const colors=["red","blue","green","yellow","purple"];
-for(let s=0;s<5;s++){
-  document.write('<div class="shelf">');
-  for(let b=0;b<14;b++){
-    let c=colors[Math.floor(Math.random()*colors.length)];
-    let h=[""," tall"," short"][Math.floor(Math.random()*3)];
-    document.write(`<div class="book ${c}${h}"></div>`);
-  }
-  document.write('</div>');
-}
-</script>
-</div>
-
-<div class="desk"></div>
-
-<div class="notes">
-  <div class="note" onclick="openSection('quizSection')">Quiz</div>
-  <div class="note" onclick="openSection('flashSection')">Flashcards</div>
-  <div class="note" onclick="openSection('teacherSection')">Teacher</div>
-  <div class="note" onclick="openSection('notebookSection')">Notebook</div>
-</div>
-
-<div class="section" id="quizSection">
-  <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
-  <h2 style="font-size:28px;">Automated Topic-Based Quiz</h2>
-  <input id="quizTopic" placeholder="Type any topic (e.g. photosynthesis, supply and demand, World War II)">
-  <button onclick="generateQuiz()">Generate Quiz</button>
-  <div id="quizList"></div>
-  <div id="quizResult" style="margin-top:8px;"></div>
-</div>
-
-<div class="section" id="flashSection">
-  <div class="close-btn" onclick="closeSection('flashSection')">✖</div>
-  <h2 style="font-size:28px;">Flashcards</h2>
-  <input id="flashF" placeholder="Front">
-  <input id="flashB" placeholder="Back">
-  <button onclick="addCard()">Add</button>
-  <button onclick="saveFlashcards()">Save</button>
-  <button onclick="deleteFlashcards()">Delete</button>
-  <div id="flashList"></div>
-</div>
-
-<div class="section" id="teacherSection">
-  <div class="close-btn" onclick="closeSection('teacherSection')">✖</div>
-  <h2 style="font-size:28px;">Teacher Helper</h2>
-  <input id="teacherQuestion" placeholder="What do you want explained? (any topic)">
-  <button onclick="teacherExplain()">Explain</button>
-  <button onclick="saveTeacher()">Save Explanation</button>
-  <button onclick="deleteTeacher()">Delete Explanation</button>
-  <p id="teacherOut" style="white-space:pre-wrap;margin-top:10px;"></p>
-</div>
-
-<div class="section" id="notebookSection">
-  <div class="close-btn" onclick="closeSection('notebookSection')">✖</div>
-  <h2 style="font-size:28px;">Notebook</h2>
-  <div id="pageButtons" style="margin-bottom:10px;"></div>
-  <div class="tools">
-    <button class="hl-btn" style="background:#f7d96f" onclick="highlight('#f7d96f')">Yellow</button>
-    <button class="hl-btn" style="background:#f7a6c7" onclick="highlight('#f7a6c7')">Pink</button>
-    <button class="hl-btn" style="background:#9adf9a" onclick="highlight('#9adf9a')">Green</button>
-    <button class="hl-btn" style="background:#9ac7df" onclick="highlight('#9ac7df')">Blue</button>
-    <button class="hl-btn" style="background:#b0a8a8" onclick="highlight('clear')">Clear</button>
-  </div>
-  <div class="notebook">
-    <div id="note" contenteditable="true" oninput="saveCurrentPage()"></div>
-  </div>
-  <div style="text-align:center;margin-top:8px;">
-    <button class="page-btn" onclick="addPage()">➕ Add Page</button>
-  </div>
-</div>
-</body>
-</html>
-          
+  if(subject==="biology"){
+    body +=
+      `1. What it means (biology focus):\n}
+                    
