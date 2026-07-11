@@ -4,82 +4,462 @@
 <meta charset="UTF-8">
 <title>knowledge</title>
 <style>
-body{margin:0;font-family:Georgia;background:#15100b;color:#f5e9c8;}
-.top-bar{display:flex;align-items:center;justify-content:center;gap:30px;margin-top:10px;}
-.back-arrow{font-size:32px;cursor:pointer;}
-.title{text-align:center;font-size:40px;text-shadow:0 0 20px #f5e9c8;}
-.library{position:fixed;top:80px;left:0;width:100%;height:calc(100% - 80px);background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);z-index:1;}
-.shelf{width:94%;height:120px;background:#3b2a15;margin:10px auto;border-radius:12px;box-shadow:inset 0 0 20px rgba(0,0,0,0.8),0 8px 16px rgba(0,0,0,0.7);display:flex;align-items:flex-end;padding:14px;gap:8px;}
-.book{width:26px;height:90px;border-radius:4px;border:2px solid rgba(0,0,0,0.6);box-shadow:inset 0 0 10px rgba(0,0,0,0.5);}
-.tall{height:105px;}
-.short{height:75px;}
+body{margin:0;font-family:Georgia;background:#15100b;color:#f5e9c8;font-size:26px;}
+.top-bar{display:flex;align-items:center;justify-content:center;gap:40px;margin-top:10px;}
+.back-arrow{font-size:44px;cursor:pointer;}
+.title{text-align:center;font-size:60px;text-shadow:0 0 20px #f5e9c8;}
+.library{position:fixed;top:100px;left:0;width:100%;height:calc(100% - 100px);background:radial-gradient(circle at top,#cfa96b 0%,#2b1f10 40%,#15100b 100%);z-index:1;}
+.shelf{width:94%;height:200px;background:#3b2a15;margin:12px auto;border-radius:12px;box-shadow:inset 0 0 20px rgba(0,0,0,0.8),0 8px 16px rgba(0,0,0,0.7);display:flex;align-items:flex-end;padding:28px;gap:12px;}
+.book{width:50px;height:160px;border-radius:4px;border:2px solid rgba(0,0,0,0.6);box-shadow:inset 0 0 10px rgba(0,0,0,0.5);}
+.tall{height:190px;}
+.short{height:130px;}
 .red{background:#7b2e2e;}
 .blue{background:#2e4a7b;}
 .green{background:#2e7b4a;}
 .yellow{background:#b89b3b;}
 .purple{background:#5b2e7b;}
-.desk{width:100%;height:190px;background:#3f2b17;position:absolute;bottom:0;z-index:2;}
-.notes{position:absolute;bottom:20px;width:100%;display:flex;justify-content:center;gap:10px;z-index:3;flex-wrap:wrap;}
-.note{width:140px;height:140px;background:#d8c3a5;border:3px solid #b89b7a;border-radius:16px;box-shadow:0 0 15px rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:bold;cursor:pointer;color:#4a3b2b;text-align:center;}
+.desk{width:100%;height:300px;background:#3f2b17;position:absolute;bottom:0;z-index:2;}
+.notes{position:absolute;bottom:34px;width:100%;display:flex;justify-content:center;gap:18px;z-index:3;flex-wrap:wrap;}
+.note{width:220px;height:220px;background:#d8c3a5;border:3px solid #b89b7a;border-radius:16px;box-shadow:0 0 15px rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:34px;font-weight:bold;cursor:pointer;color:#4a3b2b;text-align:center;}
 .note:hover{transform:scale(1.05);background:#e3d2bd;}
-.section{display:none;position:absolute;top:90px;left:50%;transform:translateX(-50%);width:92%;max-height:65%;overflow-y:auto;background:white;color:#2b1f10;padding:14px;border-radius:16px;box-shadow:0 0 20px black;font-size:16px;z-index:4;}
-.close-btn{float:right;font-size:24px;cursor:pointer;}
-input,textarea{width:100%;font-size:16px;padding:8px;margin:8px 0;border-radius:10px;border:2px solid #c9b2e8;background:#f7f2ff;}
-button{font-size:15px;padding:6px 10px;margin:6px 6px 6px 0;background:#d8c3a5;border:2px solid #b89b7a;border-radius:10px;color:#4a3b2b;cursor:pointer;}
+.section{display:none;position:absolute;top:120px;left:50%;transform:translateX(-50%);width:92%;max-height:65%;overflow-y:auto;background:white;color:#2b1f10;padding:28px;border-radius:16px;box-shadow:0 0 20px black;font-size:24px;z-index:4;}
+.close-btn{float:right;font-size:36px;cursor:pointer;}
+input,textarea{width:100%;font-size:24px;padding:16px;margin:12px 0;border-radius:10px;border:2px solid #c9b2e8;background:#f7f2ff;}
+button{font-size:24px;padding:14px 22px;margin:10px 10px 10px 0;background:#d8c3a5;border:2px solid #b89b7a;border-radius:10px;color:#4a3b2b;cursor:pointer;}
 button:hover{background:#e3d2bd;}
-.item-row{background:#e6d6f5;border:2px solid #c9b2e8;padding:10px;margin:8px 0;border-radius:12px;font-size:14px;}
-.quiz-answer{display:inline-block;margin:3px 4px;padding:5px 8px;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;}
+.item-row{background:#e6d6f5;border:2px solid #c9b2e8;padding:20px;margin:12px 0;border-radius:12px;font-size:22px;}
+.quiz-answer{display:inline-block;margin:6px 8px;padding:12px 18px;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;font-size:22px;}
 .quiz-answer.correct{background:#9adf9a;}
 .quiz-answer.wrong{background:#f7a6c7;}
-.match-container{display:flex;gap:10px;margin-top:8px;}
+.match-container{display:flex;gap:18px;margin-top:12px;}
 .match-column{flex:1;}
-.match-item{padding:5px 8px;margin:3px 0;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;font-size:14px;}
+.match-item{padding:12px 16px;margin:4px 0;border-radius:8px;background:#f7f2ff;border:2px solid #c9b2e8;cursor:pointer;font-size:22px;}
 .match-item.selected{background:#9ac7df;}
 .match-item.matched{background:#9adf9a;}
-.notebook{width:100%;margin:10px auto;background:white;border-radius:12px;padding:10px;box-shadow:0 0 15px rgba(0,0,0,0.4);}
-#note{width:100%;min-height:40vh;font-size:15px;line-height:20px;outline:none;border:none;background:transparent;color:#3b2f2f;}
-.page-btn{background:#d8c3a5;border:2px solid #b89b7a;color:#4a3b2b;padding:5px 8px;font-size:13px;border-radius:8px;cursor:pointer;margin:0 3px;}
+.notebook{width:100%;margin:14px auto;background:white;border-radius:12px;padding:18px;box-shadow:0 0 15px rgba(0,0,0,0.4);}
+#note{width:100%;min-height:55vh;font-size:24px;line-height:30px;outline:none;border:none;background:transparent;color:#3b2f2f;}
+.page-btn{background:#d8c3a5;border:2px solid #b89b7a;color:#4a3b2b;padding:12px 18px;font-size:22px;border-radius:8px;cursor:pointer;margin:0 6px;}
 .page-btn:hover{background:#e3d2bd;}
 .active{background:#b89b7a!important;color:white!important;}
-.tools{margin-bottom:8px;}
-.hl-btn{border-radius:8px;border:1px solid #4a3b2b;padding:4px 6px;font-size:12px;margin-right:4px;cursor:pointer;}
+.tools{margin-bottom:12px;}
+.hl-btn{border-radius:8px;border:1px solid #4a3b2b;padding:8px 12px;font-size:20px;margin-right:6px;cursor:pointer;}
 </style>
 <script>
 function openSection(id){document.querySelectorAll('.section').forEach(s=>s.style.display='none');document.getElementById(id).style.display='block';}
 function closeSection(id){document.getElementById(id).style.display='none';}
 function goHome(){location.reload();}
 
-/* QUIZ */
+/* SUBJECT DETECTION */
+function detectSubject(topic){
+  topic=topic.toLowerCase();
+  const bio=["cell","photosynthesis","enzyme","dna","protein","ecosystem","organism","evolution"];
+  const chem=["reaction","acid","base","molecule","compound","bond","stoichiometry"];
+  const phys=["force","energy","motion","velocity","quantum","gravity","electric","field"];
+  const math=["fraction","algebra","geometry","calculus","equation","function","ratio","probability"];
+  const hist=["war","revolution","empire","treaty","civilization","ancient","medieval","cold war"];
+  const lit=["theme","symbol","metaphor","character","plot","poem","novel","tragedy"];
+  const psych=["behavior","memory","cognition","emotion","motivation","personality","learning"];
+  const econ=["market","inflation","supply","demand","trade","economy","price"];
+  const geo=["climate","weather","plate","river","mountain","earth","continent"];
+
+  function match(list){return list.some(w=>topic.includes(w));}
+
+  if(match(bio))return "biology";
+  if(match(chem))return "chemistry";
+  if(match(phys))return "physics";
+  if(match(math))return "math";
+  if(match(hist))return "history";
+  if(match(lit))return "literature";
+  if(match(psych))return "psychology";
+  if(match(econ))return "economics";
+  if(match(geo))return "geography";
+  return "general";
+}
+
+/* ULTRA-DEEP TEACHER */
+function teacherExplain(){
+  const t=document.getElementById("teacherQuestion").value.trim();
+  const out=document.getElementById("teacherOut");
+  if(!t){out.textContent="Type a topic.";return;}
+  const subject=detectSubject(t);
+  let explanation="";
+
+  if(subject==="biology"){
+    explanation=
+`TOPIC: ${t}
+
+BIOLOGY — DEEP EXPLANATION
+1. What it is:
+   ${t} describes a biological process or structure involving living cells,
+   molecules, and systems.
+
+2. Levels:
+   - Molecular: which molecules are involved?
+   - Cellular: which organelles/pathways?
+   - Organism: how does it affect the organism?
+   - Ecosystem: how does it affect populations or environments?
+
+3. Mechanism:
+   Step-by-step: input → transformation → output.
+
+4. Example:
+   Pick a real organism and describe where ${t} appears.
+
+5. Misconceptions:
+   People often think ${t} is simple, but it involves multiple layers.
+
+6. Memory:
+   “${t} = molecule → cell → organism → ecosystem.”`;
+  }
+  else if(subject==="chemistry"){
+    explanation=
+`TOPIC: ${t}
+
+CHEMISTRY — DEEP EXPLANATION
+1. What it is:
+   ${t} describes how atoms, ions, or molecules behave and react.
+
+2. Structure:
+   - Atomic structure
+   - Bonding type
+   - Electron movement
+   - Reaction pathway
+
+3. Mechanism:
+   Reactants → transition state → products.
+
+4. Example:
+   A real chemical reaction where ${t} is important.
+
+5. Misconceptions:
+   ${t} is not random; it follows energy and stability rules.
+
+6. Memory:
+   “${t} = structure → energy → reaction → products.”`;
+  }
+  else if(subject==="physics"){
+    explanation=
+`TOPIC: ${t}
+
+PHYSICS — DEEP EXPLANATION
+1. What it is:
+   ${t} describes how matter, energy, or forces behave.
+
+2. Laws:
+   - Relevant physical law
+   - Equation
+   - Variables and units
+
+3. Mechanism:
+   How ${t} changes systems over time.
+
+4. Example:
+   A real physical scenario involving ${t}.
+
+5. Misconceptions:
+   ${t} is not magic; it follows measurable rules.
+
+6. Memory:
+   “${t} = law → equation → mechanism → application.”`;
+  }
+  else if(subject==="math"){
+    explanation=
+`TOPIC: ${t}
+
+MATH — DEEP EXPLANATION
+1. What it is:
+   ${t} is a mathematical idea describing relationships, quantities, or patterns.
+
+2. Structure:
+   - Definition
+   - Properties
+   - Rules/theorems
+
+3. Example:
+   A worked example using ${t}, step-by-step.
+
+4. Misconceptions:
+   ${t} is not arbitrary; it follows strict logic.
+
+5. Memory:
+   “${t} = definition → rule → example → generalization.”`;
+  }
+  else if(subject==="history"){
+    explanation=
+`TOPIC: ${t}
+
+HISTORY — DEEP EXPLANATION
+1. What it is:
+   ${t} is a real historical event, process, or transformation.
+
+2. Cause chain:
+   Long-term causes → short-term causes → trigger → event → consequences.
+
+3. Context:
+   Political, economic, social, cultural factors.
+
+4. Example:
+   A specific historical case involving ${t}.
+
+5. Misconceptions:
+   ${t} is not isolated; it fits into a larger timeline.
+
+6. Memory:
+   “${t} = cause → event → consequence → legacy.”`;
+  }
+  else if(subject==="literature"){
+    explanation=
+`TOPIC: ${t}
+
+LITERATURE — DEEP EXPLANATION
+1. What it is:
+   ${t} is a literary device, theme, or structural element.
+
+2. Structure:
+   - Theme
+   - Symbolism
+   - Character role
+   - Plot function
+
+3. Example:
+   A real book, poem, or play where ${t} appears.
+
+4. Misconceptions:
+   ${t} is not random; it supports deeper meaning.
+
+5. Memory:
+   “${t} = theme → symbol → character → meaning.”`;
+  }
+  else if(subject==="psychology"){
+    explanation=
+`TOPIC: ${t}
+
+PSYCHOLOGY — DEEP EXPLANATION
+1. What it is:
+   ${t} describes a mental process, emotion, or behavior pattern.
+
+2. Breakdown:
+   - Cognitive part
+   - Emotional part
+   - Behavioral outcome
+
+3. Example:
+   A real scenario where ${t} appears.
+
+4. Misconceptions:
+   ${t} is not simple; it involves multiple mental systems.
+
+5. Memory:
+   “${t} = cognition → emotion → behavior.”`;
+  }
+  else if(subject==="economics"){
+    explanation=
+`TOPIC: ${t}
+
+ECONOMICS — DEEP EXPLANATION
+1. What it is:
+   ${t} describes how resources, prices, or markets behave.
+
+2. Breakdown:
+   - Supply and demand
+   - Incentives
+   - Constraints
+
+3. Example:
+   A real market situation involving ${t}.
+
+4. Misconceptions:
+   ${t} is not random; it follows economic rules.
+
+5. Memory:
+   “${t} = incentives → decisions → outcomes.”`;
+  }
+  else if(subject==="geography"){
+    explanation=
+`TOPIC: ${t}
+
+GEOGRAPHY — DEEP EXPLANATION
+1. What it is:
+   ${t} describes how physical or human systems interact on Earth.
+
+2. Breakdown:
+   - Physical features
+   - Climate/weather
+   - Human activity
+
+3. Example:
+   A real region where ${t} appears.
+
+4. Misconceptions:
+   ${t} is not static; it changes over time.
+
+5. Memory:
+   “${t} = place → process → pattern.”`;
+  }
+  else{
+    explanation=
+`TOPIC: ${t}
+
+GENERAL — DEEP EXPLANATION
+1. What it is:
+   ${t} is a concept describing how something works, changes, or influences
+   other things.
+
+2. Breakdown:
+   - Components
+   - Mechanisms
+   - Causes
+   - Effects
+
+3. Example:
+   A real scenario involving ${t}.
+
+4. Misconceptions:
+   ${t} is deeper than people think.
+
+5. Memory:
+   “${t} = parts → mechanism → example → meaning.”`;
+  }
+
+  out.textContent=explanation;
+}
+function saveTeacher(){localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);}
+function deleteTeacher(){
+  if(!confirm("Delete explanation?"))return;
+  localStorage.removeItem("ks_teacher");
+  document.getElementById("teacherOut").textContent="";
+}
+function loadTeacher(){
+  const saved=localStorage.getItem("ks_teacher");
+  if(saved)document.getElementById("teacherOut").textContent=saved;
+}
+
+/* DEEP QUIZ */
 let currentQuiz={mcq:[],tf:[],matchA:[],matchB:[],pairs:[]},matchSelection={a:null,b:null};
 function generateQuiz(){
   const t=document.getElementById("quizTopic").value.trim();
   const out=document.getElementById("quizList");
   const result=document.getElementById("quizResult");
   if(!t){out.innerHTML="";result.textContent="Type a topic first.";return;}
-  const core=t.split(" ").pop();
-  const mcq=[
-    {q:`What is the main idea behind ${t}?`,
-     options:[
-       `${t} explains how ${core} behaves or affects something.`,
-       `${t} is random and has no meaning.`,
-       `${t} is only used in jokes.`,
-       `${t} cannot be studied or understood.`
-     ],correct:0},
-    {q:`Where does ${t} usually appear?`,
-     options:[
-       `In real situations involving ${core}.`,
-       `Only in fictional stories.`,
-       `Only in ancient myths.`,
-       `It never appears anywhere.`
-     ],correct:0}
-  ];
-  const tf=[
-    {q:`${t} has real applications.`,correct:true},
-    {q:`${t} cannot be explained or used.`,correct:false}
-  ];
-  const matchA=[`${t} – definition`,`${t} – example`,`${t} – key idea`];
-  const matchB=[`What ${t} means.`,`Where ${t} appears in real life.`,`The most important thing about ${t}.`];
-  currentQuiz={mcq,tf,matchA,matchB,pairs:[0,1,2]};
+  const subject=detectSubject(t);
+
+  let mcq=[],tf=[],matchA=[],matchB=[],pairs=[];
+
+  if(subject==="biology"){
+    mcq=[
+      {q:`At which level does ${t} primarily operate?`,
+       options:["Molecular/cellular","Mythical","Random","Undefined"],correct:0},
+      {q:`Which is a realistic example of ${t}?`,
+       options:["A cell using ${t} in a pathway","A fairy tale","A magic spell","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} can be explained using biological mechanisms.`,correct:true},
+      {q:`${t} has no role in living systems.`,correct:false}
+    ];
+    matchA=[`${t} – molecule`,` ${t} – cell process`,` ${t} – organism effect`];
+    matchB=[`Key molecule`,`Pathway in the cell`,`Impact on the organism`];
+    pairs=[0,1,2];
+  } else if(subject==="chemistry"){
+    mcq=[
+      {q:`${t} is mainly about:`,
+       options:["How particles react","Magic","Randomness","Undefined"],correct:0},
+      {q:`Which situation fits ${t}?`,
+       options:["A real chemical reaction","A myth","A story with no atoms","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} follows energy and stability rules.`,correct:true},
+      {q:`${t} is completely unpredictable.`,correct:false}
+    ];
+    matchA=[`${t} – structure`,` ${t} – energy`,` ${t} – reaction step`];
+    matchB=[`Arrangement of particles`,`Energy change`,`Part of the reaction`];
+    pairs=[0,1,2];
+  } else if(subject==="physics"){
+    mcq=[
+      {q:`${t} is best described as:`,
+       options:["A physical law/process","Magic","Fiction","Undefined"],correct:0},
+      {q:`Which example fits ${t}?`,
+       options:["A real physical system","A fairy tale","A myth","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} can be measured or modeled.`,correct:true},
+      {q:`${t} ignores physical laws.`,correct:false}
+    ];
+    matchA=[`${t} – law`,` ${t} – equation`,` ${t} – mechanism`];
+    matchB=[`Rule of behavior`,`Formula`,`How it acts in systems`];
+    pairs=[0,1,2];
+  } else if(subject==="math"){
+    mcq=[
+      {q:`${t} is:`,
+       options:["A formal mathematical idea","Random word","Magic","Undefined"],correct:0},
+      {q:`Which is a good example of ${t}?`,
+       options:["A real math problem using it","A myth","A story","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} follows strict logical rules.`,correct:true},
+      {q:`${t} is arbitrary.`,correct:false}
+    ];
+    matchA=[`${t} – definition`,` ${t} – rule`,` ${t} – example`];
+    matchB=[`Formal meaning`,`Property or theorem`,`Worked problem`];
+    pairs=[0,1,2];
+  } else if(subject==="history"){
+    mcq=[
+      {q:`${t} is:`,
+       options:["A real historical event/process","Myth","Fiction","Undefined"],correct:0},
+      {q:`Which chain fits ${t}?`,
+       options:["Long-term causes → event → consequences","Magic","Random","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} had real consequences.`,correct:true},
+      {q:`${t} is isolated from other events.`,correct:false}
+    ];
+    matchA=[`${t} – cause`,` ${t} – event`,` ${t} – consequence`];
+    matchB=[`Why it happened`,`What happened`,`What resulted`];
+    pairs=[0,1,2];
+  } else if(subject==="literature"){
+    mcq=[
+      {q:`${t} is part of:`,
+       options:["Literary structure/meaning","Random noise","Magic","Undefined"],correct:0},
+      {q:`Which example fits ${t}?`,
+       options:["A real book/poem using it","A myth","A random story","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} supports deeper meaning in a text.`,correct:true},
+      {q:`${t} is purely decorative with no meaning.`,correct:false}
+    ];
+    matchA=[`${t} – theme`,` ${t} – symbol`,` ${t} – character role`];
+    matchB=[`Central idea`,`Object/image with meaning`,`Function in the story`];
+    pairs=[0,1,2];
+  } else if(subject==="psychology"){
+    mcq=[
+      {q:`${t} describes:`,
+       options:["A mental/behavioral process","Magic","Randomness","Undefined"],correct:0},
+      {q:`Which example fits ${t}?`,
+       options:["A real behavior or mental state","A myth","A fairy tale","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} can be studied scientifically.`,correct:true},
+      {q:`${t} has no structure.`,correct:false}
+    ];
+    matchA=[`${t} – cognition`,` ${t} – emotion`,` ${t} – behavior`];
+    matchB=[`Thinking part`,`Feeling part`,`Action part`];
+    pairs=[0,1,2];
+  } else {
+    mcq=[
+      {q:`${t} is best seen as:`,
+       options:["A real concept with structure","Random word","Magic","Undefined"],correct:0},
+      {q:`Which example fits ${t}?`,
+       options:["A real situation using it","A myth","A story","None"],correct:0}
+    ];
+    tf=[
+      {q:`${t} can be broken into parts and mechanisms.`,correct:true},
+      {q:`${t} has no structure at all.`,correct:false}
+    ];
+    matchA=[`${t} – parts`,` ${t} – mechanism`,` ${t} – example`];
+    matchB=[`Components`,`How it works`,`Real case`];
+    pairs=[0,1,2];
+  }
+
+  currentQuiz={mcq,tf,matchA,matchB,pairs};
   renderQuiz();
   result.textContent="Quiz generated!";
 }
@@ -189,44 +569,6 @@ function loadFlashcards(){
   renderCards();
 }
 
-/* TEACHER */
-function teacherExplain(){
-  const t=document.getElementById("teacherQuestion").value.trim();
-  const out=document.getElementById("teacherOut");
-  if(!t){out.textContent="Type a topic.";return;}
-  const words=t.split(" ");
-  const main=words[words.length-1];
-  out.textContent=
-    `Topic: ${t}\n\n`+
-    `1. What it means:\n`+
-    `   ${t} refers to a concept involving ${main}. It is used to\n`+
-    `   describe, measure, or explain something in its field.\n\n`+
-    `2. Why it matters:\n`+
-    `   Understanding ${t} helps you see how ${main} affects real situations,\n`+
-    `   decisions, or systems.\n\n`+
-    `3. How it works:\n`+
-    `   Break ${t} into smaller parts:\n`+
-    `   - What it describes\n`+
-    `   - What causes it\n`+
-    `   - What changes it\n`+
-    `   - What results from it\n\n`+
-    `4. Real example:\n`+
-    `   Think of a real scenario where ${t} appears. Describe what happens,\n`+
-    `   why it happens, and what ${main} influences.\n\n`+
-    `5. How to remember it:\n`+
-    `   Create a short rule: “${t} is the idea that explains how ${main} behaves.”`;
-}
-function saveTeacher(){localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);}
-function deleteTeacher(){
-  if(!confirm("Delete explanation?"))return;
-  localStorage.removeItem("ks_teacher");
-  document.getElementById("teacherOut").textContent="";
-}
-function loadTeacher(){
-  const saved=localStorage.getItem("ks_teacher");
-  if(saved)document.getElementById("teacherOut").textContent=saved;
-}
-
 /* NOTEBOOK + HIGHLIGHTER */
 let pages=[],currentPage=0;
 function loadNotebook(){
@@ -312,11 +654,11 @@ for(let s=0;s<5;s++){
 
 <div class="section" id="quizSection">
   <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
-  <h2>Automated Interactive Quiz</h2>
-  <input id="quizTopic" placeholder="Type any topic">
+  <h2>Deep Subject-Aware Quiz</h2>
+  <input id="quizTopic" placeholder="Type any topic (photosynthesis, fractions, World War II, etc.)">
   <button onclick="generateQuiz()">Generate Quiz</button>
   <div id="quizList"></div>
-  <div id="quizResult" style="margin-top:6px;"></div>
+  <div id="quizResult" style="margin-top:8px;"></div>
 </div>
 
 <div class="section" id="flashSection">
@@ -332,18 +674,18 @@ for(let s=0;s<5;s++){
 
 <div class="section" id="teacherSection">
   <div class="close-btn" onclick="closeSection('teacherSection')">✖</div>
-  <h2>Teacher Helper</h2>
-  <input id="teacherQuestion" placeholder="What do you want explained?">
+  <h2>Deep Teacher</h2>
+  <input id="teacherQuestion" placeholder="Type any concept you want explained">
   <button onclick="teacherExplain()">Explain</button>
   <button onclick="saveTeacher()">Save Explanation</button>
   <button onclick="deleteTeacher()">Delete Explanation</button>
-  <p id="teacherOut" style="white-space:pre-wrap;margin-top:8px;"></p>
+  <p id="teacherOut" style="white-space:pre-wrap;margin-top:12px;"></p>
 </div>
 
 <div class="section" id="notebookSection">
   <div class="close-btn" onclick="closeSection('notebookSection')">✖</div>
   <h2>Notebook</h2>
-  <div id="pageButtons" style="margin-bottom:6px;"></div>
+  <div id="pageButtons" style="margin-bottom:10px;"></div>
   <div class="tools">
     <button class="hl-btn" style="background:#f7d96f" onclick="highlight('#f7d96f')">Yellow</button>
     <button class="hl-btn" style="background:#f7a6c7" onclick="highlight('#f7a6c7')">Pink</button>
@@ -354,10 +696,10 @@ for(let s=0;s<5;s++){
   <div class="notebook">
     <div id="note" contenteditable="true" oninput="saveCurrentPage()"></div>
   </div>
-  <div style="text-align:center;margin-top:6px;">
+  <div style="text-align:center;margin-top:10px;">
     <button class="page-btn" onclick="addPage()">➕ Add Page</button>
   </div>
 </div>
 </body>
 </html>
-            
+        
