@@ -17,15 +17,8 @@ body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
   z-index:9999;
   position:relative;
 }
-.back-arrow {
-  font-size:50px;
-  cursor:pointer;
-}
-.title {
-  text-align:center;
-  font-size:70px;
-  text-shadow:0 0 30px #f5e9c8;
-}
+.back-arrow { font-size:50px; cursor:pointer; }
+.title { text-align:center; font-size:70px; text-shadow:0 0 30px #f5e9c8; }
 
 /* Bookshelves */
 .library {
@@ -96,10 +89,15 @@ body { margin:0; font-family:Georgia; background:#15100b; color:#f5e9c8; }
 }
 .close-btn { float:right; font-size:40px; cursor:pointer; }
 
-/* Inputs (Lavender) */
+/* Inputs (Lavender, bigger) */
 input, textarea, select {
-  width:100%; font-size:24px; padding:14px; margin:10px 0;
-  border-radius:12px; border:2px solid #c9b2e8; background:#f7f2ff;
+  width:100%;
+  font-size:26px;
+  padding:18px;
+  margin:14px 0;
+  border-radius:14px;
+  border:2px solid #c9b2e8;
+  background:#f7f2ff;
 }
 
 /* Buttons */
@@ -110,10 +108,14 @@ button {
 }
 button:hover { background:#e3d2bd; }
 
-/* Lavender Boxes */
+/* Lavender Boxes (bigger) */
 .item-row {
-  background:#e6d6f5; border:2px solid #c9b2e8;
-  padding:20px; margin:15px 0; border-radius:16px; font-size:22px;
+  background:#e6d6f5;
+  border:2px solid #c9b2e8;
+  padding:26px;
+  margin:18px 0;
+  border-radius:18px;
+  font-size:24px;
 }
 
 /* NOTEBOOK BOOK */
@@ -182,10 +184,42 @@ button:hover { background:#e3d2bd; }
 }
 .page-btn:hover { background:#e3d2bd; }
 .active { background:#b89b7a !important; color:white !important; }
+
+/* Quiz answer buttons */
+.quiz-answer {
+  display:inline-block;
+  margin:6px 8px 6px 0;
+  padding:8px 14px;
+  border-radius:10px;
+  background:#f7f2ff;
+  border:2px solid #c9b2e8;
+  cursor:pointer;
+}
+.quiz-answer.correct { background:#9adf9a; }
+.quiz-answer.wrong { background:#f7a6c7; }
+
+/* Matching piles */
+.match-container {
+  display:flex;
+  gap:40px;
+  margin-top:20px;
+}
+.match-column {
+  flex:1;
+}
+.match-item {
+  padding:10px 14px;
+  margin:6px 0;
+  border-radius:10px;
+  background:#f7f2ff;
+  border:2px solid #c9b2e8;
+  cursor:pointer;
+}
+.match-item.selected { background:#9ac7df; }
+.match-item.matched { background:#9adf9a; }
 </style>
 
 <script>
-/* SECTION CONTROL */
 function openSection(id){
   document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
   document.getElementById(id).style.display = 'block';
@@ -195,42 +229,163 @@ function closeSection(id){
 }
 function goHome(){ window.location.href = "index.html"; }
 
-/* QUIZ */
-let quizzes=[];
-function addQuiz(){
-  const q=document.getElementById("quizQ").value;
-  const c=document.getElementById("quizC").value;
-  if(!q.trim()||!c.trim())return;
-  quizzes.push({q,c});
+/* QUIZ – automated, interactive, mixed */
+let currentQuiz = { mcq: [], tf: [], matchA: [], matchB: [], pairs: [] };
+let matchSelection = { a: null, b: null };
+
+function generateQuiz(){
+  const topic = document.getElementById("quizTopic").value.trim();
+  const out = document.getElementById("quizList");
+  const result = document.getElementById("quizResult");
+  if(!topic){
+    out.innerHTML = "";
+    result.textContent = "Type a topic first.";
+    return;
+  }
+
+  // Simple template-based generation (offline "AI")
+  currentQuiz.mcq = [
+    {
+      q: `Which of the following best describes ${topic}?`,
+      options: [
+        `${topic} is a key concept you should understand.`,
+        `${topic} is a random word.`,
+        `${topic} has no meaning.`,
+        `${topic} is only used in art.`
+      ],
+      correct: 0
+    },
+    {
+      q: `Why is ${topic} important?`,
+      options: [
+        `It helps explain how things work.`,
+        `It is never used in real life.`,
+        `It only appears in games.`,
+        `It is a secret code.`
+      ],
+      correct: 0
+    }
+  ];
+
+  currentQuiz.tf = [
+    {
+      q: `${topic} can be learned step by step.`,
+      correct: true
+    },
+    {
+      q: `${topic} is impossible to understand.`,
+      correct: false
+    }
+  ];
+
+  currentQuiz.matchA = [
+    `${topic} – definition`,
+    `${topic} – example`,
+    `${topic} – key idea`
+  ];
+  currentQuiz.matchB = [
+    `Short explanation of what ${topic} means.`,
+    `A simple situation where ${topic} appears.`,
+    `The most important thing to remember about ${topic}.`
+  ];
+  currentQuiz.pairs = [0,1,2]; // A0→B0, A1→B1, A2→B2
+
   renderQuiz();
+  result.textContent = "Quiz generated!";
 }
+
 function renderQuiz(){
-  const quizList=document.getElementById("quizList");
-  quizList.innerHTML="";
-  quizzes.forEach((x,i)=>{
-    quizList.innerHTML+=`<div class='item-row'><b>${x.q}</b><br>
-    <input placeholder='Your answer' onblur='check(${i},this.value)'></div>`;
+  const out = document.getElementById("quizList");
+  out.innerHTML = "";
+
+  // Mixed exam style: MCQ + TF + Matching in one flow
+  // MCQ
+  currentQuiz.mcq.forEach((qObj, qi) => {
+    let html = `<div class="item-row"><b>Q: ${qObj.q}</b><br>`;
+    qObj.options.forEach((opt, oi) => {
+      html += `<span class="quiz-answer" onclick="checkMCQ(${qi},${oi},this)">${opt}</span>`;
+    });
+    html += `</div>`;
+    out.innerHTML += html;
   });
+
+  // True/False
+  currentQuiz.tf.forEach((qObj, qi) => {
+    let html = `<div class="item-row"><b>Q: ${qObj.q}</b><br>`;
+    html += `<span class="quiz-answer" onclick="checkTF(${qi},true,this)">True</span>`;
+    html += `<span class="quiz-answer" onclick="checkTF(${qi},false,this)">False</span>`;
+    html += `</div>`;
+    out.innerHTML += html;
+  });
+
+  // Matching – click-to-pair
+  let html = `<div class="item-row"><b>Match the items:</b>
+  <div class="match-container">
+    <div class="match-column"><b>Pile A</b>`;
+  currentQuiz.matchA.forEach((item, i) => {
+    html += `<div class="match-item" onclick="selectMatch('a',${i},this)" data-index="${i}">${item}</div>`;
+  });
+  html += `</div><div class="match-column"><b>Pile B</b>`;
+  currentQuiz.matchB.forEach((item, i) => {
+    html += `<div class="match-item" onclick="selectMatch('b',${i},this)" data-index="${i}">${item}</div>`;
+  });
+  html += `</div></div></div>`;
+  out.innerHTML += html;
+
+  matchSelection = { a: null, b: null };
 }
-function check(i,a){
-  const quizResult=document.getElementById("quizResult");
-  quizResult.textContent=(a.trim()==quizzes[i].c.trim())?"Correct!":"Wrong";
+
+function checkMCQ(qIndex, optIndex, el){
+  const q = currentQuiz.mcq[qIndex];
+  const correct = (optIndex === q.correct);
+  const parent = el.parentElement;
+  parent.querySelectorAll('.quiz-answer').forEach(a => {
+    a.classList.remove('correct','wrong');
+  });
+  el.classList.add(correct ? 'correct' : 'wrong');
 }
-function saveQuizzes(){
-  localStorage.setItem("ks_quizzes",JSON.stringify(quizzes));
-  document.getElementById("quizResult").textContent="Saved!";
+
+function checkTF(qIndex, answer, el){
+  const q = currentQuiz.tf[qIndex];
+  const correct = (answer === q.correct);
+  const parent = el.parentElement;
+  parent.querySelectorAll('.quiz-answer').forEach(a => {
+    a.classList.remove('correct','wrong');
+  });
+  el.classList.add(correct ? 'correct' : 'wrong');
 }
-function deleteQuizzes(){
-  if(!confirm("Delete all quizzes?"))return;
-  quizzes=[];
-  localStorage.removeItem("ks_quizzes");
-  renderQuiz();
-  document.getElementById("quizResult").textContent="Deleted.";
-}
-function loadQuizzes(){
-  const raw=localStorage.getItem("ks_quizzes");
-  quizzes=raw?JSON.parse(raw):[];
-  renderQuiz();
+
+function selectMatch(side, index, el){
+  // If already matched, ignore
+  if(el.classList.contains('matched')) return;
+
+  // Clear previous selection on that side
+  const container = el.parentElement;
+  container.querySelectorAll('.match-item').forEach(i => i.classList.remove('selected'));
+
+  el.classList.add('selected');
+  matchSelection[side] = { index, el };
+
+  if(matchSelection.a && matchSelection.b){
+    const aIndex = matchSelection.a.index;
+    const bIndex = matchSelection.b.index;
+    const correctPairIndex = currentQuiz.pairs[aIndex]; // expected B index
+
+    if(bIndex === correctPairIndex){
+      matchSelection.a.el.classList.remove('selected');
+      matchSelection.b.el.classList.remove('selected');
+      matchSelection.a.el.classList.add('matched');
+      matchSelection.b.el.classList.add('matched');
+    } else {
+      matchSelection.a.el.classList.add('wrong');
+      matchSelection.b.el.classList.add('wrong');
+      setTimeout(() => {
+        matchSelection.a.el.classList.remove('selected','wrong');
+        matchSelection.b.el.classList.remove('selected','wrong');
+      }, 600);
+    }
+    matchSelection = { a:null, b:null };
+  }
 }
 
 /* FLASHCARDS */
@@ -269,12 +424,29 @@ function loadFlashcards(){
   renderCards();
 }
 
-/* TEACHER */
+/* TEACHER – text-based helper */
 function teacherExplain(){
-  const file=document.getElementById("teacherFile").files[0];
-  const out=document.getElementById("teacherOut");
-  if(!file){out.textContent="Upload something first.";return;}
-  out.textContent="(AI explanation would appear here)";
+  const question = document.getElementById("teacherQuestion").value.trim();
+  const out = document.getElementById("teacherOut");
+  if(!question){
+    out.textContent = "Type what you want explained.";
+    return;
+  }
+
+  // Simple structured explanation (offline "AI")
+  out.textContent =
+    "Here’s a simple way to think about:\n\n" +
+    "• Topic: " + question + "\n\n" +
+    "1. What it is:\n" +
+    "   Imagine " + question + " as a concept that helps you understand how something works.\n\n" +
+    "2. Why it matters:\n" +
+    "   It shows up when you try to solve problems, answer questions, or understand examples.\n\n" +
+    "3. Easy example:\n" +
+    "   Think of a situation in your life where " + question +
+    " appears. Describe what happens and how " + question + " changes things.\n\n" +
+    "4. How to remember it:\n" +
+    "   Turn it into a short sentence in your own words. If you can explain it simply, you understand it.\n\n" +
+    "If you want, try writing your own example under this explanation.";
 }
 function saveTeacher(){
   localStorage.setItem("ks_teacher",document.getElementById("teacherOut").textContent);
@@ -342,7 +514,6 @@ function updateActiveButton(){
 
 /* INIT */
 window.onload=function(){
-  loadQuizzes();
   loadFlashcards();
   loadTeacher();
   loadNotebook();
@@ -384,16 +555,11 @@ for(let s=0;s<4;s++){
 <!-- QUIZ -->
 <div class="section" id="quizSection">
   <div class="close-btn" onclick="closeSection('quizSection')">✖</div>
-  <h2>Quiz Generator</h2>
-  <input id="quizTopic" placeholder="AI Topic">
-  <hr>
-  <input id="quizQ" placeholder="Question">
-  <input id="quizC" placeholder="Correct Answer">
-  <button onclick="addQuiz()">Add</button>
-  <button onclick="saveQuizzes()">Save</button>
-  <button onclick="deleteQuizzes()">Delete</button>
+  <h2>Automated Interactive Quiz</h2>
+  <input id="quizTopic" placeholder="Type a topic (e.g. photosynthesis, fractions, World War II)">
+  <button onclick="generateQuiz()">Generate Quiz</button>
   <div id="quizList"></div>
-  <div id="quizResult"></div>
+  <div id="quizResult" style="margin-top:10px;"></div>
 </div>
 
 <!-- FLASHCARDS -->
@@ -411,12 +577,12 @@ for(let s=0;s<4;s++){
 <!-- TEACHER -->
 <div class="section" id="teacherSection">
   <div class="close-btn" onclick="closeSection('teacherSection')">✖</div>
-  <h2>Virtual Teacher</h2>
-  <input type="file" id="teacherFile">
+  <h2>Teacher Helper</h2>
+  <input id="teacherQuestion" placeholder="What do you want explained?">
   <button onclick="teacherExplain()">Explain</button>
-  <button onclick="saveTeacher()">Save</button>
-  <button onclick="deleteTeacher()">Delete</button>
-  <p id="teacherOut" style="white-space:pre-wrap;"></p>
+  <button onclick="saveTeacher()">Save Explanation</button>
+  <button onclick="deleteTeacher()">Delete Explanation</button>
+  <p id="teacherOut" style="white-space:pre-wrap; margin-top:20px;"></p>
 </div>
 
 <!-- NOTEBOOK BOOK -->
@@ -445,3 +611,6 @@ for(let s=0;s<4;s++){
 
 </body>
 </html>
+
+
+      
